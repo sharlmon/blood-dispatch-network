@@ -50,9 +50,13 @@ In development Clerk runs *keyless* on temporary keys (you will see a "Configure
 
 Logo: **Convergence** (four drops closing in on one point; three red sources, one dark drop for your hospital). Components `BrandMark` and `BrandLogo` (`inline` and `stacked`, with `reverse` for dark and red backgrounds). SVGs live in `frontend/public/` and `docs/brand/convergence/` (colour, black, reverse, lockup); `favicon.svg` is the app icon.
 
+## Photos
+
+`public/images/hand-vial.jpg` and `hand-tube.jpg` are free-to-use photos from [Pexels](https://www.pexels.com) (Pexels License: free to use and modify). The warm pink grade (landing) and the red duotone (login) are CSS filters, not edited files.
+
 ## Look and motion
 
-Blush gradient with floating blood cells, brick-red palette, uppercase headlines, outlined pill chips, organic cards and a floating red nav pill on mobile. Motion: staggered rise-in, tile mosaic where a spare bag lands in a gap, pins dropping onto the map, flowing route line, pulsing location dot, growing arrival-window bars. All motion is off under `prefers-reduced-motion`.
+Blush gradient with grain and floating blood cells, brick-red palette, uppercase headlines, outlined pill chips with illustrated icons, organic outlined cards, a floating pill header and a red nav pill on mobile. Landing and login use real photography (warm grade / red duotone) over a block wall of blood groups with handwritten letters. Motion: staggered rise-in, a block bobbing over its gap, pins dropping onto the map, flowing route line, pulsing location dot, growing arrival-window bars. All motion is off under `prefers-reduced-motion`.
 
 ## Known gaps (next)
 

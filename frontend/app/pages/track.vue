@@ -82,8 +82,8 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
 .audit time { font-weight: 800; color: var(--ink); margin-right: 6px; }
 
 @media (min-width: 900px) {
-  .wrap { min-height: calc(100dvh - var(--header-h)); }
+  .wrap { height: calc(100dvh - var(--header-h)); min-height: 640px; margin-top: 6px; }
   .map { inset: 0; height: auto; }
-  .panel { top: 0; right: auto; bottom: 0; width: 440px; border-radius: 0; box-shadow: 6px 0 24px rgba(18, 32, 43, 0.12); padding: 20px; }
+  .panel { top: 12px; left: 24px; right: auto; bottom: 24px; width: 470px; border-radius: 40px 44px 40px 46px / 44px 40px 46px 40px; border: 1.5px solid var(--blood-500); box-shadow: 0 26px 60px rgba(126, 16, 21, 0.2); padding: 22px; }
 }
 </style>
