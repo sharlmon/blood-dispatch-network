@@ -40,7 +40,8 @@ const { request } = useDispatch()
           <NuxtLink v-if="request" to="/track"><AppIcon name="clock" :size="18" /> Track</NuxtLink>
         </nav>
         <span class="grow" />
-        <span class="status" :class="online && verified !== 'no' ? 'ok' : 'down'" role="status"><i />{{ label }}</span>
+        <!-- Only shown when something is wrong; "demo data" and "live" are noise. -->
+        <span v-if="!demo && (!online || verified === 'no')" class="status down" role="status"><i />{{ label }}</span>
         <div class="who">
           <template v-if="authEnabled">
             <Show when="signed-in">
