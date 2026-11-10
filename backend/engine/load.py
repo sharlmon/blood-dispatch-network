@@ -218,18 +218,79 @@ class StockLookup:
         return {g: found.get(g, 0) for g in BLOOD_GROUPS}
 
 
-@dataclass(frozen=True)
+# A blank status_date means the unit is still in stock at the end of the dataset
+# (validated in build_db). Give it a date far in the future so "on the shelf after
+# as_of" is a plain comparison.
+STILL_ON_SHELF = pd.Timestamp("2262-01-01")
+
+
+def red_units_frame(units: pd.DataFrame) -> pd.DataFrame:
+    """Red cell units with parsed dates, for the near-expiry count."""
+    red = units[units["component"].isin(RED_CELL_COMPONENTS)]
+    return pd.DataFrame(
+        {
+            "facility_id": red["current_facility_id"].to_numpy(),
+            "blood_group": red["blood_group"].to_numpy(),
+            "collection_date": pd.to_datetime(red["collection_date"]).to_numpy(),
+            "expiry_date": pd.to_datetime(red["expiry_date"]).to_numpy(),
+            "shelf_until": pd.to_datetime(red["status_date"]).fillna(STILL_ON_SHELF).to_numpy(),
+        }
+    )
+
+
+@dataclass(frozen=True, eq=False)  # eq=False: hash by identity, so caches can key on it
 class Frames:
     facilities: pd.DataFrame  # indexed by facility_id
+    facility_info: dict[str, dict]  # facility_id -> row as a plain dict (fast access)
     routes: pd.DataFrame
     units: pd.DataFrame
     transfers: pd.DataFrame
     requests: pd.DataFrame
     red_stock: pd.DataFrame
+    red_units: pd.DataFrame
+    stock_dates: tuple[str, ...]  # sorted ISO dates that have stock counts
     usual_level: dict[tuple[str, str], int]  # (facility_id, blood_group) -> units
     stock: StockLookup
     travel_hours: dict[tuple[str, str], float]  # (from, to) -> typical_travel_hours
     road_km: dict[tuple[str, str], float]
+
+
+def frames_from_tables(
+    facilities: pd.DataFrame,
+    routes: pd.DataFrame,
+    units: pd.DataFrame,
+    red_stock: pd.DataFrame,
+    usual_level: pd.DataFrame,
+    transfers: pd.DataFrame | None = None,
+    requests: pd.DataFrame | None = None,
+) -> Frames:
+    """Assemble Frames from tables. Used by load_frames and by tests with tiny datasets."""
+    facilities = facilities.set_index("facility_id", drop=False)
+    facilities["has_blood_fridge_backup_power"] = facilities[
+        "has_blood_fridge_backup_power"
+    ].astype(bool)
+    pairs = list(zip(routes["from_facility_id"], routes["to_facility_id"]))
+    info = facilities.astype(object).where(facilities.notna(), None).to_dict("index")
+    return Frames(
+        facilities=facilities,
+        facility_info=info,
+        routes=routes,
+        units=units,
+        transfers=transfers if transfers is not None else pd.DataFrame(),
+        requests=requests if requests is not None else pd.DataFrame(),
+        red_stock=red_stock,
+        red_units=red_units_frame(units),
+        stock_dates=tuple(sorted(red_stock["date"].unique())),
+        usual_level={
+            (f, g): int(v)
+            for f, g, v in zip(
+                usual_level["facility_id"], usual_level["blood_group"], usual_level["usual_level"]
+            )
+        },
+        stock=StockLookup(red_stock),
+        travel_hours=dict(zip(pairs, routes["typical_travel_hours"].astype(float))),
+        road_km=dict(zip(pairs, routes["road_km"].astype(float))),
+    )
 
 
 @lru_cache(maxsize=4)
@@ -242,33 +303,15 @@ def load_frames(db_path: str | Path) -> Frames:
         )
     with sqlite3.connect(db_path) as conn:
         read = lambda table: pd.read_sql_query(f"SELECT * FROM {table}", conn)  # noqa: E731
-        facilities = read("facilities").set_index("facility_id", drop=False)
-        routes = read("routes")
-        units = read("units")
-        transfers = read("transfers")
-        requests = read("requests")
-        red_stock = read("red_stock")
-        usual = read("usual_level")
-
-    facilities["has_blood_fridge_backup_power"] = facilities[
-        "has_blood_fridge_backup_power"
-    ].astype(bool)
-    pairs = list(zip(routes["from_facility_id"], routes["to_facility_id"]))
-    return Frames(
-        facilities=facilities,
-        routes=routes,
-        units=units,
-        transfers=transfers,
-        requests=requests,
-        red_stock=red_stock,
-        usual_level={
-            (f, g): int(v)
-            for f, g, v in zip(usual["facility_id"], usual["blood_group"], usual["usual_level"])
-        },
-        stock=StockLookup(red_stock),
-        travel_hours=dict(zip(pairs, routes["typical_travel_hours"].astype(float))),
-        road_km=dict(zip(pairs, routes["road_km"].astype(float))),
-    )
+        return frames_from_tables(
+            facilities=read("facilities"),
+            routes=read("routes"),
+            units=read("units"),
+            red_stock=read("red_stock"),
+            usual_level=read("usual_level"),
+            transfers=read("transfers"),
+            requests=read("requests"),
+        )
 
 
 def timed_build(data_dir: Path, db_path: Path) -> tuple[dict[str, int], float]:
