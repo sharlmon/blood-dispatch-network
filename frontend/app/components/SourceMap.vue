@@ -220,7 +220,7 @@ const zoomPct = computed(() => Math.round(z.value * 100))
       </g>
 
       <g :transform="`translate(${YOU.x} ${YOU.y}) scale(${view.k})`" pointer-events="none">
-        <circle class="halo" r="24" fill="#1d6fd8" fill-opacity="0.16" />
+        <circle r="24" fill="#1d6fd8" fill-opacity="0.16" />
         <circle r="9" fill="#1d6fd8" stroke="#fff" stroke-width="3" />
         <text y="28" text-anchor="middle" font-size="12" font-weight="800" fill="#12202b" stroke="#fff" stroke-width="4" paint-order="stroke" font-family="Manrope, sans-serif">Your hospital</text>
       </g>
@@ -282,11 +282,8 @@ const zoomPct = computed(() => Math.round(z.value * 100))
 .pin { cursor: pointer; outline: none; }
 .pin .body { transition: transform 0.25s cubic-bezier(0.3, 1.4, 0.5, 1); }
 .pin:hover:not(.sel) .body { transform: scale(1.15); }
-.pin.sel .drop { animation: bounce 0.6s cubic-bezier(0.3, 1.5, 0.5, 1); }
-.drop { animation: pinDrop 0.55s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
 .route { transition: stroke 0.3s ease; }
 .flow { animation: flow 1.2s linear infinite; }
-.halo { transform-box: fill-box; transform-origin: center; animation: pulse 2.4s ease-out infinite; }
 @keyframes pinDrop { from { opacity: 0; transform: translateY(-26px); } to { opacity: 1; transform: none; } }
 @keyframes bounce { 0% { transform: translateY(0); } 35% { transform: translateY(-14px); } 70% { transform: translateY(2px); } 100% { transform: none; } }
 @keyframes flow { to { stroke-dashoffset: -30; } }

@@ -36,7 +36,7 @@ const img = useImg()
 h1 { margin: 0; font-size: 10vw; line-height: 1; letter-spacing: -0.03em; font-weight: 800; text-transform: uppercase; color: #085a53; white-space: pre-line; }
 .sub { margin: 14px 0 0; font-size: 17px; font-weight: 500; color: #1b1b1f; }
 .dots { display: block; width: 40px; height: 11px; border: 2px solid var(--primary-500); border-radius: 99px; margin-top: 18px; position: relative; box-sizing: border-box; }
-.dots i { position: absolute; left: 2px; top: 2px; width: 22px; height: 4px; border-radius: 99px; background: var(--primary-500); animation: slide 2.4s ease-in-out infinite alternate; }
+.dots i { position: absolute; left: 2px; top: 2px; width: 22px; height: 4px; border-radius: 99px; background: var(--primary-500); }
 @keyframes slide { to { transform: translateX(8px); } }
 .stage { position: relative; flex: 1; min-height: 340px; margin-top: 8px; }
 .photo { position: absolute; left: 0; right: 0; bottom: 0; height: 600px; max-height: 100%; overflow: hidden; z-index: 2; background: linear-gradient(180deg, #d6e8e5 0%, #8fc7bf 45%, #0a6b62 100%); -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%); }

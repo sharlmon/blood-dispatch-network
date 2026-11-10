@@ -76,7 +76,7 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
 .steps li.done:not(:last-child)::before { background: var(--teal-600); }
 .dot { width: 24px; height: 24px; border-radius: 99px; flex-shrink: 0; display: grid; place-items: center; background: var(--white); border: 2px solid var(--line); color: #fff; }
 .done .dot { background: var(--teal-600); border-color: var(--teal-600); }
-.now .dot { border: 3px solid var(--primary-500); animation: ring 1.6s ease-out infinite; }
+.now .dot { border: 3px solid var(--primary-500); }
 .txt { display: flex; flex-direction: column; }
 .txt strong { font-size: 14.5px; }
 .txt small { font-size: 12.5px; font-weight: 600; color: var(--slate); line-height: 1.4; margin-top: 1px; }
