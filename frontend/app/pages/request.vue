@@ -7,7 +7,6 @@ const route = useRoute()
 const { search } = useDispatch()
 const { toast } = useToast()
 const { firstName, hospital } = useSite()
-const img = useImg()
 
 const group = ref(route.query.sos ? 'Unknown' : 'B+')
 const product = ref('Red cells')
@@ -92,7 +91,7 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
         <p>Tell us what the patient needs. We find every source that can spare it, and when it will really arrive.</p>
         <button type="button" class="sosbtn" @click="sos"><AppIcon name="drop" :size="18" /> <span class="long">Group unknown? </span>Request group O</button>
       </div>
-      <div class="bgphoto" aria-hidden="true"><img :src="img('donation-room.jpg')" alt=""></div>
+      <div class="bgphoto" aria-hidden="true"><Pic name="donation-room" sizes="(min-width: 1000px) 600px, 64vw" eager /></div>
     </section>
 
     <form ref="form" class="form card" @submit.prevent="submit">
