@@ -92,7 +92,7 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
         <p>Tell us what the patient needs. We find every source that can spare it, and when it will really arrive.</p>
         <button type="button" class="sosbtn" @click="sos"><AppIcon name="drop" :size="18" /> <span class="long">Group unknown? </span>Request group O</button>
       </div>
-      <div class="bgphoto" aria-hidden="true"><img :src="img('nurse.jpg')" alt=""></div>
+      <div class="bgphoto" aria-hidden="true"><img :src="img('donation-room.jpg')" alt=""></div>
     </section>
 
     <form ref="form" class="form card" @submit.prevent="submit">
@@ -240,7 +240,7 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
 .hero p { margin: 10px 0 0; font-size: 14.5px; line-height: 1.5; font-weight: 500; color: #5a3c3f; max-width: 420px; }
 .sosbtn { margin-top: 16px; display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 18px; border-radius: 99px; background: #fff; border: 1.5px solid var(--blood-500); color: var(--blood-700); font-weight: 800; font-size: 14px; box-shadow: 0 8px 18px rgba(179, 23, 30, 0.18); }
 .bgphoto { position: absolute; top: 0; right: 0; bottom: 0; width: 62%; z-index: 0; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 55%); mask-image: linear-gradient(90deg, transparent 0%, #000 55%); }
-.bgphoto img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; filter: sepia(0.35) saturate(1.4) hue-rotate(-12deg) contrast(1.05); mix-blend-mode: multiply; }
+.bgphoto img { width: 100%; height: 100%; object-fit: cover; object-position: 30% 60%; filter: sepia(0.35) saturate(1.4) hue-rotate(-12deg) contrast(1.05); mix-blend-mode: multiply; }
 .bgphoto::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(179, 23, 30, 0) 40%, rgba(126, 16, 21, 0.28)); }
 
 .form { padding: var(--s-5) var(--s-4); display: flex; flex-direction: column; gap: var(--s-4); }
