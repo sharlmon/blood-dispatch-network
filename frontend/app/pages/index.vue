@@ -62,7 +62,7 @@ const safety = [
 
     <section v-inview class="section" aria-labelledby="share">
       <div class="share">
-        <div class="photo-card organic"><Pic name="blood-draw" sizes="(min-width: 900px) 520px, 92vw" alt="A health worker drawing blood from a donor's arm" /><span class="pc-tag">Hospitals share. Nobody runs short.</span></div>
+        <div class="photo-card organic"><Pic name="blood-draw" sizes="(min-width: 900px) 520px, 92vw" alt="A health worker in a lab drawing blood from a patient" /><span class="pc-tag">Hospitals share. Nobody runs short.</span></div>
         <div class="share-copy">
           <h2 id="share">Hospitals have never shared. Now they can.</h2>
           <p>A hospital 30 minutes down the road often has spare bags of exactly the type you need. Nobody knows, because nobody can see.</p>
@@ -104,8 +104,8 @@ const safety = [
       </ul>
       <div class="gallery">
         <figure class="organic"><Pic name="blood-bags" sizes="(min-width: 900px) 380px, 31vw" alt="Three bags of donated blood, labelled A and B" /><figcaption>On the shelf</figcaption></figure>
-        <figure class="organic"><Pic name="paramedics" sizes="(min-width: 900px) 380px, 31vw" alt="Paramedics loading a stretcher into an ambulance" /><figcaption>In transit</figcaption></figure>
-        <figure class="organic"><Pic name="care-team" sizes="(min-width: 900px) 380px, 31vw" alt="A team of doctors and nurses standing together" /><figcaption>At the bedside</figcaption></figure>
+        <figure class="organic"><Pic name="paramedics" sizes="(min-width: 900px) 380px, 31vw" alt="Paramedics caring for a patient inside an ambulance" /><figcaption>In transit</figcaption></figure>
+        <figure class="organic"><Pic name="care-team" sizes="(min-width: 900px) 380px, 31vw" alt="Four nurses in blue uniforms and headscarves posing together" /><figcaption>At the bedside</figcaption></figure>
       </div>
       <div class="sms-card organic">
         <IconBadge size="lg"><ServiceIcon name="sms" :size="36" /></IconBadge>

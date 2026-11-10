@@ -118,7 +118,7 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
     </div>
 
     <figure class="road organic">
-      <Pic name="ambulance" sizes="(min-width: 900px) 1150px, 92vw" alt="An ambulance driving along a road through green hills" />
+      <Pic name="ambulance" sizes="(min-width: 900px) 1150px, 92vw" alt="A paramedic at the wheel of an ambulance" />
       <figcaption><b>01:06</b> You pick. The supplier checks the shelf. Then the blood is on its way.</figcaption>
     </figure>
   </div>
@@ -184,15 +184,15 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
 .swap-enter-from { opacity: 0; transform: translateY(12px); }
 .swap-leave-to { opacity: 0; }
 
-.road { position: relative; margin: 0; overflow: hidden; height: 190px; background: #cfe4e1; }
-.road img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; filter: saturate(1.05) contrast(1.02); }
+.road { position: relative; margin: 0; overflow: hidden; height: 210px; background: #cfe4e1; }
+.road img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 57%; filter: saturate(1.05) contrast(1.02); }
 .road::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(6, 74, 68, 0.78) 0%, rgba(6, 74, 68, 0.2) 70%); }
 .road figcaption { position: absolute; z-index: 1; left: 20px; right: 20px; bottom: 18px; color: #fff; font-weight: 700; font-size: 16px; line-height: 1.4; max-width: 460px; text-shadow: 0 2px 10px rgba(3, 30, 28, 0.5); }
 .road figcaption b { display: inline-block; margin-right: 8px; padding: 3px 10px; border-radius: 99px; background: #fff; color: var(--primary-700); font-size: 13px; text-shadow: none; }
 @media (min-width: 900px) {
   .body { grid-template-columns: 1.2fr 0.8fr; gap: 28px; }
   .map { min-height: 440px; }
-  .road { height: 220px; }
+  .road { height: 250px; }
   .road figcaption { font-size: 18px; left: 32px; bottom: 26px; }
 }
 @media (max-width: 899px) { .map { aspect-ratio: 560 / 410; min-height: 0; } }
