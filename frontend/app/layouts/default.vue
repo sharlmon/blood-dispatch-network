@@ -1,7 +1,11 @@
 <script setup lang="ts">
-const { public: { apiBase } } = useRuntimeConfig()
-const { data: health, error } = useFetch<{ status: string }>(`${apiBase}/api/health`, { lazy: true, server: false })
-const online = computed(() => health.value?.status === 'ok' && !error.value)
+const { public: { apiBase, authEnabled } } = useRuntimeConfig()
+// No API configured (static demo): run on built-in demo data instead of showing "Offline".
+const demo = !apiBase
+const { data: health, error } = demo
+  ? { data: ref(null), error: ref(null) }
+  : useFetch<{ status: string }>(`${apiBase}/api/health`, { lazy: true, server: false })
+const online = computed(() => demo || (health.value?.status === 'ok' && !error.value))
 const { request } = useDispatch()
 </script>
 
@@ -17,16 +21,19 @@ const { request } = useDispatch()
         <NuxtLink v-if="request" to="/results">Results</NuxtLink>
       </nav>
       <div class="who">
-        <Show when="signed-in">
-          <OrganizationSwitcher :hide-personal="true" after-select-organization-url="/request" />
-          <UserButton />
-        </Show>
-        <Show when="signed-out">
-          <NuxtLink to="/sign-in" class="signin">Sign in</NuxtLink>
-        </Show>
+        <template v-if="authEnabled">
+          <Show when="signed-in">
+            <OrganizationSwitcher :hide-personal="true" after-select-organization-url="/request" />
+            <UserButton />
+          </Show>
+          <Show when="signed-out">
+            <NuxtLink to="/sign-in" class="signin">Sign in</NuxtLink>
+          </Show>
+        </template>
+        <span v-else class="site">Hillside Hospital · demo</span>
       </div>
       <span class="status" :class="online ? 'ok' : 'down'" role="status">
-        <i /> {{ online ? 'Live' : 'Offline' }}
+        <i /> {{ demo ? 'Demo data' : online ? 'Live' : 'Offline' }}
       </span>
     </header>
     <div v-if="!online" class="fallback" role="alert">
@@ -46,6 +53,7 @@ const { request } = useDispatch()
 .nav a { padding: 8px 14px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 14px; color: var(--slate); }
 .nav a.router-link-exact-active { background: var(--blood-50); color: var(--blood-700); }
 .who { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.site { display: none; font-size: 13px; font-weight: 600; color: var(--slate); }
 .signin { padding: 9px 18px; border-radius: 99px; border: 1.5px solid var(--blood-500); color: var(--blood-700); font-weight: 800; font-size: 14px; text-decoration: none; background: #fff; }
 .status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 99px; }
 .status i { width: 8px; height: 8px; border-radius: 99px; background: currentColor; }
@@ -54,6 +62,7 @@ const { request } = useDispatch()
 .fallback { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--amber-50); color: var(--amber-900); font-size: 13px; font-weight: 700; border-bottom: 1px solid var(--amber-500); }
 .main { flex: 1; min-height: 0; display: flex; flex-direction: column; padding-bottom: 86px; }
 @media (min-width: 900px) {
+  .site { display: block; }
   .main { padding-bottom: 0; }
   .nav { display: flex; }
 }

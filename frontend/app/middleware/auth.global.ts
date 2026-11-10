@@ -3,6 +3,7 @@
 const PUBLIC = ['/', '/sign-in', '/sign-up']
 
 export default defineNuxtRouteMiddleware((to) => {
+  if (!useRuntimeConfig().public.authEnabled) return // static demo build: no login
   const isPublic = PUBLIC.some(p => to.path === p || to.path.startsWith(p + '/')) || to.query.demo === '1'
   if (isPublic) return
 

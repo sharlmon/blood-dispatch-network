@@ -36,6 +36,10 @@ When the API is unreachable the header shows **Offline** and a banner tells the 
 | `app/utils/icons.ts` | The icon set (24px grid, 1.75 stroke) |
 | `app/layouts/default.vue` | Header, live status, phone-process fallback banner |
 
+## Deploy to GitHub Pages
+
+`scripts/deploy-pages.sh` builds a static SPA (`GH_PAGES=1`, base path `/<repo>/`) and pushes it to the `gh-pages` branch. Pages is static, so there is no Flask API and no server-side Clerk: the build runs on built-in demo data and the header shows **Demo data**. If `NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is set at build time, Clerk login is included (client-side only; add the Pages URL to the Clerk allowed origins). Set `NUXT_PUBLIC_API_BASE` to point at a hosted API.
+
 ## Authentication (Clerk)
 
 `@clerk/nuxt`. Public routes: `/`, `/sign-in`, `/sign-up` and demo links (`?demo=1`). Everything else needs a signed-in user who belongs to a **hospital**, which is a Clerk Organization: `/onboarding` lets them join or create one. The header shows the hospital switcher and user menu.
