@@ -1,0 +1,169 @@
+{
+  "cleaning_performed": false,
+  "dataset_manifest": {
+    "daily_stock.csv": {
+      "rows": 185785,
+      "sha256": "b57e9df0622b1d7318e37da44969d07bd8b1f6a235f0be3021538dcf5a2f5130"
+    },
+    "facilities.csv": {
+      "rows": 47,
+      "sha256": "9cb53f2975de71ce1aa3f43f1e6d9ebf19901e8c77c56c27071ca2eeb1e1cf13"
+    },
+    "requests.csv": {
+      "rows": 17430,
+      "sha256": "68dc3cc50343d2ef306ebb8a3afb75adc6766c5ef95d1eb01d7d566d9bfbb557"
+    },
+    "routes.csv": {
+      "rows": 2162,
+      "sha256": "e7e6bcbeb199f99e52c72e990f156d7dc1df2d4a36faf5204933c81e5a934e74"
+    },
+    "transfers.csv": {
+      "rows": 35181,
+      "sha256": "00ca80de55df4489987e364e03ca4a52105af9519d5e86e6045a99f1cdf45987"
+    }
+  },
+  "generated_at": "2026-11-10T15:01:16.194125+03:00",
+  "result": {
+    "arrival_test_metrics": {
+      "baseline_map_plus_2_mean_absolute_error_hours": 1.3326338153221715,
+      "baseline_map_plus_2_median_absolute_error_hours": 1.0159722222222225,
+      "fraction_after_p90": 0.1050228310502283,
+      "mean_absolute_error_hours": 0.8899372885270107,
+      "mean_interval_width_hours": 3.0323073839163754,
+      "median_absolute_error_hours": 0.6946279296153324,
+      "nominal_interval_probability": 0.8,
+      "p10_p90_coverage": 0.8082191780821918
+    },
+    "prealert_metrics": {
+      "alert_count": 1582,
+      "censored_alert_count": 25,
+      "censored_window_count": 1,
+      "detected_unmet_request_count": 56,
+      "evaluated_alert_count": 1557,
+      "evaluated_request_count": 771,
+      "evaluated_window_count": 60,
+      "false_positive_alert_count": 1510,
+      "known_snapshot_exposure_count": 3420,
+      "missed_unmet_request_count": 1,
+      "observed_unmet_request_count": 57,
+      "precision": 0.03018625561978163,
+      "precision_denominator_alerts": 1557,
+      "recall": 0.9824561403508771,
+      "recall_denominator_unmet_requests": 57,
+      "requests_excluded_censoring": 4,
+      "requests_excluded_missing_snapshot": 126,
+      "scheduled_window_count": 61,
+      "true_positive_alert_count": 47,
+      "unknown_snapshot_exposure_count": 420,
+      "unmet_requests_excluded_censoring": 1,
+      "unmet_requests_excluded_missing_snapshot": 29
+    },
+    "replay_policies": {
+      "all_centres": {
+        "evaluated_requests": 370,
+        "full_source_found": 369,
+        "full_source_p50_within_deadline": 141,
+        "full_source_p90_within_deadline": 135,
+        "hospital_sources_selected": 0,
+        "mean_p50_hours_full_sources": 7.720259169454271,
+        "median_p50_hours_full_sources": 6.975818812776842,
+        "no_source_found": 0,
+        "partial_source_only": 1,
+        "previously_unfulfilled_p50_opportunities": 27
+      },
+      "baseline": {
+        "evaluated_requests": 370,
+        "full_source_found": 255,
+        "full_source_p50_within_deadline": 141,
+        "full_source_p90_within_deadline": 132,
+        "hospital_sources_selected": 0,
+        "mean_p50_hours_full_sources": 5.658807064150622,
+        "median_map_plus_two_quote_hours": 3.95,
+        "median_p50_hours_full_sources": 4.778257445878714,
+        "no_source_found": 96,
+        "partial_source_only": 19,
+        "previously_unfulfilled_p50_opportunities": 27
+      },
+      "centres_and_hospitals": {
+        "evaluated_requests": 370,
+        "full_source_found": 369,
+        "full_source_p50_within_deadline": 269,
+        "full_source_p90_within_deadline": 260,
+        "hospital_sources_selected": 215,
+        "mean_p50_hours_full_sources": 5.459013109068379,
+        "median_p50_hours_full_sources": 4.06850685333551,
+        "no_source_found": 0,
+        "partial_source_only": 1,
+        "previously_unfulfilled_p50_opportunities": 48
+      }
+    },
+    "test_arrival_batches": 438,
+    "training_batches": 1762
+  },
+  "schema_version": 1,
+  "seed": 42,
+  "settings": {
+    "arrival": {
+      "confirmation_timeout_minutes": 10,
+      "dispatch_wait_hours": 2.0,
+      "min_training_samples": 20,
+      "road_time_multiplier": 1.2,
+      "seed": 42,
+      "too_long_hours": 6,
+      "window_percentiles": [
+        10,
+        50,
+        90
+      ]
+    },
+    "country": "KE",
+    "demo_clock": null,
+    "lending": {
+      "enabled": true,
+      "protect_o_negative": true,
+      "safety_stock_units": {}
+    },
+    "prealert": {
+      "blood_groups": [
+        "O+"
+      ],
+      "components": [
+        "RBC",
+        "WB"
+      ],
+      "horizon_hours": 24,
+      "run_hour": 18
+    },
+    "replay": {
+      "components": [
+        "RBC"
+      ],
+      "deadline_hours": 6,
+      "hospital_reserve_units": {
+        "A+": 10,
+        "A-": 10,
+        "AB+": 10,
+        "AB-": 10,
+        "B+": 10,
+        "B-": 10,
+        "O+": 10
+      },
+      "urgencies": [
+        "emergency"
+      ]
+    },
+    "sms": {
+      "gateway": null
+    },
+    "timezone": "Africa/Nairobi",
+    "unknown_group_policy": "group_o_only"
+  },
+  "settings_sha256": "e39fcf4f6f7b01121c5966f5d701898d7dd1008cfc53e3a9f935085683723fbe",
+  "split": {
+    "test_end_exclusive": "2026-11-01T00:00:00",
+    "training_end_exclusive": "2026-07-01T00:00:00",
+    "validation_end_exclusive": "2026-09-01T00:00:00"
+  },
+  "synthetic_data": true,
+  "timezone": "Africa/Nairobi"
+}

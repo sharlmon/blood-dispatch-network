@@ -1,0 +1,408 @@
+{
+  "cleaning_performed": false,
+  "dataset_manifest": {
+    "daily_stock.csv": {
+      "rows": 185785,
+      "sha256": "b57e9df0622b1d7318e37da44969d07bd8b1f6a235f0be3021538dcf5a2f5130"
+    },
+    "facilities.csv": {
+      "rows": 47,
+      "sha256": "9cb53f2975de71ce1aa3f43f1e6d9ebf19901e8c77c56c27071ca2eeb1e1cf13"
+    },
+    "requests.csv": {
+      "rows": 17430,
+      "sha256": "68dc3cc50343d2ef306ebb8a3afb75adc6766c5ef95d1eb01d7d566d9bfbb557"
+    },
+    "routes.csv": {
+      "rows": 2162,
+      "sha256": "e7e6bcbeb199f99e52c72e990f156d7dc1df2d4a36faf5204933c81e5a934e74"
+    },
+    "transfers.csv": {
+      "rows": 35181,
+      "sha256": "00ca80de55df4489987e364e03ca4a52105af9519d5e86e6045a99f1cdf45987"
+    }
+  },
+  "generated_at": "2026-11-10T15:01:16.449128+03:00",
+  "result": {
+    "alerts": [
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-002",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-004",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-004",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-005",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-005",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-006",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-006",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-007",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-007",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-008",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-015",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-016",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-017",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-017",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-018",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-019",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-020",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-024",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-026",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-027",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-028",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-029",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-030",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-031",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "WB",
+        "facility_id": "HSP-032",
+        "generated_at": "2026-10-31T18:00:00+03:00",
+        "human_review_required": true,
+        "reason": "known_zero_stock_for_component_previous_closing_snapshot",
+        "recorded_units": 0,
+        "stock_as_of": "2026-10-30"
+      }
+    ],
+    "assumptions": [
+      "Synthetic starter dataset; results do not describe real facilities.",
+      "Naive timestamps are East Africa Time (UTC+03:00).",
+      "Only the exact previous day's closing stock is available at each cutoff; missing snapshots are unknown and older stock is never carried forward.",
+      "Only configured exact blood groups and components are evaluated; components are not pooled and compatibility substitution is not inferred.",
+      "A zero-stock alert requires human review and is not a prediction or an order.",
+      "Daily evaluation windows last 24 hours; windows are half-open and cannot overlap.",
+      "Alert association with later unmet demand does not establish that replenishment would have prevented a shortage."
+    ],
+    "generated_at": "2026-10-31T18:00:00+03:00",
+    "missing_snapshot": [
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-021",
+        "reason": "missing_previous_day_snapshot",
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-027",
+        "reason": "missing_previous_day_snapshot",
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-028",
+        "reason": "missing_previous_day_snapshot",
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-029",
+        "reason": "missing_previous_day_snapshot",
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-030",
+        "reason": "missing_previous_day_snapshot",
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-031",
+        "reason": "missing_previous_day_snapshot",
+        "stock_as_of": "2026-10-30"
+      },
+      {
+        "blood_group": "O+",
+        "component": "RBC",
+        "facility_id": "HSP-032",
+        "reason": "missing_previous_day_snapshot",
+        "stock_as_of": "2026-10-30"
+      }
+    ],
+    "stock_as_of": "2026-10-30"
+  },
+  "schema_version": 1,
+  "seed": 42,
+  "settings": {
+    "arrival": {
+      "confirmation_timeout_minutes": 10,
+      "dispatch_wait_hours": 2.0,
+      "min_training_samples": 20,
+      "road_time_multiplier": 1.2,
+      "seed": 42,
+      "too_long_hours": 6,
+      "window_percentiles": [
+        10,
+        50,
+        90
+      ]
+    },
+    "country": "KE",
+    "demo_clock": null,
+    "lending": {
+      "enabled": true,
+      "protect_o_negative": true,
+      "safety_stock_units": {}
+    },
+    "prealert": {
+      "blood_groups": [
+        "O+"
+      ],
+      "components": [
+        "RBC",
+        "WB"
+      ],
+      "horizon_hours": 24,
+      "run_hour": 18
+    },
+    "replay": {
+      "components": [
+        "RBC"
+      ],
+      "deadline_hours": 6,
+      "hospital_reserve_units": {
+        "A+": 5,
+        "A-": 5,
+        "AB+": 5,
+        "AB-": 5,
+        "B+": 5,
+        "B-": 5,
+        "O+": 5
+      },
+      "urgencies": [
+        "emergency"
+      ]
+    },
+    "sms": {
+      "gateway": null
+    },
+    "timezone": "Africa/Nairobi",
+    "unknown_group_policy": "group_o_only"
+  },
+  "settings_sha256": "bbf8edb02f5ce899ab2731c8eed8a6da78b57fcc7f2b075c5273fd546170bbf3",
+  "split": {
+    "test_end_exclusive": "2026-11-01T00:00:00",
+    "training_end_exclusive": "2026-07-01T00:00:00",
+    "validation_end_exclusive": "2026-09-01T00:00:00"
+  },
+  "synthetic_data": true,
+  "timezone": "Africa/Nairobi"
+}

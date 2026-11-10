@@ -1,11 +1,15 @@
 import sqlite3
 from pathlib import Path
+from contextlib import contextmanager
 
 from flask import current_app, g
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS facilities (
  id TEXT PRIMARY KEY, name TEXT NOT NULL, kind TEXT NOT NULL CHECK(kind IN ('hospital','centre'))
+);
+CREATE TABLE IF NOT EXISTS facility_metadata (
+ facility_id TEXT PRIMARY KEY REFERENCES facilities(id), payload TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS inventory (
  facility_id TEXT NOT NULL REFERENCES facilities(id), blood_group TEXT NOT NULL,
@@ -19,6 +23,29 @@ CREATE TABLE IF NOT EXISTS requests (
  blood_group TEXT NOT NULL, product TEXT NOT NULL, units INTEGER NOT NULL CHECK(units > 0),
  status TEXT NOT NULL, supplier_id TEXT REFERENCES facilities(id),
  attempt INTEGER NOT NULL DEFAULT 0, deadline TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS request_metadata (
+ request_id TEXT PRIMARY KEY REFERENCES requests(id), payload TEXT NOT NULL,
+ ranking TEXT NOT NULL, selected_option TEXT, attempted_sources TEXT NOT NULL DEFAULT '[]'
+);
+CREATE TABLE IF NOT EXISTS allocations (
+ request_id TEXT NOT NULL REFERENCES requests(id), facility_id TEXT NOT NULL,
+ blood_group TEXT NOT NULL, product TEXT NOT NULL, units INTEGER NOT NULL CHECK(units > 0),
+ PRIMARY KEY(request_id,blood_group,product)
+);
+CREATE TABLE IF NOT EXISTS idempotency (
+ actor TEXT NOT NULL, key TEXT NOT NULL, fingerprint TEXT NOT NULL,
+ response TEXT NOT NULL, status INTEGER NOT NULL, PRIMARY KEY(actor,key)
+);
+CREATE TABLE IF NOT EXISTS operations (
+ key TEXT PRIMARY KEY, value TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS operational_audit (
+ id INTEGER PRIMARY KEY AUTOINCREMENT, action TEXT NOT NULL, actor TEXT NOT NULL,
+ payload TEXT NOT NULL, created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS prealert_runs (
+ id TEXT PRIMARY KEY, created_at TEXT NOT NULL, payload TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS audit (
  id INTEGER PRIMARY KEY AUTOINCREMENT, request_id TEXT NOT NULL REFERENCES requests(id),
@@ -47,3 +74,19 @@ def init_app(app):
 
     with app.app_context():
         get_db().executescript(SCHEMA)
+
+
+@contextmanager
+def atomic(db=None):
+    db = db or get_db()
+    nested = db.in_transaction
+    if not nested:
+        db.execute('BEGIN IMMEDIATE')
+    try:
+        yield db
+        if not nested:
+            db.commit()
+    except Exception:
+        if not nested:
+            db.rollback()
+        raise

@@ -1,0 +1,103 @@
+<script setup lang="ts">
+// Dropdown that uses the app theme (the native one cannot be styled). Popover on desktop, sheet on phones.
+export interface Opt { value: string; label?: string; hint?: string }
+const model = defineModel<string>({ required: true })
+const props = defineProps<{ options: (string | Opt)[]; label: string }>()
+
+const opts = computed<Opt[]>(() => props.options.map(o => typeof o === 'string' ? { value: o } : o))
+const current = computed(() => opts.value.find(o => o.value === model.value))
+const open = ref(false)
+const sheet = ref(false)
+const active = ref(0)
+const btn = ref<HTMLButtonElement | null>(null)
+const pop = ref<HTMLElement | null>(null)
+const pos = reactive({ top: 0, left: 0, minWidth: 0, up: false })
+const uid = useId()
+
+function place() {
+  const r = btn.value!.getBoundingClientRect()
+  const h = opts.value.length * 52 + 16
+  pos.up = window.innerHeight - r.bottom < h + 16 && r.top > h
+  pos.top = pos.up ? r.top - 8 : r.bottom + 8
+  pos.minWidth = Math.max(r.width, 200)
+  pos.left = Math.min(Math.max(12, r.right - pos.minWidth), window.innerWidth - pos.minWidth - 12)
+}
+async function toggle() {
+  if (open.value) { open.value = false; return }
+  sheet.value = window.matchMedia('(max-width: 599px)').matches
+  active.value = Math.max(0, opts.value.findIndex(o => o.value === model.value))
+  if (!sheet.value) place()
+  open.value = true
+  await nextTick()
+  pop.value?.focus()
+}
+function pick(o: Opt) { model.value = o.value; open.value = false; btn.value?.focus() }
+function onKey(e: KeyboardEvent) {
+  const n = opts.value.length
+  if (e.key === 'ArrowDown') { e.preventDefault(); active.value = (active.value + 1) % n }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); active.value = (active.value - 1 + n) % n }
+  else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(opts.value[active.value]!) }
+  else if (e.key === 'Escape' || e.key === 'Tab') { open.value = false; btn.value?.focus() }
+}
+function away(e: MouseEvent) {
+  if (!open.value || sheet.value) return
+  const t = e.target as Node
+  if (!pop.value?.contains(t) && !btn.value?.contains(t)) open.value = false
+}
+const close = () => { open.value = false }
+onMounted(() => { document.addEventListener('mousedown', away); window.addEventListener('resize', close); window.addEventListener('scroll', close, true) })
+onBeforeUnmount(() => { document.removeEventListener('mousedown', away); window.removeEventListener('resize', close); window.removeEventListener('scroll', close, true) })
+</script>
+
+<template>
+  <button ref="btn" type="button" class="trig" :class="{ open }" aria-haspopup="listbox" :aria-expanded="open" :aria-label="`${label}: ${current?.label ?? model}`" @click="toggle">
+    <span>{{ current?.label ?? model }}</span>
+    <svg width="12" height="8" viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+  </button>
+
+  <Teleport to="body">
+    <Transition name="pp">
+      <div v-if="open && !sheet" ref="pop" class="pop" :class="{ up: pos.up }" role="listbox" tabindex="-1" :aria-label="label" :aria-activedescendant="`${uid}-${active}`"
+        :style="{ top: pos.top + 'px', left: pos.left + 'px', minWidth: pos.minWidth + 'px' }" @keydown="onKey">
+        <div v-for="(o, i) in opts" :id="`${uid}-${i}`" :key="o.value" role="option" :aria-selected="o.value === model" class="opt" :class="{ on: o.value === model, act: i === active }" @mouseenter="active = i" @click="pick(o)">
+          <span class="t"><b>{{ o.label ?? o.value }}</b><small v-if="o.hint">{{ o.hint }}</small></span>
+          <AppIcon v-if="o.value === model" name="check" :size="18" />
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
+
+  <AppModal v-if="sheet" v-model="open" :title="label">
+    <div class="sheetlist" role="listbox" :aria-label="label">
+      <button v-for="o in opts" :key="o.value" type="button" role="option" :aria-selected="o.value === model" class="sopt" :class="{ on: o.value === model }" @click="pick(o)">
+        <span class="t"><b>{{ o.label ?? o.value }}</b><small v-if="o.hint">{{ o.hint }}</small></span>
+        <AppIcon v-if="o.value === model" name="check" :size="20" />
+      </button>
+    </div>
+  </AppModal>
+</template>
+
+<style scoped>
+.trig { min-height: 44px; padding: 0 16px 0 18px; border-radius: 99px; border: 1.5px solid #e6c4c0; background: #fff; color: var(--blood-700); font-weight: 800; font-size: 14px; display: inline-flex; align-items: center; gap: 10px; transition: box-shadow 0.2s ease, border-color 0.2s ease; }
+.trig svg { transition: transform 0.25s ease; }
+.trig.open { border-color: var(--blood-500); box-shadow: 0 0 0 4px rgba(179, 23, 30, 0.14); }
+.trig.open svg { transform: rotate(180deg); }
+.pop { position: fixed; z-index: 130; padding: 8px; border-radius: 24px; background: rgba(255, 255, 255, 0.98); border: 1.5px solid var(--blood-500); box-shadow: 0 24px 50px rgba(60, 5, 10, 0.28); outline: none; transform-origin: top right; }
+.pop.up { transform: translateY(-100%); transform-origin: bottom right; }
+.opt, .sopt { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 6px 14px; border-radius: 16px; cursor: pointer; color: var(--ink); width: 100%; text-align: left; background: transparent; border: 0; font: inherit; }
+.opt + .opt { margin-top: 2px; }
+.t { flex: 1; display: flex; flex-direction: column; }
+.t b { font-size: 14.5px; font-weight: 800; }
+.t small { font-size: 12.5px; font-weight: 600; color: #7a5a5d; }
+.opt.act { background: var(--blood-50); }
+.opt.on, .sopt.on { color: var(--blood-700); }
+.opt svg, .sopt svg { color: var(--blood-500); }
+.sheetlist { display: grid; gap: 8px; }
+.sopt { min-height: 56px; padding: 8px 18px; border-radius: 99px; border: 1.5px solid #ecd5d1; background: #fff; }
+.sopt.on { background: var(--blood-50); border-color: var(--blood-500); }
+.pp-enter-active { transition: opacity 0.18s ease, transform 0.28s cubic-bezier(0.2, 1.1, 0.3, 1); }
+.pp-leave-active { transition: opacity 0.12s ease; }
+.pp-enter-from, .pp-leave-to { opacity: 0; }
+.pp-enter-from { transform: translateY(-6px) scale(0.96); }
+.pop.up.pp-enter-from { transform: translateY(-100%) translateY(6px) scale(0.96); }
+</style>
