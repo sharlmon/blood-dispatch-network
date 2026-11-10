@@ -2,6 +2,9 @@
 data/*
 !data/README.md
 .env
+.env.*
+!.env.example
+.clerk/
 *.pdf
 # python
 __pycache__/
