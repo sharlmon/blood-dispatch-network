@@ -27,7 +27,7 @@ const has = computed(() => !!request.value)
 .it.here { background: #fff; color: var(--primary-600); }
 .it.off { opacity: 0.6; }
 .sos { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; text-decoration: none; color: rgba(255, 255, 255, 0.92); min-height: 56px; }
-.sos i { width: 60px; height: 60px; margin-top: -30px; border-radius: 99px; display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 15px; letter-spacing: 0.04em; color: #fff; background: radial-gradient(circle at 35% 30%, #ec6f67, #c3282c 60%, #8f1519); border: 4px solid var(--paper); box-shadow: 0 12px 24px rgba(179, 23, 30, 0.45); animation: sosPulse 2.4s ease-out infinite; }
+.sos i { width: 60px; height: 60px; margin-top: -30px; border-radius: 99px; display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 15px; letter-spacing: 0.04em; color: #fff; background: radial-gradient(circle at 35% 30%, #ec6f67, #c3282c 60%, #8f1519); border: 4px solid var(--paper); box-shadow: 0 12px 24px rgba(179, 23, 30, 0.45); }
 .sos span { font-size: 11.5px; font-weight: 800; }
 @keyframes sosPulse { 0% { box-shadow: 0 12px 24px rgba(10, 107, 98, 0.5), 0 0 0 0 rgba(209, 43, 49, 0.45); } 100% { box-shadow: 0 12px 24px rgba(10, 107, 98, 0.5), 0 0 0 16px rgba(209, 43, 49, 0); } }
 @media (min-width: 900px) { .dock { display: none; } }

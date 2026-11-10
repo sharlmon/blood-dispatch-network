@@ -63,12 +63,6 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
       <text x="0" y="-100" text-anchor="middle" class="tag big">12 spare</text>
     </g>
 
-    <!-- drops on the move -->
-    <g v-for="d in drops" :key="d.path + d.begin" class="drop">
-      <path :d="DROP" fill="#b3171e" stroke="#fff" stroke-width="2.500" />
-      <animateMotion :path="d.path" :dur="d.dur" :begin="d.begin" repeatCount="indefinite" />
-      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.88;1" :dur="d.dur" :begin="d.begin" repeatCount="indefinite" />
-    </g>
 
     <!-- front ground -->
     <path d="M0 225C260 200 520 235 780 215S1200 200 1440 222V260H0Z" fill="url(#hz-deep)" />

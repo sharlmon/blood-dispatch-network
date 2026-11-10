@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Counts up from 0 to `to`, and replays every `every` ms while it is on screen.
+// Counts up from 0 to `to` once, when it scrolls into view.
 // Server render and reduced-motion show the final value, so nothing is hidden without JS.
 const props = withDefaults(defineProps<{
   to: number; prefix?: string; suffix?: string; decimals?: number; duration?: number; every?: number
@@ -35,7 +35,7 @@ onMounted(() => {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches || !el.value) return
   io = new IntersectionObserver(([e]) => {
     if (e?.isIntersecting) {
-      if (!timer) { run(); timer = window.setInterval(run, props.every) }
+      if (!timer) { run(); timer = 1; io?.disconnect() }
     } else stop()
   }, { threshold: 0.4 })
   io.observe(el.value)

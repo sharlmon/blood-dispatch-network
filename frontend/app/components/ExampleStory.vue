@@ -19,15 +19,8 @@ const pins = computed(() => props.options.slice(0, 3).map((o, i) => {
 }))
 
 const sel = ref(0)
-const pinned = ref(false)
 const current = computed(() => pins.value[sel.value]!)
-let timer: ReturnType<typeof setInterval> | undefined
-onMounted(() => {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
-  timer = setInterval(() => { if (!pinned.value) sel.value = (sel.value + 1) % pins.value.length }, 4200)
-})
-onBeforeUnmount(() => clearInterval(timer))
-function pick(i: number) { sel.value = i; pinned.value = true }
+function pick(i: number) { sel.value = i }
 
 const verdict = computed(() => {
   const o = current.value.o
@@ -79,8 +72,7 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
 
           <!-- your hospital -->
           <g :transform="`translate(${C.x} ${C.y})`">
-            <circle r="20" class="pulse" /><circle r="20" class="pulse p2" />
-            <circle r="20" fill="#1b1b1f" stroke="#fff" stroke-width="3" />
+                        <circle r="20" fill="#1b1b1f" stroke="#fff" stroke-width="3" />
             <path d="M0-9v18M-9 0h18" stroke="#fff" stroke-width="4.5" stroke-linecap="round" />
             <text y="38" text-anchor="middle" class="me">Your hospital</text>
           </g>

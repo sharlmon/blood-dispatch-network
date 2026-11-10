@@ -30,7 +30,6 @@ const { request } = useDispatch()
 
 <template>
   <div class="shell">
-    <BloodCells />
     <header class="barwrap">
       <div class="bar">
         <NuxtLink to="/" class="brand" aria-label="Blood Dispatch home"><BrandLogo :size="34" /></NuxtLink>

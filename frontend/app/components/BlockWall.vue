@@ -33,12 +33,12 @@ const cols = computed(() =>
 <style scoped>
 .wall { display: flex; align-items: flex-end; width: 100%; }
 .col { flex: 1; min-width: 0; display: flex; flex-direction: column-reverse; }
-.tile { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: clamp(18px, 2vw, 30px); color: rgba(255, 255, 255, 0.42); animation: tileUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.tile { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: clamp(18px, 2vw, 30px); color: rgba(255, 255, 255, 0.42); }
 .slot { position: relative; aspect-ratio: 1; box-sizing: border-box; border: 2.5px dashed rgba(10, 107, 98, 0.6); margin: 3px; }
 .block {
   position: absolute; left: -3px; right: -3px; bottom: calc(100% + 26px); aspect-ratio: 1; display: grid; place-items: center;
   border-radius: 6px; background: linear-gradient(180deg, #12877b, #064a44); color: #fff; font-weight: 800; font-size: clamp(16px, 1.7vw, 24px);
-  box-shadow: 0 16px 26px rgba(6, 74, 68, 0.45); transform: rotate(9deg); animation: bob 3.6s ease-in-out infinite;
+  box-shadow: 0 16px 26px rgba(6, 74, 68, 0.45); transform: rotate(9deg);
 }
 @keyframes tileUp { from { opacity: 0; transform: translateY(36px); } to { opacity: 1; transform: none; } }
 @keyframes bob { 0%, 100% { transform: translateY(0) rotate(9deg); } 50% { transform: translateY(-10px) rotate(4deg); } }

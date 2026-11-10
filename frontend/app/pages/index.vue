@@ -262,13 +262,13 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
   /* The arch stands on the hills: its base sits in the empty sky of the horizon, so no hospital or label is covered. */
   .stage { position: absolute; right: 8%; bottom: calc(clamp(200px, 18vw, 270px) * 0.6); width: min(460px, 34vw); height: auto; aspect-ratio: 500 / 610; margin: 0; --iw: 172%; --il: -66%; --it: -77%; }
   .arch { border-radius: 50% 50% 40px 40px / 41% 41% 40px 40px; box-shadow: 0 30px 70px rgba(6, 74, 68, 0.22); }
-  .fcard { right: auto; left: -96px; top: 34%; width: 280px; padding: 16px 18px; border-radius: 26px; gap: 4px; box-shadow: 0 22px 50px rgba(6, 74, 68, 0.2); animation: bob 6s ease-in-out infinite; }
+  .fcard { right: auto; left: -96px; top: 34%; width: 280px; padding: 16px 18px; border-radius: 26px; gap: 4px; box-shadow: 0 22px 50px rgba(6, 74, 68, 0.2); }
   .fcard small { font-size: 11px; }
   .fcard strong { font-size: 17px; }
   .ft b { font-size: 40px; }
   .ft > span { font-size: 13px; }
-  .fchip { display: block; position: absolute; z-index: 6; top: 40px; left: -40px; white-space: nowrap; padding: 11px 18px; border-radius: 99px; background: var(--primary-500); color: #fff; font-weight: 800; font-size: 14.5px; box-shadow: 0 14px 28px rgba(10, 107, 98, 0.38); animation: bob 5s ease-in-out infinite -1s; }
-  .fmini { display: flex; align-items: center; gap: 12px; position: absolute; z-index: 6; top: 56%; right: -56px; white-space: nowrap; padding: 12px 16px; border-radius: 20px; background: rgba(255, 255, 255, 0.95); border: 1px solid #d8e4e2; box-shadow: 0 16px 36px rgba(6, 74, 68, 0.18); animation: bob 7s ease-in-out infinite -3s; }
+  .fchip { display: block; position: absolute; z-index: 6; top: 40px; left: -40px; white-space: nowrap; padding: 11px 18px; border-radius: 99px; background: var(--primary-500); color: #fff; font-weight: 800; font-size: 14.5px; box-shadow: 0 14px 28px rgba(10, 107, 98, 0.38); }
+  .fmini { display: flex; align-items: center; gap: 12px; position: absolute; z-index: 6; top: 56%; right: -56px; white-space: nowrap; padding: 12px 16px; border-radius: 20px; background: rgba(255, 255, 255, 0.95); border: 1px solid #d8e4e2; box-shadow: 0 16px 36px rgba(6, 74, 68, 0.18); }
   .fmini span:last-child { display: flex; flex-direction: column; }
   .fmini strong { font-size: 14px; color: #12202b; }
   .fmini small { font-size: 12px; font-weight: 700; color: var(--teal-600); }
