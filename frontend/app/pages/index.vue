@@ -108,24 +108,7 @@ const safety = [
 
     <section v-inview class="section" aria-labelledby="example">
       <h2 id="example">One request, in a minute</h2>
-      <div class="example">
-        <div class="ex-card organic">
-          <p class="kick">Example · 01:04</p>
-          <div class="ex-req"><span class="grp">B+</span><span><b>2 units · red cells</b><small>Hillside Hospital · limit 3 h</small></span></div>
-          <ul class="ex-list">
-            <li v-for="(o, i) in demo" :key="o.id">
-              <div class="ex-top">
-                <span class="ln" :class="[o.kind, { first: i === 0 }]">{{ i + 1 }}</span>
-                <span class="ex-name"><b>{{ o.name }}</b><small>{{ o.kind === 'hospital' ? 'Hospital' : 'Centre' }} · {{ o.spare }} · {{ o.km }} km</small></span>
-                <span class="ex-when"><b><Dur :h="o.p50" /></b><small>{{ fmtRange(o.p10, o.p90) }}</small></span>
-              </div>
-              <WindowBar :p10="o.p10" :p50="o.p50" :p90="o.p90" :limit="3" :max="4" />
-            </li>
-          </ul>
-          <NuxtLink to="/results?group=B%2B&units=2&limit=3&demo=1" class="btn btn-primary">Open this example on the map</NuxtLink>
-        </div>
-        <figure class="ex-photo organic"><img :src="img('ambulance.jpg')" alt="An ambulance driving along a road through green hills"><figcaption>Once it is approved, the blood is on its way.</figcaption></figure>
-      </div>
+      <ExampleStory :options="demo" :limit="3" group="B+" :units="2" product="Red cells" hospital="Hillside Hospital" />
     </section>
 
     <section v-inview id="phone" class="section" aria-labelledby="roles">
@@ -239,18 +222,6 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
 .callout svg { flex-shrink: 0; color: var(--amber-700); }
 .callout p { margin: 0; font-size: 15px; line-height: 1.5; font-weight: 600; }
 
-.example { display: grid; gap: 20px; align-items: start; }
-.ex-card { padding: 22px; display: flex; flex-direction: column; gap: 14px; }
-.kick { margin: 0; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blood-700); }
-.ex-req { display: flex; align-items: center; gap: 14px; }
-.grp { font-size: 34px; font-weight: 800; color: var(--blood-500); line-height: 1; }
-.ex-req span:last-child { display: flex; flex-direction: column; }
-.ex-req small, .ex-name small, .ex-when small { font-size: 12px; font-weight: 600; color: var(--slate); }
-.ex-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
-.ex-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-.ex-name { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-.ex-when { text-align: right; display: flex; flex-direction: column; }
-.ex-when b { font-size: 20px; line-height: 1; }
 .timeline { list-style: none; margin: 0; padding: 0 0 0 4px; display: flex; flex-direction: column; gap: 16px; border-left: 2px solid var(--blood-500); margin-left: 6px; }
 .timeline li { display: flex; flex-direction: column; gap: 2px; padding-left: 18px; position: relative; }
 .timeline li::before { content: ''; position: absolute; left: -9px; top: 4px; width: 12px; height: 12px; border-radius: 99px; background: var(--blood-500); border: 3px solid #fdf3f1; }
