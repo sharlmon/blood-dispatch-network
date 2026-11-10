@@ -1,0 +1,3 @@
+import{t as e}from"./FBbd_Vrp.js";import{n as t,r as n,t as r}from"./BfQPAjKm.js";import{n as i,v as a}from"./sG3eabQm.js";import{R as o,U as s,Y as c,ct as l,f as u,x as d}from"./B6hl2IO8.js";var f=d({__name:`[...slug]`,setup(d){let{public:{authEnabled:f,demoAuth:p}}=a();return i({title:`Sign in · Blood Dispatch`}),(i,a)=>{let d=s(`SignIn`),m=e,h=n,g=t;return o(),u(g,{title:`Every hospital
+could be
+a lifeline`,sub:`Saving lives, one spare bag at a time.`},{default:c(()=>[l(f)?(o(),u(d,{key:0,appearance:l(r),"sign-up-url":`/sign-up`},null,8,[`appearance`])):l(p)?(o(),u(m,{key:1,mode:`in`})):(o(),u(h,{key:2}))]),_:1})}}});export{f as default};
