@@ -1,5 +1,10 @@
 # Backend API contract
 
+Interactive Swagger UI: **http://localhost:5000/api/docs**. OpenAPI JSON:
+**http://localhost:5000/api/openapi.json**. Both use the current server when hosted
+elsewhere. Swagger assets are bundled locally. Use **Authorize** for a Clerk token;
+mutations also need a unique **Idempotency-Key**. SMS uses its gateway signature.
+
 Base path: `/api`. All requests and responses use JSON. No patient names, ages,
 clinical notes or identifiers are accepted in request creation.
 

@@ -1,5 +1,8 @@
 # backend/ (Flask)
 
+Swagger UI: **http://localhost:5000/api/docs** (use your chosen server port).
+OpenAPI: **http://localhost:5000/api/openapi.json**.
+
 ```bash
 cd backend
 python3 -m venv .venv && source .venv/bin/activate

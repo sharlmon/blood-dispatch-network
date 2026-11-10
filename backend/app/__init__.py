@@ -91,6 +91,8 @@ def create_app(settings_path: str | None = None, test_config: dict | None = None
     app.register_blueprint(api, url_prefix="/api")
     from .sms import sms_api
     app.register_blueprint(sms_api, url_prefix='/api')
+    from .docs import docs
+    app.register_blueprint(docs, url_prefix='/api')
     if not app.testing:
         from .services import warm_engine
         with app.app_context():
