@@ -1,16 +1,23 @@
 /* Triage palette: red is reserved for blood and the single next action. */
 :root {
+  /* Calm palette: teal is the interface colour, red is kept for blood, urgency and the logo. */
+  --primary-500: #0a6b62;
+  --primary-600: #085a53;
+  --primary-700: #064a44;
+  --primary-50: #e4f2f0;
   --blood-500: #b3171e;
   --blood-600: #9a1319;
   --blood-700: #7e1015;
   --blood-50: #fdecea;
-  --blush: #f8e4e1;
-  --wine: #3b0a0e;
+  --mist: #e8f1ef;
+  --ink-deep: #0c2b33;
+  --wine: #0c2b33;
+  --blush: #e8f1ef;
   --ink: #12202b;
   --slate: #4a5b68;
-  --line: #e6d3cf;
+  --line: #d8e3e1;
   --fog: #e9eef1;
-  --paper: #fbf3f1;
+  --paper: #f4f8f8;
   --white: #fff;
   --water: #cfe3ee;
   --park: #dceadf;
@@ -33,9 +40,9 @@
   /* radii: control, card, pill */
   --r-sm: 14px; --r-md: 20px; --r-lg: 28px; --r-pill: 99px;
   /* elevation scale: rest, floating, sheet */
-  --sh-1: 0 6px 16px rgba(126, 16, 21, 0.1);
-  --sh-2: 0 14px 32px rgba(126, 16, 21, 0.16);
-  --sh-3: 0 28px 64px rgba(126, 16, 21, 0.22);
+  --sh-1: 0 6px 16px rgba(6, 74, 68, 0.1);
+  --sh-2: 0 14px 32px rgba(6, 74, 68, 0.16);
+  --sh-3: 0 28px 64px rgba(6, 74, 68, 0.22);
   /* type scale (app screens): overline 12 / caption 13 / body 15 / title 16 / h2 20 / h1 clamp */
   --fs-overline: 12px; --fs-caption: 13px; --fs-body: 15px; --fs-title: 16px; --fs-h2: 20px;
 }
@@ -58,10 +65,10 @@ button { cursor: pointer; }
   min-height: 52px; padding: 0 20px; border-radius: 16px; border: 1px solid var(--line);
   background: var(--white); font-weight: 800; font-size: 15px; text-decoration: none; color: var(--ink);
 }
-.btn-primary { background: var(--blood-500); border-color: var(--blood-500); color: #fff; }
-.btn-primary:hover { background: var(--blood-700); border-color: var(--blood-700); }
+.btn-primary { background: var(--primary-500); border-color: var(--primary-500); color: #fff; }
+.btn-primary:hover { background: var(--primary-700); border-color: var(--primary-700); }
 .btn-dark { background: var(--ink); border-color: var(--ink); color: #fff; }
-.btn-outline-blood { border: 2px solid var(--blood-500); color: var(--blood-500); }
+.btn-outline-blood { border: 2px solid var(--primary-500); color: var(--primary-500); }
 .card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); }
 .muted { color: var(--slate); }
 
@@ -69,37 +76,37 @@ button { cursor: pointer; }
 body {
   background:
     radial-gradient(900px 520px at 15% -8%, #fff 0%, rgba(255, 255, 255, 0) 70%),
-    linear-gradient(180deg, #fdf7f5 0%, #f8e6e2 100%);
+    linear-gradient(180deg, #f6faf9 0%, #e8f1ef 100%);
   background-attachment: fixed;
 }
 h1, h2 { text-wrap: balance; }
 .btn { border-radius: 99px; transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease; }
 .btn:active { transform: scale(0.97); }
-.btn-primary { box-shadow: 0 8px 20px rgba(179, 23, 30, 0.28); }
+.btn-primary { box-shadow: 0 8px 20px rgba(10, 107, 98, 0.28); }
 .card { background: rgba(255, 255, 255, 0.82); border: 1.5px solid var(--line); border-radius: var(--r-lg); backdrop-filter: blur(6px); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .overline { font-size: var(--fs-overline); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--slate); }
-.h2 { margin: 0; font-size: var(--fs-h2); font-weight: 800; color: var(--wine); letter-spacing: -0.01em; }
-.meta { font-size: var(--fs-caption); font-weight: 600; color: #6b4b4e; }
+.h2 { margin: 0; font-size: var(--fs-h2); font-weight: 800; color: var(--ink-deep); letter-spacing: -0.01em; }
+.meta { font-size: var(--fs-caption); font-weight: 600; color: #5d6d78; }
 .organic {
-  background: linear-gradient(180deg, #fff 0%, var(--blood-50) 100%);
-  border: 1.5px solid var(--blood-500);
+  background: linear-gradient(180deg, #fff 0%, var(--primary-50) 100%);
+  border: 1.5px solid var(--primary-500);
   border-radius: 30px 38px 32px 40px / 36px 30px 40px 32px;
 }
 .chip {
   display: inline-flex; align-items: center; gap: 10px; padding: 6px 18px 6px 6px; border-radius: 99px;
-  border: 1.5px solid var(--blood-500); background: linear-gradient(180deg, #fff, var(--blood-50));
-  color: var(--blood-700); font-weight: 800; font-size: 14px; text-decoration: none;
+  border: 1.5px solid var(--primary-500); background: linear-gradient(180deg, #fff, var(--primary-50));
+  color: var(--primary-700); font-weight: 800; font-size: 14px; text-decoration: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.chip:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(179, 23, 30, 0.18); }
-.chip-ico { width: 38px; height: 38px; border-radius: 99px; display: grid; place-items: center; background: radial-gradient(circle at 30% 25%, #fff, #f3c9c4); color: var(--blood-500); }
+.chip:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(10, 107, 98, 0.18); }
+.chip-ico { width: 38px; height: 38px; border-radius: 99px; display: grid; place-items: center; background: radial-gradient(circle at 30% 25%, #fff, #cfe4e1); color: var(--primary-500); }
 
 /* ---------- Small animations (all respect reduced motion) ---------- */
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes pop { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: none; } }
 @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes ring { 0% { box-shadow: 0 0 0 0 rgba(179, 23, 30, 0.45); } 100% { box-shadow: 0 0 0 12px rgba(179, 23, 30, 0); } }
+@keyframes ring { 0% { box-shadow: 0 0 0 0 rgba(10, 107, 98, 0.45); } 100% { box-shadow: 0 0 0 12px rgba(10, 107, 98, 0); } }
 .rise { animation: rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--d, 0ms); }
 /* Page changes */
 .page-enter-active, .page-leave-active { transition: opacity 0.28s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -112,15 +119,15 @@ h1, h2 { text-wrap: balance; }
 
 /* Hover and press feedback on interactive surfaces */
 .btn, .chip, .more, button.rcard, .ncard { transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, background 0.2s ease; }
-.btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(179, 23, 30, 0.22); }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(10, 107, 98, 0.22); }
 .btn:active { transform: scale(0.97); }
-.ncard:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(126, 16, 21, 0.14); }
-button.rcard:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 12px 24px rgba(126, 16, 21, 0.14); }
+.ncard:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(6, 74, 68, 0.14); }
+button.rcard:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 12px 24px rgba(6, 74, 68, 0.14); }
 .ib { transition: transform 0.3s cubic-bezier(0.2, 1.2, 0.3, 1); }
 a:hover .ib, button:hover .ib, li:hover > .ib { transform: scale(1.08) rotate(-4deg); }
 
 /* Life: the urgent button breathes, the bell rings, the hero shimmers, status dots pulse */
-@keyframes breathe { 0%, 100% { box-shadow: 0 8px 18px rgba(179, 23, 30, 0.18), 0 0 0 0 rgba(179, 23, 30, 0.35); } 50% { box-shadow: 0 8px 18px rgba(179, 23, 30, 0.18), 0 0 0 12px rgba(179, 23, 30, 0); } }
+@keyframes breathe { 0%, 100% { box-shadow: 0 8px 18px rgba(10, 107, 98, 0.18), 0 0 0 0 rgba(10, 107, 98, 0.35); } 50% { box-shadow: 0 8px 18px rgba(10, 107, 98, 0.18), 0 0 0 12px rgba(10, 107, 98, 0); } }
 @keyframes wiggle { 0%, 88%, 100% { transform: rotate(0); } 91% { transform: rotate(14deg); } 94% { transform: rotate(-12deg); } 97% { transform: rotate(8deg); } }
 @keyframes drift { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
@@ -139,7 +146,7 @@ a:hover .ib, button:hover .ib, li:hover > .ib { transform: scale(1.08) rotate(-4
 /* ---------- Grain, like a printed poster ---------- */
 body::after {
   content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 60; opacity: 0.16; mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .1 0 0 0 0 .1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .25 0 0 0 0 .35 0 0 0 0 .35 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 .hand { font-family: Caveat, cursive; }
 .organic-card { border-radius: 40px 44px 40px 46px / 44px 40px 46px 40px; }

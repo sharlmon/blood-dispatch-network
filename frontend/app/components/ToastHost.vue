@@ -21,15 +21,15 @@ const icon = { ok: 'check', info: 'bell', warn: 'warning', error: 'warning' } as
 <style scoped>
 .toasts { position: fixed; z-index: 120; right: 16px; top: 96px; width: min(380px, calc(100vw - 32px)); pointer-events: none; }
 .stack { display: flex; flex-direction: column; gap: 10px; }
-.toast { pointer-events: auto; position: relative; overflow: hidden; display: flex; align-items: center; gap: 12px; padding: 12px 12px 14px 12px; border-radius: 22px; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(10px); border: 1.5px solid #ecd5d1; box-shadow: var(--sh-3); }
+.toast { pointer-events: auto; position: relative; overflow: hidden; display: flex; align-items: center; gap: 12px; padding: 12px 12px 14px 12px; border-radius: 22px; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(10px); border: 1.5px solid #d8e4e2; box-shadow: var(--sh-3); }
 .toast.ok { border-color: #9fd6cd; }
 .toast.warn, .toast.error { border-color: #ecc98a; }
 .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .tx b { font-size: 14px; color: var(--ink); }
-.tx small { font-size: 13px; font-weight: 600; color: #5a3c3f; line-height: 1.4; margin-top: 1px; }
+.tx small { font-size: 13px; font-weight: 600; color: #44545f; line-height: 1.4; margin-top: 1px; }
 .x { width: 32px; height: 32px; border-radius: 99px; display: grid; place-items: center; color: var(--slate); background: transparent; border: 0; flex-shrink: 0; }
-.x:hover { background: var(--blood-50); }
-.bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--blood-500); transform-origin: left; animation: toastbar linear forwards; opacity: 0.7; }
+.x:hover { background: var(--primary-50); }
+.bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--primary-500); transform-origin: left; animation: toastbar linear forwards; opacity: 0.7; }
 .ok .bar { background: var(--teal-600); }
 .warn .bar, .error .bar { background: var(--amber-700); }
 @keyframes toastbar { to { transform: scaleX(0); } }

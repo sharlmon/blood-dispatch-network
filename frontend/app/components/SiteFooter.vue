@@ -9,7 +9,7 @@ const links = [
 ]
 const D = 'M32 5 C40 16 50 27 50 39 A18 18 0 0 1 14 39 C14 27 24 16 32 5 Z'
 const petals = [
-  { r: 0, x: 0, y: -56, fill: '#ffd3cd' },
+  { r: 0, x: 0, y: -56, fill: '#cfeae6' },
   { r: 90, x: 56, y: 0, fill: '#fff' },
   { r: 180, x: 0, y: 56, fill: '#fff' },
   { r: 270, x: -56, y: 0, fill: '#fff' }
@@ -51,7 +51,7 @@ const petals = [
 </template>
 
 <style scoped>
-.sf { position: relative; overflow: hidden; margin-top: 40px; color: #fff; background: radial-gradient(900px 420px at 50% 22%, #d6343a 0%, #a8181f 45%, #6e0d12 100%); text-align: center; }
+.sf { position: relative; overflow: hidden; margin-top: 40px; color: #fff; background: radial-gradient(900px 420px at 50% 22%, #1a9a8d 0%, #0a6b62 45%, #053b36 100%); text-align: center; }
 .ribbon { overflow: hidden; border-bottom: 1px solid rgba(255, 255, 255, 0.14); padding: 8px 0; }
 .track { display: flex; width: max-content; animation: scroll 38s linear infinite; }
 .set { display: flex; gap: 38px; padding-right: 38px; }
@@ -60,14 +60,14 @@ const petals = [
 @keyframes scroll { to { transform: translateX(-25%); } }
 
 .stage { position: relative; padding: 32px 20px 20px; display: flex; flex-direction: column; align-items: center; }
-.cell { position: absolute; border-radius: 50%; background: radial-gradient(ellipse at 35% 30%, #ec6f67 0%, #b3171e 58%, #7e1015 100%); box-shadow: inset -6px -8px 14px rgba(70, 5, 10, 0.4); filter: blur(1.5px); opacity: 0.55; animation: bob 7s ease-in-out infinite; }
+.cell { position: absolute; border-radius: 50%; background: radial-gradient(ellipse at 35% 30%, #4fb5a8 0%, #0a6b62 58%, #064a44 100%); box-shadow: inset -6px -8px 14px rgba(4, 40, 38, 0.4); filter: blur(1.5px); opacity: 0.55; animation: bob 7s ease-in-out infinite; }
 .c1 { width: 120px; height: 66px; left: -30px; top: 70px; transform: rotate(-24deg); }
 .c2 { width: 90px; height: 50px; right: -16px; top: 150px; transform: rotate(28deg); animation-delay: -2s; }
 .c3 { width: 70px; height: 38px; left: 12%; bottom: 150px; transform: rotate(14deg); animation-delay: -4s; opacity: 0.4; }
 @keyframes bob { 50% { translate: 0 -12px; } }
 
 .mark { position: relative; width: 84px; height: 84px; display: grid; place-items: center; }
-.mark svg { position: relative; width: 84px; height: 84px; overflow: visible; filter: drop-shadow(0 10px 22px rgba(60, 5, 10, 0.45)); }
+.mark svg { position: relative; width: 84px; height: 84px; overflow: visible; filter: drop-shadow(0 10px 22px rgba(4, 40, 38, 0.45)); }
 .pet { transform-box: view-box; transform-origin: 32px 32px; animation: lock 5s cubic-bezier(0.2, 0.9, 0.2, 1) infinite; animation-delay: calc(var(--i) * 0.12s); }
 @keyframes lock {
   0% { opacity: 0; transform: translate(var(--x), var(--y)) scale(0.4) rotate(40deg); }
@@ -81,18 +81,18 @@ const petals = [
 @keyframes ping { 0%, 24% { opacity: 0; transform: scale(0.6); } 28% { opacity: 0.9; } 52%, 100% { opacity: 0; transform: scale(2.3); } }
 
 .word { margin: 10px 0 0; display: flex; flex-direction: column; align-items: center; line-height: 1; }
-.word strong { font-size: clamp(20px, 4vw, 34px); font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; background: linear-gradient(90deg, #fff 0%, #ffd9d5 40%, #fff 80%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 6s ease-in-out infinite; }
-.word small { margin-top: 6px; font-size: clamp(10px, 1.2vw, 12px); font-weight: 700; letter-spacing: 0.5em; text-transform: uppercase; color: #ffc9c4; padding-left: 0.5em; }
+.word strong { font-size: clamp(20px, 4vw, 34px); font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; background: linear-gradient(90deg, #fff 0%, #cfeae6 40%, #fff 80%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 6s ease-in-out infinite; }
+.word small { margin-top: 6px; font-size: clamp(10px, 1.2vw, 12px); font-weight: 700; letter-spacing: 0.5em; text-transform: uppercase; color: #bfe3de; padding-left: 0.5em; }
 @keyframes shine { 0%, 100% { background-position: 100% 0; } 50% { background-position: 0 0; } }
 
 h2 { margin: 18px 0 0; font-size: clamp(18px, 2.6vw, 26px); line-height: 1.1; letter-spacing: -0.02em; text-transform: uppercase; max-width: 720px; }
-.sub { margin: 6px 0 0; font-size: 14.5px; font-weight: 500; color: #ffd9d5; max-width: 460px; line-height: 1.5; }
-.cta { margin-top: 16px; display: inline-flex; align-items: center; gap: 10px; min-height: 50px; padding: 0 26px; border-radius: 99px; background: #fff; color: var(--blood-700); font-weight: 800; font-size: 16px; text-decoration: none; box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5), 0 16px 30px rgba(40, 3, 6, 0.4); animation: halo 2.6s ease-out infinite; transition: transform 0.2s ease; }
+.sub { margin: 6px 0 0; font-size: 14.5px; font-weight: 500; color: #cfeae6; max-width: 460px; line-height: 1.5; }
+.cta { margin-top: 16px; display: inline-flex; align-items: center; gap: 10px; min-height: 50px; padding: 0 26px; border-radius: 99px; background: #fff; color: var(--primary-700); font-weight: 800; font-size: 16px; text-decoration: none; box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5), 0 16px 30px rgba(3, 30, 28, 0.4); animation: halo 2.6s ease-out infinite; transition: transform 0.2s ease; }
 .cta:hover { transform: translateY(-3px) scale(1.03); }
-@keyframes halo { to { box-shadow: 0 0 0 18px rgba(255, 255, 255, 0), 0 16px 30px rgba(40, 3, 6, 0.4); } }
+@keyframes halo { to { box-shadow: 0 0 0 18px rgba(255, 255, 255, 0), 0 16px 30px rgba(3, 30, 28, 0.4); } }
 
 .links { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 6px; padding: 4px 16px; margin-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.14); margin: 0 16px; }
-.links a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 99px; color: #ffe3e0; font-weight: 700; font-size: 14px; text-decoration: none; transition: background 0.2s ease; }
+.links a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 99px; color: #dff1ee; font-weight: 700; font-size: 14px; text-decoration: none; transition: background 0.2s ease; }
 .links a:hover { background: rgba(255, 255, 255, 0.14); }
 .fine { margin: 0; padding: 2px 20px 16px; font-size: 12px; font-weight: 600; color: rgba(255, 220, 216, 0.7); }
 @media (max-width: 520px) { .set b { font-size: 20px; } .mark, .mark svg { width: 72px; height: 72px; } }

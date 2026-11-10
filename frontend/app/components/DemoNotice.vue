@@ -8,6 +8,6 @@
 
 <style scoped>
 .note { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
-h2 { margin: 0; font-size: 22px; font-weight: 800; text-transform: uppercase; color: var(--blood-600); }
-p { margin: 0; font-size: 15px; line-height: 1.55; font-weight: 500; color: #5a3c3f; }
+h2 { margin: 0; font-size: 22px; font-weight: 800; text-transform: uppercase; color: var(--primary-600); }
+p { margin: 0; font-size: 15px; line-height: 1.55; font-weight: 500; color: #44545f; }
 </style>

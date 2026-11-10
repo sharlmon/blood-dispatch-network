@@ -65,7 +65,7 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
 .big { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .big strong { font-size: 34px; line-height: 1; }
 .big > span { font-size: 13px; font-weight: 700; color: var(--slate); }
-.eta { margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 14px; font-weight: 600; color: #5a3c3f; }
+.eta { margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 14px; font-weight: 600; color: #44545f; }
 .eta svg { color: var(--teal-600); }
 .eta b { font-size: 18px; color: var(--ink); }
 .eta span { font-size: 12.5px; color: var(--slate); }
@@ -76,7 +76,7 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
 .steps li.done:not(:last-child)::before { background: var(--teal-600); }
 .dot { width: 24px; height: 24px; border-radius: 99px; flex-shrink: 0; display: grid; place-items: center; background: var(--white); border: 2px solid var(--line); color: #fff; }
 .done .dot { background: var(--teal-600); border-color: var(--teal-600); }
-.now .dot { border: 3px solid var(--blood-500); animation: ring 1.6s ease-out infinite; }
+.now .dot { border: 3px solid var(--primary-500); animation: ring 1.6s ease-out infinite; }
 .txt { display: flex; flex-direction: column; }
 .txt strong { font-size: 14.5px; }
 .txt small { font-size: 12.5px; font-weight: 600; color: var(--slate); line-height: 1.4; margin-top: 1px; }
@@ -93,11 +93,11 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
 @media (min-width: 900px) {
   .wrap { height: calc(100dvh - var(--header-h)); min-height: 640px; margin-top: 6px; }
   .map { inset: 0; height: auto; }
-  .panel { top: 12px; left: 24px; right: auto; bottom: 24px; width: 470px; border-radius: 40px 44px 40px 46px / 44px 40px 46px 40px; border: 1.5px solid var(--blood-500); box-shadow: 0 26px 60px rgba(126, 16, 21, 0.2); padding: 22px; }
+  .panel { top: 12px; left: 24px; right: auto; bottom: 24px; width: 470px; border-radius: 40px 44px 40px 46px / 44px 40px 46px 40px; border: 1.5px solid var(--primary-500); box-shadow: 0 26px 60px rgba(6, 74, 68, 0.2); padding: 22px; }
 }
-.auditbtn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 99px; border: 1.5px solid #ecd5d1; background: #fff; color: var(--blood-700); font-weight: 800; font-size: 14px; align-self: flex-start; transition: transform 0.2s ease; }
+.auditbtn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 99px; border: 1.5px solid #d8e4e2; background: #fff; color: var(--primary-700); font-weight: 800; font-size: 14px; align-self: flex-start; transition: transform 0.2s ease; }
 .auditbtn:hover { transform: translateY(-1px); }
 .alog { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.alog li { display: flex; gap: 12px; padding: 10px 14px; border-radius: var(--r-md); background: #fff; border: 1.5px solid #ecd5d1; font-size: 14px; font-weight: 600; color: var(--slate); }
+.alog li { display: flex; gap: 12px; padding: 10px 14px; border-radius: var(--r-md); background: #fff; border: 1.5px solid #d8e4e2; font-size: 14px; font-weight: 600; color: var(--slate); }
 .alog time { font-weight: 800; color: var(--ink); flex-shrink: 0; }
 </style>

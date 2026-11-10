@@ -29,37 +29,37 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
   <svg class="horizon" viewBox="0 0 1440 260" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Hospitals and a blood centre linked by routes, with spare blood moving between them">
     <defs>
       <linearGradient id="hz-deep" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#9a1319" /><stop offset="1" stop-color="#3b0a0e" />
+        <stop offset="0" stop-color="#085a53" /><stop offset="1" stop-color="#0c2b33" />
       </linearGradient>
       <linearGradient id="hz-mid" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#c8423b" /><stop offset="1" stop-color="#8f1519" />
+        <stop offset="0" stop-color="#159084" /><stop offset="1" stop-color="#085a53" />
       </linearGradient>
     </defs>
 
     <!-- hills -->
-    <path d="M0 170C160 120 330 190 560 150S960 100 1160 150S1380 170 1440 130V260H0Z" fill="#e58a80" opacity="0.55" />
+    <path d="M0 170C160 120 330 190 560 150S960 100 1160 150S1380 170 1440 130V260H0Z" fill="#8fc7bf" opacity="0.55" />
     <path d="M0 200C220 160 400 215 640 185S1020 150 1240 190S1400 205 1440 180V260H0Z" fill="url(#hz-mid)" />
 
     <!-- routes -->
-    <g fill="none" stroke="#b3171e" stroke-opacity="0.7" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 9">
+    <g fill="none" stroke="#0a6b62" stroke-opacity="0.7" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 9">
       <path v-for="a in arcs" :key="a" :d="a" />
     </g>
 
     <!-- hospitals -->
     <g v-for="h in hospitals" :key="h.x" :transform="`translate(${h.x} ${h.y})`">
-      <rect x="-27" y="-46" width="54" height="46" rx="5" fill="#fdecea" />
+      <rect x="-27" y="-46" width="54" height="46" rx="5" fill="#e4f2f0" />
       <path d="M0-40v18M-9-31h18" stroke="#b3171e" stroke-width="5" stroke-linecap="round" />
-      <rect x="-7" y="-13" width="14" height="13" rx="2" fill="#c8423b" />
+      <rect x="-7" y="-13" width="14" height="13" rx="2" fill="#159084" />
       <text x="0" y="-62" text-anchor="middle" class="tag">{{ h.tag }}</text>
     </g>
 
     <!-- regional blood centre -->
     <g transform="translate(720 192)">
-      <rect x="-62" y="-52" width="124" height="52" rx="6" fill="#fdecea" />
+      <rect x="-62" y="-52" width="124" height="52" rx="6" fill="#e4f2f0" />
       <rect x="-44" y="-84" width="88" height="40" rx="6" fill="#fff" />
       <path :d="DROP" fill="#b3171e" transform="translate(0 -56) scale(1.5)" />
-      <rect x="-9" y="-16" width="18" height="16" rx="2" fill="#c8423b" />
-      <rect x="-50" y="-34" width="14" height="12" rx="2" fill="#f4b9b3" /><rect x="36" y="-34" width="14" height="12" rx="2" fill="#f4b9b3" />
+      <rect x="-9" y="-16" width="18" height="16" rx="2" fill="#159084" />
+      <rect x="-50" y="-34" width="14" height="12" rx="2" fill="#b5dcd6" /><rect x="36" y="-34" width="14" height="12" rx="2" fill="#b5dcd6" />
       <text x="0" y="-100" text-anchor="middle" class="tag big">12 spare</text>
     </g>
 
@@ -77,7 +77,7 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
 
 <style scoped>
 .horizon { display: block; width: 100%; height: clamp(200px, 18vw, 270px); }
-.tag { font-family: Caveat, cursive; font-weight: 700; font-size: 26px; fill: #7e1015; stroke: #fff; stroke-width: 6; paint-order: stroke; stroke-linejoin: round; }
+.tag { font-family: Caveat, cursive; font-weight: 700; font-size: 26px; fill: #064a44; stroke: #fff; stroke-width: 6; paint-order: stroke; stroke-linejoin: round; }
 .tag.big { font-size: 32px; }
 @media (prefers-reduced-motion: reduce) { .drop { display: none; } }
 </style>

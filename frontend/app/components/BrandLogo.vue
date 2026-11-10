@@ -17,7 +17,7 @@ withDefaults(defineProps<{ layout?: 'inline' | 'stacked'; size?: number; reverse
 .logo { display: inline-flex; align-items: center; gap: 10px; color: #1b1b1f; }
 .word { display: flex; flex-direction: column; line-height: 1; }
 .word strong { font-weight: 800; font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; }
-.word small { margin-top: 4px; font-weight: 700; font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--blood-500); }
+.word small { margin-top: 4px; font-weight: 700; font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--primary-500); }
 .stacked { flex-direction: column; gap: 14px; text-align: center; }
 .stacked .word { align-items: center; }
 .stacked .word strong { font-size: clamp(18px, 3vw, 26px); }
@@ -28,5 +28,5 @@ withDefaults(defineProps<{ layout?: 'inline' | 'stacked'; size?: number; reverse
   .inline { gap: 8px; }
 }
 .reverse { color: #fff; }
-.reverse .word small { color: #ffd2cf; }
+.reverse .word small { color: #cfeae6; }
 </style>
