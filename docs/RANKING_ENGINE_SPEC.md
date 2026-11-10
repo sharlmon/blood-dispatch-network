@@ -119,6 +119,10 @@ For a request at hospital `H` for patient group `g`, needing `need` units:
   `o_neg_reserve` (config, default 2). O- is kept for O- patients and for women of
   childbearing age.
 - **Sharing switch:** if config `sharing_allowed: false`, only regional centres are candidates.
+- **Edges of the dataset (decided 2026-11-10):** requests on the first day (2025-11-01)
+  have no previous-day count, so they use that day's closing count, and
+  `as_of_stock_date` says so. Requests after the dataset ends (a live demo clock) use
+  the last count.
 - **Near-expiry count:** units of compatible groups at that facility with
   `collection_date <= as_of`, `status_date > as_of` (still on the shelf), and expiry within
   `near_expiry_days` (default 10) of the request date. Cap at `spare`. This approximates
@@ -222,6 +226,10 @@ If your numbers are far off, check the join and the emergency-type filter before
 Flags vocabulary: `no_backup_power`, `partial`, `group_unknown_emergency_O`,
 `o_neg_reserve_applied`, `low_connectivity_2g`.
 
+`o_neg_reserve_applied` appears only when the O- reserve held back units that the normal
+safety stock (`max(usual_level, min_keep)`) would have lent. With the default config
+(`o_neg_reserve` = `min_keep` = 2) it never fires; raise `o_neg_reserve` to see it.
+
 ## 10. Config (`config/kenya.yaml`)
 
 ```yaml
@@ -246,9 +254,14 @@ These were checked by hand. Ranks can shift slightly with your ETA fit, but the
 
 | Request | Hospital | Need | Expected |
 |---|---|---|---|
-| REQ-020421 (2026-10-31 00:58) | HSP-004 Westlands Private | 1 × O+ | Nairobi centre (0.47 h) has 0 compatible units. Top options are nearby hospitals: National Referral (0.48 h, spare ~24, 3 near expiry) and City Maternity (0.47 h, spare ~5). Baseline = Eldoret centre (6.93 h map). Model p50 ≈ 2.6 h vs baseline quote ≈ 8.9 h. |
-| REQ-005594 (2025-12-26 23:17) | HSP-009 Kilifi County | 1 × O+ | Mombasa centre (1.59 h, 3 units) and Coast Teaching (1.60 h, spare ~13) are both near the top. The baseline agrees with the model. |
-| REQ-003159 (2025-11-03 02:41) | HSP-032 Garissa County Referral | 4 × O+ | Nothing with spare stock within 8 h (Kitui 7.5 h has 0 spare). Nearest full source is National Referral (11.7 h, spare ~18). `advice = consider_emergency_O_or_transfer`. |
+| REQ-020421 (2026-10-31 00:58) | HSP-004 Westlands Private | 1 × O+ | Nairobi centre (0.47 h) has 0 compatible units. City Maternity (0.47 h) holds 8 but is at its usual level, so spare 0. Top options are nearby hospitals: National Referral (0.48 h, spare 22, 14 near expiry) and Eastlands County (0.68 h, spare 2). Baseline = Eldoret centre (6.93 h map). Model p50 ≈ 2.6 h vs baseline quote ≈ 8.9 h. |
+| REQ-005594 (2025-12-26 23:17) | HSP-009 Kilifi County | 1 × O+ | Mombasa centre (1.59 h, 3 units) and Coast Teaching (1.60 h, spare 18, 6 near expiry) are both near the top. The baseline agrees with the model. |
+| REQ-003159 (2025-11-03 02:41) | HSP-032 Garissa County Referral | 4 × O+ | Nothing with spare stock within 8 h (Kitui 7.5 h has 0 spare). National Referral (11.7 h) holds 56 O+ against a usual level of 72, so spare 0. Nearest full source is Nakuru centre (14.1 h, spare 15), then Mombasa centre (14.2 h, spare 53). `advice = consider_emergency_O_or_transfer`. |
+
+Stock figures above were updated on 2026-11-10 to what section 6 gives on the starter
+data. The first hand-checked values (City Maternity ~5, Coast Teaching ~13, National
+Referral ~18 in case 3) could not be reproduced by section 6 or by 54 alternative
+definitions of `usual_level`. ETA and baseline figures are checked in steps 4 and 5.
 
 Also test:
 - the requester is never a candidate;
