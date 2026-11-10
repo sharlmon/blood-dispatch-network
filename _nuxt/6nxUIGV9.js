@@ -1,1 +1,0 @@
-import{L as e,p as t,t as n}from"./BO1HbDmf.js";var r={},i={class:`note`};function a(n,r){return e(),t(`p`,i,`You decide. Crossmatch every unit before use.`)}var o=Object.assign(n(r,[[`render`,a],[`__scopeId`,`data-v-eae4d40f`]]),{__name:`SafetyNote`});export{o as t};

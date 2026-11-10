@@ -1,0 +1,1 @@
+import{v as e}from"./sG3eabQm.js";import{u as t}from"./B6hl2IO8.js";function n(){let{public:{authEnabled:n}}=e();if(n){let{user:e}=useUser(),{organization:n}=useOrganization();return{firstName:t(()=>e.value?.firstName??``),hospital:t(()=>n.value?.name??`Your hospital`)}}return{firstName:t(()=>``),hospital:t(()=>`Hillside Hospital`)}}export{n as t};
