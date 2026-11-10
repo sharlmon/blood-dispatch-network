@@ -33,7 +33,7 @@ const safety = [
 <template>
   <div class="landing">
     <section class="hero">
-      <div class="bgimg" aria-hidden="true"><img :src="img('transfusion.jpg')" alt=""></div>
+      <div class="bgimg" aria-hidden="true"><img class="bgblur" :src="img('transfusion.jpg')" alt=""><img class="main" :src="img('transfusion.jpg')" alt=""></div>
       <div class="copy">
         <h1 class="rise" style="--d: 80ms">Spare blood<br>is already<br><span>nearby.</span></h1>
         <p class="lead rise" style="--d: 160ms">At 1 a.m. the hospital fridge does not have the right type. See every centre and hospital that can spare it, and when it will really arrive.</p>
@@ -45,20 +45,6 @@ const safety = [
         <div class="cta-m rise" style="--d: 240ms">
           <NuxtLink to="/request" class="btn btn-primary">Find blood now</NuxtLink>
           <a href="#phone" class="chip"><span class="chip-ico"><ServiceIcon name="sms" :size="26" /></span>By SMS</a>
-        </div>
-      </div>
-
-      <div class="stage rise" style="--d: 200ms">
-        <div class="fcard" aria-hidden="true">
-          <small>FASTEST · B+ · 2 UNITS</small>
-          <strong>{{ demo[0]!.name }}</strong>
-          <div class="ft"><b><Dur :h="demo[0]!.p50" /></b><span>{{ fmtRange(demo[0]!.p10, demo[0]!.p90) }}</span></div>
-          <WindowBar :p10="demo[0]!.p10" :p50="demo[0]!.p50" :p90="demo[0]!.p90" :limit="3" />
-        </div>
-        <span class="fchip" aria-hidden="true">B+ · 2 units · red cells</span>
-        <div class="fmini" aria-hidden="true">
-          <span class="ln">2</span>
-          <span><strong>{{ demo[1]!.name }}</strong><small>{{ fmtHours(demo[1]!.p50) }} · {{ demo[1]!.km }} km</small></span>
         </div>
       </div>
 
@@ -144,10 +130,13 @@ const safety = [
 </template>
 
 <style scoped>
-.hero { position: relative; overflow: hidden; padding: 14px 20px 150px; }
-.bgimg { position: absolute; inset: auto 0 0 0; height: 66%; z-index: 0; }
-.bgimg img { width: 100%; height: 100%; object-fit: cover; object-position: 66% 30%; filter: sepia(0.28) saturate(1.25) hue-rotate(-10deg) contrast(1.03); }
-.bgimg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #fdf1ef 0%, rgba(253, 241, 239, 0.55) 22%, rgba(253, 241, 239, 0) 48%, rgba(179, 23, 30, 0.14) 100%); }
+.hero { position: relative; overflow: hidden; padding: 14px 20px 190px; min-height: max(680px, calc(100svh - var(--header-h))); }
+.bgimg { position: absolute; inset: 0; z-index: 0; }
+.bgimg img { position: absolute; left: 0; width: 100%; object-fit: cover; }
+/* Phone: a soft blurred copy fills the whole hero, the sharp photo sits lower so the faces clear the headline. */
+.bgimg .bgblur { top: -30px; left: -30px; width: calc(100% + 60px); height: calc(100% + 60px); object-position: 60% 40%; filter: blur(28px) sepia(0.28) saturate(1.3) hue-rotate(-10deg); opacity: 0.75; }
+.bgimg .main { top: 36%; height: 64%; object-position: 66% 30%; filter: sepia(0.28) saturate(1.25) hue-rotate(-10deg) contrast(1.03); -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 34%); mask-image: linear-gradient(180deg, transparent 0%, #000 34%); }
+.bgimg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(253, 241, 239, 0.94) 0%, rgba(253, 241, 239, 0.85) 36%, rgba(253, 241, 239, 0.3) 52%, rgba(253, 241, 239, 0) 66%, rgba(179, 23, 30, 0.16) 100%); }
 .copy { position: relative; z-index: 4; max-width: 720px; }
 .eyebrow { margin: 0; display: inline-block; padding: 7px 14px; border-radius: 99px; border: 1.5px solid var(--blood-500); background: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blood-700); }
 h1 { margin: 16px 0 0; font-size: clamp(46px, 6.1vw, 88px); line-height: 0.94; letter-spacing: -0.035em; font-weight: 800; text-transform: uppercase; color: var(--blood-600); }
@@ -264,8 +253,8 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
 
 
 @media (min-width: 900px) {
-  .bgimg { inset: 0; height: auto; }
-  .bgimg img { object-position: 62% 50%; }
+  .bgimg .bgblur { display: none; }
+  .bgimg .main { top: 0; height: 100%; object-position: 62% 50%; -webkit-mask-image: none; mask-image: none; }
   .bgimg::after { background: linear-gradient(90deg, #fdf1ef 0%, rgba(253, 241, 239, 0.94) 34%, rgba(253, 241, 239, 0.45) 56%, rgba(253, 241, 239, 0) 78%), linear-gradient(180deg, rgba(253, 241, 239, 0.55) 0%, rgba(253, 241, 239, 0) 22%, rgba(253, 241, 239, 0) 70%, rgba(179, 23, 30, 0.18) 100%); }
   .hero { padding: 40px 64px clamp(190px, 16vw, 240px); min-height: clamp(740px, calc(100svh - var(--header-h)), 880px); }
   .chips-d { display: flex; }
