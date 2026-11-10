@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url'
+
 // Two build modes:
 //  - normal (dev / server): Clerk on (keyless in dev), SSR.
 //  - GH_PAGES=1: static SPA for GitHub Pages under a base path. Clerk is only included when a
@@ -5,6 +7,8 @@
 const pages = !!process.env.GH_PAGES
 const base = process.env.NUXT_APP_BASE_URL || '/'
 const clerkOn = process.env.DEMO_AUTH ? false : pages ? !!process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY : true
+// scripts/deploy-pages.sh always sets NUXT_PUBLIC_API_BASE (empty unless the shell gives one), so
+// the localhost API in a developer's frontend/.env never reaches the Pages build.
 const apiBase = process.env.NUXT_PUBLIC_API_BASE ?? (pages ? '' : 'http://localhost:5001')
 
 export default defineNuxtConfig({
@@ -17,7 +21,13 @@ export default defineNuxtConfig({
     signInFallbackRedirectUrl: `${base}onboarding`,
     signUpFallbackRedirectUrl: `${base}onboarding`
   },
-  nitro: pages ? { preset: 'github-pages' } : {},
+  nitro: {
+    ...(pages ? { preset: 'github-pages' } : {}),
+    // Every build bundles the committed DS2 results (aggregate, synthetic) at <baseURL>results-data/,
+    // for the evidence page and the static pre-alert list. Nothing reads arrival_model.json.
+    publicAssets: [{ dir: fileURLToPath(new URL('../results', import.meta.url)), baseURL: '/results-data', maxAge: 0 }],
+    ignore: ['**/arrival_model.json']
+  },
   devtools: { enabled: false },
   css: ['~/assets/css/main.css'],
   runtimeConfig: {

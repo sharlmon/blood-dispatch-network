@@ -15,6 +15,10 @@ const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') open.value = false
 onMounted(() => window.addEventListener('keydown', onKey))
 onBeforeUnmount(() => { window.removeEventListener('keydown', onKey); document.documentElement.style.overflow = '' })
 
+const tools = [
+  { to: '/prealerts', icon: 'bell', label: 'Pre-alerts', sub: 'Hospitals to review for a top-up' },
+  { to: '/evidence', icon: 'evidence', label: 'Evidence', sub: 'How well the estimates held up' }
+]
 const links = [
   { hash: '#how', icon: 'route', label: 'How it works' },
   { hash: '#data', icon: 'results', label: 'The data' },
@@ -36,6 +40,13 @@ const links = [
             <BrandLogo :size="34" />
             <button type="button" class="x" aria-label="Close menu" @click="open = false"><AppIcon name="back" :size="20" /></button>
           </div>
+
+          <p class="lab">Tools</p>
+          <ul class="links">
+            <li v-for="t in tools" :key="t.to">
+              <NuxtLink :to="t.to" class="link tool" @click="open = false"><IconBadge size="md"><AppIcon :name="t.icon" :size="22" /></IconBadge><span class="lt">{{ t.label }}<small>{{ t.sub }}</small></span></NuxtLink>
+            </li>
+          </ul>
 
           <p class="lab">About the project</p>
           <ul class="links">
@@ -92,6 +103,9 @@ const links = [
 .x { width: 46px; height: 46px; border-radius: 99px; border: 1.5px solid #d8e4e2; background: #fff; display: grid; place-items: center; color: var(--primary-700); transform: rotate(90deg); }
 .links { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .link { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 18px 6px 6px; border-radius: 99px; border: 1.5px solid #d8e4e2; background: #fff; text-decoration: none; color: var(--ink); font-weight: 800; font-size: 16px; }
+.link.tool.router-link-active { border-color: var(--primary-500); background: var(--primary-50); }
+.lt { display: flex; flex-direction: column; line-height: 1.2; }
+.lt small { font-size: 12px; font-weight: 600; color: #5d6d78; margin-top: 2px; }
 .acct { padding: 14px 16px; border-radius: 26px; background: var(--primary-50); display: flex; flex-direction: column; gap: 8px; }
 .lab { margin: 0; font-size: 11.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #5d6d78; }
 .hosp { margin: 0; font-size: 16px; font-weight: 800; color: var(--primary-700); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }

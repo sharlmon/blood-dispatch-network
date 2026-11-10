@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import sqlite3
 from pathlib import Path
@@ -23,6 +24,10 @@ def create_app(settings_path: str | None = None, test_config: dict | None = None
     app = Flask(__name__)
     CORS(app, origins=os.environ.get("CORS_ORIGINS", "http://localhost:3000").split(","))
     app.config["SETTINGS"] = load_settings(settings_path)
+    demo_clock = os.environ.get("DEMO_CLOCK", "").strip()
+    if demo_clock:  # freezes "now" for demos on the synthetic data; no offset means East Africa Time
+        has_offset = demo_clock.endswith("Z") or re.search(r"[+-]\d\d:?\d\d$", demo_clock)
+        app.config["SETTINGS"]["demo_clock"] = demo_clock if has_offset else demo_clock + "+03:00"
     app.config["DB_PATH"] = os.environ.get("DB_PATH", str(Path(__file__).resolve().parents[2] / "data" / "blood.sqlite"))
 
     from engine.config import load_config

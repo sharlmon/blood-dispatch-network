@@ -1,8 +1,18 @@
 <script setup lang="ts">
-import type { Option } from '~/utils/mock'
+import type { Option } from '~/utils/engine'
 
-const props = withDefaults(defineProps<{ options: Option[]; selectedId: string | null; padTop?: number; padBottom?: number; padX?: number; maxZoom?: number; panels?: boolean }>(), {
-  padTop: 96, padBottom: 36, padX: 56, maxZoom: 2, panels: false
+const props = withDefaults(defineProps<{
+  options: Option[]
+  selectedId: string | null
+  /** the requesting hospital's name, under the centre marker */
+  youLabel?: string
+  padTop?: number
+  padBottom?: number
+  padX?: number
+  maxZoom?: number
+  panels?: boolean
+}>(), {
+  youLabel: 'Your hospital', padTop: 96, padBottom: 36, padX: 56, maxZoom: 2, panels: false
 })
 const emit = defineEmits<{ select: [id: string] }>()
 
@@ -10,9 +20,13 @@ const YOU = { x: 200, y: 150 }
 const CIRCLE_PIN = 'M0 0C-9-10-14-16-14-23a14 14 0 0 1 28 0c0 7-5 13-14 23z'
 const SQUARE_PIN = 'M-12-36h24a3 3 0 0 1 3 3v21a3 3 0 0 1-3 3h-8L0 0l-4-9h-8a3 3 0 0 1-3-3v-21a3 3 0 0 1 3-3z'
 const DROP_SMALL = 'M0-31c3.5 4 5.5 6.5 5.5 9a5.5 5.5 0 0 1-11 0c0-2.5 2-5 5.5-9z'
-const DROP = 'M0-10C4-4 7.5 0 7.5 3.5a7.5 7.5 0 0 1-15 0C-7.5 0-4-4 0-10z'
+// Named apart from the auto-imported DROP icon: a clashing name breaks template type checks.
+const TRAVEL_DROP = 'M0-10C4-4 7.5 0 7.5 3.5a7.5 7.5 0 0 1-15 0C-7.5 0-4-4 0-10z'
 
 const chipW = (o: Option) => Math.max(54, fmtHours(o.p50).length * 7.6 + 20)
+// Road distance from the routes table, else the map driving time.
+const distance = (o: Option) => (o.roadKm != null ? fmtKm(o.roadKm) : o.travelHoursMap != null ? `${fmtHours(o.travelHoursMap)} drive` : '')
+const distW = (o: Option) => Math.max(52, distance(o).length * 7 + 18)
 const ctrl = (o: Option) => ({ x: (YOU.x + o.x) / 2, y: (YOU.y + o.y) / 2 - 24 })
 const routePath = (o: Option) => `M${YOU.x} ${YOU.y} Q${ctrl(o).x} ${ctrl(o).y} ${o.x} ${o.y}`
 const mid = (o: Option) => ({ x: 0.25 * YOU.x + 0.5 * ctrl(o).x + 0.25 * o.x, y: 0.25 * YOU.y + 0.5 * ctrl(o).y + 0.25 * o.y })
@@ -188,7 +202,7 @@ const zoomPct = computed(() => Math.round(z.value * 100))
   <div ref="root" class="map-root" :class="{ grabbing: dragging }">
     <svg
       ref="svg" class="source-map" :viewBox="viewBox" preserveAspectRatio="xMidYMid slice" role="application" tabindex="0"
-      aria-label="Map of your hospital and nearby sources. Drag to move, scroll or pinch to zoom, plus and minus keys zoom, zero resets."
+      :aria-label="`Map of ${youLabel} and nearby sources. Drag to move, scroll or pinch to zoom, plus and minus keys zoom, zero resets.`"
       @pointerdown="down" @pointermove="move" @pointerup="up" @pointercancel="up" @dblclick="dbl" @keydown="key"
     >
       <rect x="-1500" y="-1500" width="3400" height="3300" fill="#e9eef1" />
@@ -210,19 +224,19 @@ const zoomPct = computed(() => Math.round(z.value * 100))
       <!-- blood on its way: a drop travels the selected route -->
       <g v-if="selected" :key="'t' + selected.id" class="trav" pointer-events="none">
         <animateMotion :path="routePath(selected)" dur="2.6s" repeatCount="indefinite" />
-        <g :transform="`scale(${view.k})`"><path :d="DROP" fill="#b3171e" stroke="#fff" stroke-width="2.5" /></g>
+        <g :transform="`scale(${view.k})`"><path :d="TRAVEL_DROP" fill="#b3171e" stroke="#fff" stroke-width="2.5" /></g>
       </g>
 
       <!-- distance on the selected route -->
-      <g v-if="selected" :transform="`translate(${mid(selected).x} ${mid(selected).y}) scale(${view.k})`" pointer-events="none">
-        <rect x="-26" y="-11" width="52" height="22" rx="11" fill="#12202b" />
-        <text y="4" text-anchor="middle" font-size="11.5" font-weight="800" fill="#fff" font-family="Manrope, sans-serif">{{ selected.km }} km</text>
+      <g v-if="selected && distance(selected)" :transform="`translate(${mid(selected).x} ${mid(selected).y}) scale(${view.k})`" pointer-events="none">
+        <rect :x="-distW(selected) / 2" y="-11" :width="distW(selected)" height="22" rx="11" fill="#12202b" />
+        <text y="4" text-anchor="middle" font-size="11.5" font-weight="800" fill="#fff" font-family="Manrope, sans-serif">{{ distance(selected) }}</text>
       </g>
 
       <g :transform="`translate(${YOU.x} ${YOU.y}) scale(${view.k})`" pointer-events="none">
         <circle r="24" fill="#1d6fd8" fill-opacity="0.16" />
         <circle r="9" fill="#1d6fd8" stroke="#fff" stroke-width="3" />
-        <text y="28" text-anchor="middle" font-size="12" font-weight="800" fill="#12202b" stroke="#fff" stroke-width="4" paint-order="stroke" font-family="Manrope, sans-serif">Your hospital</text>
+        <text y="28" text-anchor="middle" font-size="12" font-weight="800" fill="#12202b" stroke="#fff" stroke-width="4" paint-order="stroke" font-family="Manrope, sans-serif">{{ youLabel }}</text>
       </g>
 
       <g
@@ -250,8 +264,8 @@ const zoomPct = computed(() => Math.round(z.value * 100))
     <Transition name="tip">
       <div v-if="hovered && hoverPos && hovered.id !== selectedId" class="tip" :style="{ left: hoverPos.x + 'px', top: hoverPos.y + 'px' }" role="tooltip">
         <b>{{ hovered.name }}</b>
-        <span>{{ hovered.kind === 'hospital' ? 'Hospital' : 'Centre' }} · {{ hovered.km }} km · {{ hovered.avail }} units</span>
-        <em>{{ fmtHours(hovered.p50) }} · {{ fmtRange(hovered.p10, hovered.p90) }}</em>
+        <span>{{ hovered.kind === 'hospital' ? 'Hospital' : 'Centre' }}<template v-if="distance(hovered)"> · {{ distance(hovered) }}</template> · {{ hovered.partial ? `${hovered.spare} spare (part)` : `${hovered.spare} spare` }}</span>
+        <em>Most likely {{ fmtHours(hovered.p50) }} · 8 in 10: {{ fmtRange(hovered.p10, hovered.p90) }}</em>
         <i>Click to select</i>
       </div>
     </Transition>

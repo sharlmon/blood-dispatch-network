@@ -39,7 +39,7 @@ def test_spec_documents_every_concrete_api_operation(app):
                 expected.add((path, method.lower()))
     documented = {(path, method) for path, operations in spec['paths'].items() for method in operations}
     assert documented == expected
-    assert len(documented) == 28
+    assert len(documented) == 29
     ids = [operation['operationId'] for operations in spec['paths'].values() for operation in operations.values()]
     assert len(ids) == len(set(ids))
     for path, method in documented:
