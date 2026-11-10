@@ -1,1 +1,0 @@
-import{t as e}from"./DBfUzvrj.js";import{B as t,I as n,p as r,t as i,v as a}from"./DKv-E6IO.js";var o={},s={class:`auth`};function c(i,o){let c=e;return n(),r(`div`,s,[a(c),t(i.$slots,`default`,{},void 0,!0)])}var l=i(o,[[`render`,c],[`__scopeId`,`data-v-8f764dbf`]]);export{l as default};

@@ -1,0 +1,1 @@
+import{v as e}from"./D4RRTWt9.js";function t(){let t=e().app.baseURL||`/`;return e=>`${t}${t.endsWith(`/`)?``:`/`}images/${e}`}export{t};
