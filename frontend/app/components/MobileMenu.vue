@@ -19,7 +19,7 @@ const links = [
   { hash: '#how', icon: 'route', label: 'How it works' },
   { hash: '#data', icon: 'results', label: 'The data' },
   { hash: '#phone', icon: 'sms', label: 'Who uses it, and SMS' },
-  { hash: '#honest', icon: 'warning', label: 'What we are honest about' }
+  { hash: '#safe', icon: 'warning', label: 'Built to be safe' }
 ]
 </script>
 

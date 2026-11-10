@@ -90,9 +90,9 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
       <div class="hc">
         <h1>Urgently need blood?</h1>
         <p>Tell us what the patient needs. We find every source that can spare it, and when it will really arrive.</p>
-        <button type="button" class="sosbtn" @click="sos"><AppIcon name="drop" :size="18" /> Group unknown? Request group O</button>
+        <button type="button" class="sosbtn" @click="sos"><AppIcon name="drop" :size="18" /> <span class="long">Group unknown? </span>Request group O</button>
       </div>
-      <div class="thumb" aria-hidden="true"><img :src="img('hand-vial.jpg')" alt=""></div>
+      <div class="bgphoto" aria-hidden="true"><img :src="img('nurse.jpg')" alt=""></div>
     </section>
 
     <form ref="form" class="form card" @submit.prevent="submit">
@@ -239,8 +239,9 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
 .hero h1 { margin: 0; font-size: clamp(26px, 5vw, 38px); line-height: 1; letter-spacing: -0.03em; font-weight: 800; text-transform: uppercase; color: var(--blood-600); }
 .hero p { margin: 10px 0 0; font-size: 14.5px; line-height: 1.5; font-weight: 500; color: #5a3c3f; max-width: 420px; }
 .sosbtn { margin-top: 16px; display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 18px; border-radius: 99px; background: #fff; border: 1.5px solid var(--blood-500); color: var(--blood-700); font-weight: 800; font-size: 14px; box-shadow: 0 8px 18px rgba(179, 23, 30, 0.18); }
-.thumb { width: 96px; height: 96px; flex-shrink: 0; border-radius: 99px; overflow: hidden; border: 4px solid #fff; box-shadow: 0 12px 26px rgba(126, 16, 21, 0.25); position: relative; background: #f3c9c4; }
-.thumb img { position: absolute; width: 330%; left: -115%; top: -257%; max-width: none; height: auto; filter: sepia(0.4) saturate(1.5) hue-rotate(-14deg) brightness(1.1); }
+.bgphoto { position: absolute; top: 0; right: 0; bottom: 0; width: 62%; z-index: 0; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 55%); mask-image: linear-gradient(90deg, transparent 0%, #000 55%); }
+.bgphoto img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; filter: sepia(0.35) saturate(1.4) hue-rotate(-12deg) contrast(1.05); mix-blend-mode: multiply; }
+.bgphoto::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(179, 23, 30, 0) 40%, rgba(126, 16, 21, 0.28)); }
 
 .form { padding: var(--s-5) var(--s-4); display: flex; flex-direction: column; gap: var(--s-4); }
 .form h2, .side h2 { margin: 0; font-size: 18px; font-weight: 800; color: var(--wine); }
@@ -292,7 +293,11 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
   .rl small { display: none; }
   .row { padding: 10px 12px; gap: 10px; }
   .hero { padding: 18px 16px 18px 18px; gap: 10px; }
-  .thumb { width: 78px; height: 78px; align-self: flex-start; }
+  .bgphoto { width: 50%; opacity: 0.85; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 45%); mask-image: linear-gradient(90deg, transparent 0%, #000 45%); }
+  .hero h1, .hero p { max-width: 60%; }
+  .hero h1 { font-size: 26px; }
+  .long { display: none; }
+  .sosbtn { max-width: 100%; }
   .sosbtn { font-size: 13px; padding: 0 14px; line-height: 1.2; text-align: left; }
   .hosp { max-width: 120px; }
 }
@@ -300,7 +305,7 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
   .page { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 20px 28px; padding: 22px 24px 40px; }
   .greet, .hero { grid-column: 1 / -1; }
   .side { position: sticky; top: 96px; }
-  .thumb { width: 150px; height: 150px; }
+  .bgphoto { width: 52%; }
   .hero { padding: 28px 36px; }
   .hero p { font-size: 16px; }
 }

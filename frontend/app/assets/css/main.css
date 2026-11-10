@@ -128,7 +128,8 @@ a:hover .ib, button:hover .ib, li:hover > .ib { transform: scale(1.08) rotate(-4
 .sosbtn { animation: breathe 2.6s ease-in-out infinite; }
 .bell svg { transform-origin: 50% 10%; animation: wiggle 5s ease-in-out infinite; }
 .hero.organic-card { background-size: 220% 220%; animation: drift 9s ease-in-out infinite alternate; }
-.thumb { animation: floaty 5s ease-in-out infinite; }
+.bgphoto img { animation: slowzoom 14s ease-in-out infinite alternate; }
+@keyframes slowzoom { from { transform: scale(1); } to { transform: scale(1.08); } }
 .status.ok i { position: relative; }
 .status.ok i::after { content: ''; position: absolute; inset: 0; border-radius: 99px; background: inherit; animation: pulsedot 2s ease-out infinite; }
 @media (prefers-reduced-motion: reduce) {

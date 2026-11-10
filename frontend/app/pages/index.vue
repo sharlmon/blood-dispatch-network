@@ -6,22 +6,9 @@ const selected = demo[0]!.id
 const img = useImg()
 
 const stats = [
-  { c: { to: 28, suffix: '%' }, text: 'of emergencies (2,456 of 8,768) hit a hospital fridge that fell short.' },
-  { c: { to: 617 }, text: 'red cell emergencies got no blood at all. About 1 in 4 of those short.' },
-  { c: { to: 5330, prefix: '0 of ' }, text: 'emergency transfers came from another hospital. All came from regional centres.' },
-  { c: { to: 2, suffix: 'h', decimals: 1 }, text: 'median wait from request to dispatch, about a third of the delivery time.' },
-  { c: { to: 2, prefix: '~', suffix: 'h' }, text: 'sooner on average when last year\'s requests are replayed with the tool.' },
-  { c: { to: 290, prefix: '~' }, text: 'patients who got nothing could have had blood within 6 hours.' }
-]
-const funnel = [
-  { label: 'Emergency requests', n: 8768, w: 100, tone: 'ink' },
-  { label: 'Hospital fridge fell short', n: 2456, w: 28, tone: 'blood' },
-  { label: 'Red cell emergencies with no blood at all', n: 617, w: 7, tone: 'wine' }
-]
-const impact = [
-  { label: 'Regional centre stock check alone', n: 208, w: 33.7, tone: 'teal' },
-  { label: 'Plus hospital lending', n: 80, w: 13, tone: 'blood', pre: '~' },
-  { label: 'Still not reachable in 6 h', n: 330, w: 53.3, tone: 'grey', pre: '~' }
+  { c: { to: 28, suffix: '%' }, text: 'of emergencies hit a hospital fridge that fell short.' },
+  { c: { to: 617 }, text: 'red cell emergencies got no blood at all.' },
+  { c: { to: 2, prefix: '~', suffix: 'h' }, text: 'sooner on average when last year\'s requests are replayed with the tool.' }
 ]
 const steps = [
   { icon: 'pen', title: 'Type what the patient needs', body: 'Blood group, units and the longest the patient can wait. On a computer, or by text message from a basic phone.' },
@@ -29,29 +16,11 @@ const steps = [
   { icon: 'window', title: 'Read an honest arrival time', body: 'Not one number, a range: most likely 2½ h, almost certainly between 2 and 3½ h.' },
   { icon: 'confirm', title: 'Pick one, the shelf is checked', body: 'The supplier confirms the bags are really on the shelf, then sends them. No answer in 10 minutes, we move to the next source.' }
 ]
-const honest = [
-  { icon: 'warning', title: 'Lending is assumed, not observed', body: 'No hospital lent in the data. A lender 1 hour slower cuts rescues within 4 hours from 176 to 119.' },
-  { icon: 'clock', title: 'Yesterday\'s stock can be gone', body: 'About 1 in 6 picks would lack units by end of day. The supplier confirms the shelf; no answer in 10 minutes moves to the next source.' },
-  { icon: 'route', title: 'Remote hospitals gain little', body: 'The nearest other hospital to Garissa is 7.5 hours away, so the tool suggests referral or local emergency group O.' },
-  { icon: 'drop', title: 'O negative is short everywhere', body: '57% of O negative shortfall emergencies went unmet. Lending protects stock held for girls and women of childbearing age.' }
-]
 const roles = [
   { icon: 'pen', who: 'Lab worker', at: 'Requesting hospital', body: 'Types the need, reads the ranked sources and their windows, and picks one.' },
   { icon: 'confirm', who: 'Supplying site', at: 'Centre or hospital', body: 'Confirms the units are really on the shelf, then dispatches.' },
   { icon: 'ambulance', who: 'Clinician', at: 'At the bedside', body: 'Is told plainly if the wait is too long, and chooses emergency group O or a transfer.' },
   { icon: 'bell', who: 'Regional centre staff', at: 'Every evening', body: 'Gets the list of hospitals out of the most common blood type, to top up first.' }
-]
-const pipeline = ['CSV data', 'SQLite', 'Ranking engine', 'Flask API', 'Web and SMS', 'Results tab']
-const roadmap = [
-  { n: 'Next', title: 'Prevent shortages', body: 'Move from an evening list to stock top-ups before the 1 a.m. emergency happens.' },
-  { n: 'Then', title: 'A live national picture', body: 'Give the health ministry one live view of all the blood in the country.' },
-  { n: 'After', title: 'Another country by settings', body: 'Set it up elsewhere by changing a settings file, not rewriting the code.' }
-]
-const faq = [
-  { q: 'Does the tool decide who gets blood?', a: 'No. It suggests and people approve. A trained lab worker still checks every bag before it goes into a patient.' },
-  { q: 'What if the blood group is unknown?', a: 'The tool never decides blood group. For an unknown group it requests group O only, per hospital protocol.' },
-  { q: 'What if the stock count is out of date?', a: 'Stock is yesterday\'s closing count. The supplier confirms the shelf before anything moves, and a 10 minute timeout passes the request on.' },
-  { q: 'What if the tool breaks?', a: 'Everyone falls back to the phone process they use today. The header shows when the tool cannot be reached.' }
 ]
 const safety = [
   'A person makes every decision. The tool suggests, people approve.',
@@ -103,7 +72,7 @@ const safety = [
     <section v-inview id="data" class="band" aria-labelledby="why">
       <div class="inner">
         <h2 id="why">The gap, in the data</h2>
-        <p class="sub">Last year's requests, from the synthetic hackathon dataset (November 2025 to October 2026).</p>
+        <p class="sub">Last year's requests, from the synthetic hackathon dataset.</p>
         <ul class="stats">
           <li v-for="(st, i) in stats" :key="st.text" class="rise" :style="{ '--d': i * 70 + 'ms' }"><strong><CountUp v-bind="st.c" /></strong><span>{{ st.text }}</span></li>
         </ul>
@@ -112,41 +81,16 @@ const safety = [
 
     <section v-inview class="section" aria-labelledby="share">
       <div class="share">
-        <div class="photo-card organic"><img :src="img('hand-tube.jpg')" alt="A gloved hand holding a tube of blood"><span class="pc-tag">Hospitals share. Nobody runs short.</span></div>
+        <div class="photo-card organic"><img :src="img('nurse.jpg')" alt="A nurse in scrubs and a mask checking a tablet"><span class="pc-tag">Hospitals share. Nobody runs short.</span></div>
         <div class="share-copy">
           <h2 id="share">Hospitals have never shared. Now they can.</h2>
-          <p>In the data, not one of 5,330 emergency transfers came from another hospital. Yet a hospital 30 minutes down the road often has spare bags of exactly that type. Nobody knows, because nobody can see.</p>
+          <p>A hospital 30 minutes down the road often has spare bags of exactly the type you need. Nobody knows, because nobody can see.</p>
           <ul>
             <li><ServiceIcon name="bag" :size="26" /> Hospitals share only what they can spare.</li>
             <li><ServiceIcon name="confirm" :size="26" /> The supplier confirms the shelf before anything moves.</li>
             <li><ServiceIcon name="ambulance" :size="26" /> If the wait is too long, the doctor is told plainly.</li>
           </ul>
         </div>
-      </div>
-    </section>
-
-    <section v-inview class="section" aria-labelledby="funnel">
-      <h2 id="funnel">Where the blood goes missing</h2>
-      <div class="charts">
-        <Reveal class="chart organic">
-          <h3>From every emergency to the ones with no blood</h3>
-          <div v-for="f in funnel" :key="f.label" class="bar-row">
-            <div class="bl"><span>{{ f.label }}</span><b><CountUp :to="f.n" /></b></div>
-            <div class="bt"><i class="grow" :class="f.tone" :style="{ width: f.w + '%' }" /></div>
-          </div>
-          <p class="note">Bars are to scale. 617 of the 2,456 short emergencies, about 1 in 4, were red cell requests that got no blood.</p>
-        </Reveal>
-
-        <Reveal class="chart organic">
-          <h3>What the tool could reach within 6 hours</h3>
-          <div class="stack" role="img" aria-label="Of 617 unmet requests, 208 reachable from centre stock, about 80 more with hospital lending, about 330 not reachable">
-            <i v-for="p in impact" :key="p.label" class="grow" :class="p.tone" :style="{ width: p.w + '%' }" />
-          </div>
-          <ul class="legend">
-            <li v-for="p in impact" :key="p.label"><i :class="p.tone" /><span>{{ p.label }}</span><b><CountUp :to="p.n" :prefix="p.pre" /></b></li>
-          </ul>
-          <p class="note">Of the 617 who got nothing. Checking the six regional centres alone reaches 208; hospital lending adds about 80. Counts are approximate and exploratory.</p>
-        </Reveal>
       </div>
     </section>
 
@@ -160,14 +104,10 @@ const safety = [
           <p>{{ st.body }}</p>
         </li>
       </ol>
-      <div class="callout rise">
-        <AppIcon name="warning" :size="26" />
-        <p><strong>If the wait is too long, it says so plainly.</strong> The doctor can act now: give emergency group O, or move the patient.</p>
-      </div>
     </section>
 
     <section v-inview class="section" aria-labelledby="example">
-      <h2 id="example">One request, end to end</h2>
+      <h2 id="example">One request, in a minute</h2>
       <div class="example">
         <div class="ex-card organic">
           <p class="kick">Example · 01:04</p>
@@ -184,14 +124,7 @@ const safety = [
           </ul>
           <NuxtLink to="/results?group=B%2B&units=2&limit=3&demo=1" class="btn btn-primary">Open this example on the map</NuxtLink>
         </div>
-        <ol class="timeline">
-          <li><b>01:04</b><span>Lab worker enters B+, 2 units, limit 3 h.</span></li>
-          <li><b>01:05</b><span>Tool ranks three sources and draws their windows.</span></li>
-          <li><b>01:06</b><span>Lab worker picks Lakeview. Request sent, logged.</span></li>
-          <li><b>Shelf check</b><span>Lakeview confirms the units are on the shelf, within 10 minutes or the next source is asked.</span></li>
-          <li><b>Dispatch</b><span>Bags leave. The window tightens.</span></li>
-          <li><b>Arrival</b><span>Lab worker checks every bag before use. Every step is in the audit log.</span></li>
-        </ol>
+        <figure class="ex-photo organic"><img :src="img('nurse-wide.jpg')" alt="A nurse reading a tablet in a hospital corridor"><figcaption>The lab worker picks. A person approves every step.</figcaption></figure>
       </div>
     </section>
 
@@ -205,6 +138,11 @@ const safety = [
           <p>{{ r.body }}</p>
         </li>
       </ul>
+      <div class="gallery">
+        <figure class="organic"><img :src="img('lab-gloves.jpg')" alt="A gloved hand holding a tube of blood in a lab"><figcaption>At the bench</figcaption></figure>
+        <figure class="organic"><img :src="img('tubes.jpg')" alt="Two blood sample tubes held in a gloved hand"><figcaption>On the shelf</figcaption></figure>
+        <figure class="organic"><img :src="img('nurse.jpg')" alt="A nurse writing on a tablet"><figcaption>At the bedside</figcaption></figure>
+      </div>
       <div class="sms-card organic">
         <IconBadge size="lg"><ServiceIcon name="sms" :size="36" /></IconBadge>
         <div>
@@ -215,48 +153,11 @@ const safety = [
       </div>
     </section>
 
-    <section v-inview class="section" aria-labelledby="honest">
-      <h2 id="honest">What we are honest about</h2>
-      <ul class="honest">
-        <li v-for="h in honest" :key="h.title" class="card rise">
-          <IconBadge tone="amber"><AppIcon :name="h.icon" :size="22" /></IconBadge>
-          <div><h3>{{ h.title }}</h3><p>{{ h.body }}</p></div>
-        </li>
-      </ul>
-      <Reveal class="chart organic sens">
-        <h3>If lenders are slower, fewer rescues</h3>
-        <div class="bar-row"><div class="bl"><span>Hospitals lend at the assumed speed</span><b><CountUp :to="176" /></b></div><div class="bt"><i class="grow teal" style="width: 100%" /></div></div>
-        <div class="bar-row"><div class="bl"><span>Lender is 1 hour slower</span><b><CountUp :to="119" /></b></div><div class="bt"><i class="grow blood" style="width: 67.6%" /></div></div>
-        <p class="note">Patients with no blood who could be rescued within 4 hours.</p>
-      </Reveal>
-    </section>
-
-    <section v-inview class="section" aria-labelledby="built">
-      <h2 id="built">How it is built</h2>
-      <ol class="pipe">
-        <li v-for="(n, i) in pipeline" :key="n"><span>{{ n }}</span><AppIcon v-if="i < pipeline.length - 1" name="back" :size="18" class="arrow" /></li>
-      </ol>
-      <p class="pnote">Settings live in one file per country: lending rules, safety stock, arrival parameters. A new country is a new settings file, not a code change. The ranking engine uses fixed lookups and a seeded simulation; no AI model writes the numbers.</p>
-    </section>
-
-    <section v-inview class="section" aria-labelledby="road">
-      <h2 id="road">Where it goes next</h2>
-      <ol class="road">
-        <li v-for="r in roadmap" :key="r.title" class="card"><small>{{ r.n }}</small><h3>{{ r.title }}</h3><p>{{ r.body }}</p></li>
-      </ol>
-    </section>
-
-    <section v-inview class="section" aria-labelledby="safe">
-      <h2 id="safe">Built to be safe</h2>
+    <section v-inview id="safe" class="section" aria-labelledby="safe-h">
+      <h2 id="safe-h">Built to be safe</h2>
       <ul class="safety">
         <li v-for="t in safety" :key="t"><AppIcon name="check" :size="20" />{{ t }}</li>
       </ul>
-      <div class="faq">
-        <details v-for="f in faq" :key="f.q" class="card">
-          <summary>{{ f.q }}</summary>
-          <p>{{ f.a }}</p>
-        </details>
-      </div>
     </section>
 
     <section v-inview class="final">
@@ -300,8 +201,8 @@ h1 span { color: var(--wine); }
 .band h2 { margin: 0; font-size: 30px; letter-spacing: -0.02em; font-weight: 800; text-transform: uppercase; color: #fff; }
 .sub { margin: 8px 0 28px; font-size: 14px; font-weight: 600; color: #d9b3b0; }
 .stats { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
-.stats strong { display: block; font-size: 42px; line-height: 1; letter-spacing: -0.02em; font-weight: 800; color: #ff9a92; }
-.stats span { display: block; margin-top: 8px; font-size: 14.5px; line-height: 1.5; font-weight: 500; color: #f2d5d2; max-width: 340px; }
+.stats li > strong { display: block; font-size: 42px; line-height: 1; letter-spacing: -0.02em; font-weight: 800; color: #ff9a92; }
+.stats li > span { display: block; margin-top: 8px; font-size: 14.5px; line-height: 1.5; font-weight: 500; color: #f2d5d2; max-width: 340px; }
 
 .section { max-width: 1200px; margin: 0 auto; padding: 52px 16px 0; }
 .section h2 { margin: 0 0 22px; font-size: 30px; letter-spacing: -0.02em; font-weight: 800; text-transform: uppercase; color: var(--blood-600); }
@@ -309,7 +210,7 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
 
 .share { display: grid; gap: 24px; align-items: center; }
 .photo-card { position: relative; overflow: hidden; aspect-ratio: 4 / 3; background: linear-gradient(180deg, #f9d5d0 0%, #e58d86 45%, #b3171e 100%); }
-.photo-card img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 36%; filter: grayscale(1) contrast(1.25) brightness(1.15); mix-blend-mode: multiply; }
+.photo-card img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; filter: sepia(0.3) saturate(1.35) hue-rotate(-10deg); }
 .pc-tag { position: absolute; left: 16px; bottom: 16px; padding: 9px 16px; border-radius: 99px; background: #fdecea; color: var(--blood-700); font-weight: 800; font-size: 14px; box-shadow: 0 10px 22px rgba(60, 5, 10, 0.3); }
 .share-copy h2 { margin-bottom: 14px; }
 .share-copy p { margin: 0 0 16px; font-size: 16px; line-height: 1.6; font-weight: 500; color: #5a3c3f; }
@@ -429,4 +330,14 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
   .road { grid-template-columns: repeat(3, 1fr); }
   .section, .band { padding-left: 24px; padding-right: 24px; }
 }
+
+.ex-photo { margin: 0; position: relative; overflow: hidden; min-height: 280px; background: #f3c9c4; }
+.ex-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; filter: sepia(0.3) saturate(1.3) hue-rotate(-10deg); }
+.ex-photo figcaption, .gallery figcaption { position: absolute; left: 14px; bottom: 14px; right: 14px; padding: 9px 16px; border-radius: 99px; background: rgba(253, 236, 234, 0.96); color: var(--blood-700); font-weight: 800; font-size: 14px; box-shadow: 0 10px 22px rgba(60, 5, 10, 0.3); width: fit-content; max-width: calc(100% - 28px); }
+.gallery { margin-top: 16px; display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.gallery figure { margin: 0; position: relative; overflow: hidden; aspect-ratio: 3 / 4; background: #f3c9c4; }
+.gallery img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.3) saturate(1.35) hue-rotate(-10deg); transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.gallery figure:hover img { transform: scale(1.06); }
+.gallery figcaption { left: 10px; bottom: 10px; padding: 6px 12px; font-size: 12.5px; }
+@media (max-width: 520px) { .gallery { gap: 8px; } .gallery figcaption { font-size: 11.5px; padding: 5px 10px; } }
 </style>
