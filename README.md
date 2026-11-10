@@ -115,7 +115,7 @@ It's 1 a.m. A patient needs blood urgently and the hospital fridge doesn't have 
 ```bash
 # backend
 cd backend && python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt && flask --app wsgi run --debug --port 5000
+pip install -r requirements.txt && flask --app wsgi run --debug --port 5001
 # frontend (Node 22+)
 cd frontend && npm install && npm run dev
 ```

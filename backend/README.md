@@ -5,7 +5,7 @@ cd backend
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp ../.env.example .env   # or export vars
-flask --app wsgi run --debug --port 5000
+flask --app wsgi run --debug --port 5001
 pytest
 ```
 
