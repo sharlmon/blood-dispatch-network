@@ -101,6 +101,36 @@ h1, h2 { text-wrap: balance; }
 @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes ring { 0% { box-shadow: 0 0 0 0 rgba(179, 23, 30, 0.45); } 100% { box-shadow: 0 0 0 12px rgba(179, 23, 30, 0); } }
 .rise { animation: rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--d, 0ms); }
+/* Page changes */
+.page-enter-active, .page-leave-active { transition: opacity 0.28s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.page-enter-from { opacity: 0; transform: translateY(14px); }
+.page-leave-to { opacity: 0; transform: translateY(-6px); }
+
+/* Scroll reveal (v-inview) */
+.iv { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: var(--iv-d, 0ms); }
+.iv.iv-in { opacity: 1; transform: none; }
+
+/* Hover and press feedback on interactive surfaces */
+.btn, .chip, .more, button.rcard, .ncard { transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, background 0.2s ease; }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(179, 23, 30, 0.22); }
+.btn:active { transform: scale(0.97); }
+.ncard:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(126, 16, 21, 0.14); }
+button.rcard:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 12px 24px rgba(126, 16, 21, 0.14); }
+.ib { transition: transform 0.3s cubic-bezier(0.2, 1.2, 0.3, 1); }
+a:hover .ib, button:hover .ib, li:hover > .ib { transform: scale(1.08) rotate(-4deg); }
+
+/* Life: the urgent button breathes, the bell rings, the hero shimmers, status dots pulse */
+@keyframes breathe { 0%, 100% { box-shadow: 0 8px 18px rgba(179, 23, 30, 0.18), 0 0 0 0 rgba(179, 23, 30, 0.35); } 50% { box-shadow: 0 8px 18px rgba(179, 23, 30, 0.18), 0 0 0 12px rgba(179, 23, 30, 0); } }
+@keyframes wiggle { 0%, 88%, 100% { transform: rotate(0); } 91% { transform: rotate(14deg); } 94% { transform: rotate(-12deg); } 97% { transform: rotate(8deg); } }
+@keyframes drift { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+@keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes pulsedot { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.6); opacity: 0; } }
+.sosbtn { animation: breathe 2.6s ease-in-out infinite; }
+.bell svg { transform-origin: 50% 10%; animation: wiggle 5s ease-in-out infinite; }
+.hero.organic-card { background-size: 220% 220%; animation: drift 9s ease-in-out infinite alternate; }
+.thumb { animation: floaty 5s ease-in-out infinite; }
+.status.ok i { position: relative; }
+.status.ok i::after { content: ''; position: absolute; inset: 0; border-radius: 99px; background: inherit; animation: pulsedot 2s ease-out infinite; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }

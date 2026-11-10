@@ -89,5 +89,8 @@ export interface RecentRequest {
 export const RECENT: RecentRequest[] = [
   { group: 'B+', units: 2, where: 'Lakeview District Hospital', status: 'Dispatched', when: '18 min ago', urgent: true },
   { group: 'O+', units: 1, where: 'Central Regional Blood Centre', status: 'Arrived', when: 'Yesterday, 22:40', urgent: false },
-  { group: 'A−', units: 2, where: 'Group O given, patient moved', status: 'Escalated', when: 'Mon, 03:10', urgent: true }
+  { group: 'A−', units: 2, where: 'Group O given, patient moved', status: 'Escalated', when: 'Mon, 03:10', urgent: true },
+  { group: 'O−', units: 3, where: 'Hillcrest Hospital', status: 'Arrived', when: 'Sun, 19:25', urgent: false },
+  { group: 'AB+', units: 1, where: 'Central Regional Blood Centre', status: 'Arrived', when: 'Sat, 08:05', urgent: false },
+  { group: 'B−', units: 2, where: 'Lakeview District Hospital', status: 'Dispatched', when: 'Fri, 23:50', urgent: true }
 ]

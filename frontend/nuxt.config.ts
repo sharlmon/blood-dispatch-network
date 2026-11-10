@@ -4,7 +4,7 @@
 //    publishable key is provided at build time; otherwise the app runs in open demo mode.
 const pages = !!process.env.GH_PAGES
 const base = process.env.NUXT_APP_BASE_URL || '/'
-const clerkOn = pages ? !!process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY : true
+const clerkOn = process.env.DEMO_AUTH ? false : pages ? !!process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY : true
 const apiBase = process.env.NUXT_PUBLIC_API_BASE ?? (pages ? '' : 'http://localhost:5001')
 
 export default defineNuxtConfig({
@@ -23,11 +23,14 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase,
-      authEnabled: clerkOn
+      authEnabled: clerkOn,
+      // Static demo with no Clerk: anyone can make a local account for their hospital.
+      demoAuth: !clerkOn && (pages || !!process.env.DEMO_AUTH)
     }
   },
   app: {
     baseURL: base,
+    pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       htmlAttrs: { lang: 'en' },
       title: 'Blood Dispatch',

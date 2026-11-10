@@ -1,7 +1,10 @@
 <script setup lang="ts">
 // Phone menu: a hamburger in the header that opens a sheet. The bottom bar handles the main
 // destinations; this sheet holds account, hospital, status and secondary links.
-const { public: { authEnabled } } = useRuntimeConfig()
+const { public: { authEnabled, demoAuth } } = useRuntimeConfig()
+const { account, signOut } = useDemoAccount()
+const { toast } = useToast()
+const leave = () => { signOut(); open.value = false; navigateTo('/'); toast({ title: 'Signed out', body: 'See you next time.' }) }
 const { hospital } = useSite()
 const route = useRoute()
 const open = ref(route.query.menu === 'open')
@@ -50,6 +53,17 @@ const links = [
               <Show when="signed-out">
                 <NuxtLink to="/sign-in" class="btn btn-primary">Sign in</NuxtLink>
               </Show>
+            </template>
+            <template v-else-if="demoAuth">
+              <template v-if="account">
+                <p class="lab">Signed in as</p>
+                <p class="hosp">{{ account.hospital }} <span class="demo">{{ account.name }}</span></p>
+                <button type="button" class="btn" @click="leave">Sign out</button>
+              </template>
+              <template v-else>
+                <NuxtLink to="/sign-in" class="btn btn-primary">Sign in</NuxtLink>
+                <NuxtLink to="/sign-up" class="btn">Create account</NuxtLink>
+              </template>
             </template>
             <template v-else>
               <p class="lab">Your hospital</p>

@@ -5,6 +5,7 @@ useHead({ title: 'New request · Blood Dispatch' })
 
 const route = useRoute()
 const { search } = useDispatch()
+const { toast } = useToast()
 const { firstName, hospital } = useSite()
 const img = useImg()
 
@@ -27,9 +28,46 @@ const nearby = computed(() => mockRank({ id: '#n', group: effective.value, units
 const form = ref<HTMLElement | null>(null)
 function sos() {
   group.value = 'Unknown'
+  toast({ tone: 'warn', title: 'Group O will be requested', body: 'Unknown group: only group O, per hospital protocol.' })
   form.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
-const submit = () => search({ group: effective.value, units: units.value, product: product.value, limitH: limitH.value, unknownGroup: unknown.value })
+const stepUnits = (d: number) => {
+  const n = Math.min(10, Math.max(1, units.value + d))
+  if (n === units.value) toast({ tone: 'info', title: d > 0 ? 'Maximum is 10 units' : 'At least 1 unit', ms: 2200 })
+  units.value = n
+}
+const stepLimit = (d: number) => {
+  const n = Math.min(12, Math.max(1, limitH.value + d))
+  if (n === limitH.value) toast({ tone: 'info', title: d > 0 ? 'Longest limit is 12 hours' : 'Shortest limit is 1 hour', ms: 2200 })
+  limitH.value = n
+}
+
+// Lists stay short on the page; the full list opens in a modal.
+const showRecent = ref(false)
+const showSources = ref(false)
+const pickedRecent = ref<(typeof RECENT)[number] | null>(null)
+const recentOpen = computed({ get: () => !!pickedRecent.value, set: (v) => { if (!v) pickedRecent.value = null } })
+const contact = ref<(typeof nearby.value)[number] | null>(null)
+const contactOpen = computed({ get: () => !!contact.value, set: (v) => { if (!v) contact.value = null } })
+const contacted = ref<string[]>([])
+const smsText = computed(() => `${effective.value} ${units.value} RBC ${limitH.value}H`)
+async function copy(text: string) {
+  try { await navigator.clipboard.writeText(text); toast({ tone: 'ok', title: 'Copied', body: text, ms: 2600 }) }
+  catch { toast({ tone: 'warn', title: 'Could not copy', body: 'Select the text and copy it by hand.' }) }
+}
+function markContacted() {
+  if (!contact.value) return
+  contacted.value = [...contacted.value, contact.value.id]
+  toast({ tone: 'ok', title: 'Marked as contacted', body: `${contact.value.name}. Ask them to confirm the shelf.` })
+  contact.value = null
+}
+function rerun(r: (typeof RECENT)[number]) {
+  group.value = r.group; units.value = r.units
+  pickedRecent.value = null; showRecent.value = false
+  toast({ tone: 'info', title: `Loaded ${r.group}, ${r.units} ${r.units === 1 ? 'unit' : 'units'}`, body: 'Check the details, then find sources.' })
+  form.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+const submit = () => { toast({ tone: 'info', title: 'Finding sources', body: `${effective.value}, ${units.value} ${units.value === 1 ? 'unit' : 'units'}`, ms: 2400 }); return search({ group: effective.value, units: units.value, product: product.value, limitH: limitH.value, unknownGroup: unknown.value }) }
 const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', Escalated: 'st-amber' }[s] ?? '')
 </script>
 
@@ -70,17 +108,17 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
         <div class="row">
           <IconBadge><AppIcon name="drop" :size="22" /></IconBadge>
           <span class="rl"><b>Product</b><small>What the patient needs</small></span>
-          <select v-model="product" class="sel" aria-label="Product"><option>Red cells</option><option>Whole blood</option></select>
+          <ThemedSelect v-model="product" label="Product" :options="[{ value: 'Red cells', hint: 'Most requests' }, { value: 'Whole blood', hint: 'When whole blood is needed' }]" />
         </div>
         <div class="row">
           <IconBadge><AppIcon name="units" :size="22" /></IconBadge>
           <span class="rl"><b>Units needed</b><small>Bags for this patient</small></span>
-          <span class="step"><button type="button" aria-label="One fewer unit" @click="units = Math.max(1, units - 1)">−</button><output class="tnum" aria-live="polite">{{ units }}</output><button type="button" aria-label="One more unit" @click="units = Math.min(10, units + 1)">+</button></span>
+          <span class="step"><button type="button" aria-label="One fewer unit" @click="stepUnits(-1)">−</button><output :key="units" class="tnum flip" aria-live="polite">{{ units }}</output><button type="button" aria-label="One more unit" @click="stepUnits(1)">+</button></span>
         </div>
         <div class="row">
           <IconBadge><AppIcon name="clock" :size="22" /></IconBadge>
           <span class="rl"><b>Longest wait</b><small>Used to flag a wait that is too long</small></span>
-          <span class="step"><button type="button" aria-label="Shorter limit" @click="limitH = Math.max(1, limitH - 1)">−</button><output class="tnum">{{ limitH }}h</output><button type="button" aria-label="Longer limit" @click="limitH = Math.min(12, limitH + 1)">+</button></span>
+          <span class="step"><button type="button" aria-label="Shorter limit" @click="stepLimit(-1)">−</button><output :key="limitH" class="tnum flip">{{ limitH }}h</output><button type="button" aria-label="Longer limit" @click="stepLimit(1)">+</button></span>
         </div>
         <div class="row">
           <IconBadge><AppIcon name="hospital" :size="22" /></IconBadge>
@@ -96,10 +134,10 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
 
     <aside class="side">
       <section>
-        <div class="sh"><h2>Recent requests</h2></div>
+        <div class="sh"><h2>Recent requests</h2><button type="button" class="more" @click="showRecent = true"><AppIcon name="list" :size="16" /> View all {{ RECENT.length }}</button></div>
         <ul class="recent">
-          <li v-for="r in RECENT" :key="r.when">
-            <NuxtLink to="/results?group=B%2B&units=2&limit=3&demo=1" class="rcard">
+          <li v-for="(r, i) in RECENT.slice(0, 2)" :key="r.when" class="rise" :style="{ '--d': i * 80 + 'ms' }">
+            <button type="button" class="rcard" @click="pickedRecent = r">
               <IconBadge size="lg" class="rg"><b>{{ r.group }}</b></IconBadge>
               <span class="rb">
                 <b>{{ r.units }} {{ r.units === 1 ? 'unit' : 'units' }} needed</b>
@@ -107,15 +145,15 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
                 <small class="when"><i v-if="r.urgent" class="dot" />{{ r.urgent ? 'Urgent' : 'Planned' }} · {{ r.when }}</small>
               </span>
               <span class="chipst" :class="statusClass(r.status)">{{ r.status }}</span>
-            </NuxtLink>
+            </button>
           </li>
         </ul>
       </section>
 
       <section>
-        <div class="sh"><h2>Nearby sources</h2><span>Yesterday's stock</span></div>
+        <div class="sh"><h2>Nearby sources</h2><button v-if="nearby.length > 2" type="button" class="more" @click="showSources = true"><AppIcon name="list" :size="16" /> View all {{ nearby.length }}</button><span v-else>Yesterday's stock</span></div>
         <ul class="near">
-          <li v-for="o in nearby" :key="o.id" class="ncard rise">
+          <li v-for="(o, i) in nearby.slice(0, 2)" :key="o.id" class="ncard rise" :style="{ '--d': i * 80 + 'ms' }">
             <div class="nt">
               <IconBadge size="lg" tone="solid" :square="o.kind === 'centre'"><AppIcon :name="o.kind" :size="26" /></IconBadge>
               <span class="nb">
@@ -124,11 +162,66 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
               </span>
               <span class="avail">{{ o.avail }} units<br>available</span>
             </div>
-            <a href="#" class="contact"><AppIcon name="call" :size="18" /> Contact site</a>
+            <button type="button" class="contact" :class="{ done: contacted.includes(o.id) }" @click="contact = o"><AppIcon :name="contacted.includes(o.id) ? 'check' : 'call'" :size="18" /> {{ contacted.includes(o.id) ? 'Contacted' : 'Contact site' }}</button>
           </li>
         </ul>
       </section>
     </aside>
+
+    <AppModal v-model="showRecent" title="Recent requests" :sub="`${RECENT.length} in the last week`">
+      <ul class="mlist">
+        <li v-for="r in RECENT" :key="r.when + r.group">
+          <button type="button" class="rcard" @click="showRecent = false; pickedRecent = r">
+            <IconBadge size="lg" class="rg"><b>{{ r.group }}</b></IconBadge>
+            <span class="rb"><b>{{ r.units }} {{ r.units === 1 ? 'unit' : 'units' }} needed</b><small>{{ r.where }}</small><small class="when"><i v-if="r.urgent" class="dot" />{{ r.urgent ? 'Urgent' : 'Planned' }} · {{ r.when }}</small></span>
+            <span class="chipst" :class="statusClass(r.status)">{{ r.status }}</span>
+          </button>
+        </li>
+      </ul>
+    </AppModal>
+
+    <AppModal v-model="recentOpen" :title="pickedRecent ? `${pickedRecent.group} · ${pickedRecent.units} ${pickedRecent.units === 1 ? 'unit' : 'units'}` : ''" :sub="pickedRecent?.where">
+      <template v-if="pickedRecent">
+        <dl class="facts">
+          <div><dt>Status</dt><dd><span class="chipst" :class="statusClass(pickedRecent.status)">{{ pickedRecent.status }}</span></dd></div>
+          <div><dt>Priority</dt><dd>{{ pickedRecent.urgent ? 'Urgent' : 'Planned' }}</dd></div>
+          <div><dt>When</dt><dd>{{ pickedRecent.when }}</dd></div>
+        </dl>
+        <p class="mnote">Past requests are kept in the audit log. You can start a new search with the same group and units.</p>
+      </template>
+      <template #footer>
+        <button type="button" class="btn" @click="pickedRecent = null">Close</button>
+        <button type="button" class="btn btn-primary" @click="pickedRecent && rerun(pickedRecent)"><AppIcon name="search" :size="18" /> Use these details</button>
+      </template>
+    </AppModal>
+
+    <AppModal v-model="showSources" title="Nearby sources" sub="Based on yesterday's stock. Confirm the shelf before you rely on it.">
+      <ul class="mlist">
+        <li v-for="o in nearby" :key="o.id" class="ncard">
+          <div class="nt">
+            <IconBadge size="lg" tone="solid" :square="o.kind === 'centre'"><AppIcon :name="o.kind" :size="26" /></IconBadge>
+            <span class="nb"><b>{{ o.name }}</b><small><AppIcon name="drop" :size="13" /> {{ effective }} <i>·</i> <AppIcon name="route" :size="13" /> {{ fmtHours(o.p50) }} away</small></span>
+            <span class="avail">{{ o.avail }} units<br>available</span>
+          </div>
+          <button type="button" class="contact" :class="{ done: contacted.includes(o.id) }" @click="showSources = false; contact = o"><AppIcon :name="contacted.includes(o.id) ? 'check' : 'call'" :size="18" /> {{ contacted.includes(o.id) ? 'Contacted' : 'Contact site' }}</button>
+        </li>
+      </ul>
+    </AppModal>
+
+    <AppModal v-model="contactOpen" :title="contact ? `Contact ${contact.name}` : ''" sub="Call or text the site, then mark it here so the team can see.">
+      <template v-if="contact">
+        <p class="mnote">The site's phone number will come from the site register once it is connected. Until then, use the number your hospital already has.</p>
+        <div class="smsbox">
+          <span><small>SMS request</small><b>{{ smsText }}</b></span>
+          <button type="button" class="btn" @click="copy(smsText)"><AppIcon name="copy" :size="18" /> Copy</button>
+        </div>
+        <p class="mnote">Say you need {{ units }} {{ units === 1 ? 'unit' : 'units' }} of {{ effective }}. Ask them to confirm the units are on the shelf before dispatch.</p>
+      </template>
+      <template #footer>
+        <button type="button" class="btn" @click="contact = null">Not now</button>
+        <button type="button" class="btn btn-primary" @click="markContacted"><AppIcon name="check" :size="18" /> Mark contacted</button>
+      </template>
+    </AppModal>
   </div>
 </template>
 
@@ -173,7 +266,7 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
 .sh { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
 .sh span { font-size: var(--fs-caption); font-weight: 700; color: #7a5a5d; }
 .recent, .near { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.rcard { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-radius: var(--r-lg); background: #fff; border: 1.5px solid #ecd5d1; text-decoration: none; color: inherit; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.rcard { width: 100%; text-align: left; font: inherit; cursor: pointer; display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-radius: var(--r-lg); background: #fff; border: 1.5px solid #ecd5d1; text-decoration: none; color: inherit; transition: transform 0.2s ease, box-shadow 0.2s ease; }
 .rcard:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(126, 16, 21, 0.12); }
 .rg b { font-size: 17px; font-weight: 800; }
 .rb { flex: 1; min-width: 0; display: flex; flex-direction: column; }
@@ -212,4 +305,22 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
   .hero p { font-size: 16px; }
 }
 .needhint { margin: 0; display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-radius: var(--r-lg); background: var(--amber-50); color: var(--amber-900); font-size: var(--fs-caption); font-weight: 700; line-height: 1.4; }
+
+.more { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px; border-radius: 99px; border: 1.5px solid #f0c0ba; background: var(--blood-50); color: var(--blood-700); font-weight: 800; font-size: 13px; transition: transform 0.2s ease, background 0.2s ease; }
+.more:hover { transform: translateY(-1px); background: #fbddd9; }
+.contact { width: 100%; font: inherit; cursor: pointer; transition: transform 0.15s ease, background 0.2s ease; }
+.contact:active { transform: scale(0.98); }
+.contact.done { background: var(--teal-50); border-color: #9fd6cd; color: var(--teal-600); }
+.flip { animation: flip 0.35s cubic-bezier(0.2, 1.1, 0.3, 1); }
+@keyframes flip { from { opacity: 0; transform: translateY(-10px) scale(0.8); } to { opacity: 1; transform: none; } }
+.mlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.facts { margin: 0 0 12px; display: grid; gap: 8px; }
+.facts div { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-radius: var(--r-md); background: #fff; border: 1.5px solid #ecd5d1; }
+.facts dt { font-size: 13px; font-weight: 700; color: #7a5a5d; }
+.facts dd { margin: 0; font-weight: 800; color: var(--ink); font-size: 14.5px; }
+.mnote { margin: 0 0 12px; font-size: 14px; line-height: 1.55; font-weight: 500; color: #5a3c3f; }
+.smsbox { display: flex; align-items: center; gap: 12px; justify-content: space-between; padding: 12px 12px 12px 18px; border-radius: var(--r-md); background: var(--azure-50); margin-bottom: 12px; }
+.smsbox span { display: flex; flex-direction: column; }
+.smsbox small { font-size: 12px; font-weight: 800; color: var(--azure-600); text-transform: uppercase; letter-spacing: 0.06em; }
+.smsbox b { font-size: 17px; color: var(--ink); letter-spacing: 0.02em; }
 </style>
