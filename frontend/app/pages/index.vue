@@ -48,20 +48,6 @@ const safety = [
         </div>
       </div>
 
-      <div class="stage rise" style="--d: 200ms">
-        <div class="fcard" aria-hidden="true">
-          <small>FASTEST · B+ · 2 UNITS</small>
-          <strong>{{ demo[0]!.name }}</strong>
-          <div class="ft"><b><Dur :h="demo[0]!.p50" /></b><span>{{ fmtRange(demo[0]!.p10, demo[0]!.p90) }}</span></div>
-          <WindowBar :p10="demo[0]!.p10" :p50="demo[0]!.p50" :p90="demo[0]!.p90" :limit="3" />
-        </div>
-        <span class="fchip" aria-hidden="true">B+ · 2 units · red cells</span>
-        <div class="fmini" aria-hidden="true">
-          <span class="ln">2</span>
-          <span><strong>{{ demo[1]!.name }}</strong><small>{{ fmtHours(demo[1]!.p50) }} · {{ demo[1]!.km }} km</small></span>
-        </div>
-      </div>
-
       <NetworkHorizon class="wall" />
     </section>
 
@@ -144,7 +130,7 @@ const safety = [
 </template>
 
 <style scoped>
-.hero { position: relative; overflow: hidden; padding: 14px 20px 150px; }
+.hero { position: relative; overflow: hidden; padding: 14px 20px 190px; min-height: max(680px, calc(100svh - var(--header-h))); }
 .bgimg { position: absolute; inset: 0; z-index: 0; }
 .bgimg img { position: absolute; left: 0; width: 100%; object-fit: cover; }
 /* Phone: a soft blurred copy fills the whole hero, the sharp photo sits lower so the faces clear the headline. */
