@@ -44,16 +44,21 @@ out = rank_sources({
 
 ### For the Flask API
 
-- **Warm up at startup.** The first call loads the data (~14 s); after that each call
-  takes ~0.07 s. Call `rank_sources` once inside `create_app()` so the first demo
-  click doesn't hang. Don't pass a fresh `frames` per request; the default reuses
-  the cached data.
-- **Bad input raises `ValueError`** with a plain message: unknown facility or blood
-  group, a component other than RBC, or `units_needed` < 1. Return it as HTTP 400
-  with the message.
+Done in `backend/app/engine_service.py`; the endpoints are in
+[backend/README.md](../README.md#endpoints).
+
+- **Warm-up at startup.** `create_app()` starts a background thread that loads the data
+  once and ranks one request (`ENGINE_WARMUP`, default on). Every call then reuses the
+  loaded frames. On the starter data the load takes about 5 s and a ranking about 20 ms.
+  `/api/health` reports `idle`, `loading`, `ready` or `error` without waiting.
+- **Bad input → 400.** The API checks its own input rules first. The engine's `ValueError`
+  (unknown facility or blood group, a component other than RBC, `units_needed` < 1)
+  becomes `400 invalid_request` with the engine's message.
 - **Paths.** `DATA_DIR` resolves from the repo root (`DATA_DIR=data`, not `../data`).
   The engine's database is `ENGINE_DB_PATH` (default `$DATA_DIR/blood.db`), kept apart
   from the API's own `DB_PATH`.
+- **Unchanged JSON.** `POST /api/rank` returns this engine's JSON untouched under
+  `ranking`, next to site names and map positions.
 
 ## Sample outputs (no Python needed)
 
@@ -74,7 +79,7 @@ All times are in **hours**. All stock is **yesterday's closing count, unconfirme
 
 | Field | Meaning |
 |---|---|
-| `request.as_of_stock_date` | Date of the stock count used (the day before the request) |
+| `request.as_of_stock_date` | Date of the stock count used: the day before the request, or the latest earlier count (after the data ends, the last one). The first day of the data uses its own count |
 | `advice` | `null`; `no_full_source` (no site has enough; options are partial); `consider_emergency_O_or_transfer` (even the best option's slow end, p90, is over 6 h) |
 | `options[].stock_seen` | Compatible red cell units the site held at yesterday's close |
 | `options[].spare` | Of those, what it can lend. Hospitals keep `max(usual level, 2)` per group and their O- reserve; regional centres can lend all |

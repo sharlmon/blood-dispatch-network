@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GROUPS } from '~/utils/mock'
+import { GROUPS } from '~/utils/engine'
 
 const model = defineModel<string>({ required: true })
 withDefaults(defineProps<{ allowUnknown?: boolean }>(), { allowUnknown: false })

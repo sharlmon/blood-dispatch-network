@@ -1,0 +1,858 @@
+{
+ "created": {
+  "allocations": [],
+  "attempt": 0,
+  "blood_group": "A+",
+  "created_at": "2026-03-09T22:00:00+00:00",
+  "deadline": null,
+  "facility_id": "HSP-R",
+  "id": "07875f4e-6435-46b7-8431-7cdd96399cf9",
+  "product": "red_cells",
+  "ranking": {
+   "advice": null,
+   "baseline": {
+    "facility_id": "RBTC-A",
+    "name": "Centre A",
+    "quote_hours": 4.0,
+    "rule": "Supply centre first, then the nearest regional centres. Quote = map time + 2 h."
+   },
+   "compatibility_note": "From a fixed table. A qualified person crossmatches and releases every unit.",
+   "mode": "model",
+   "model_used": true,
+   "options": [
+    {
+     "connectivity": "4G",
+     "eta": {
+      "p10": 4.0,
+      "p50": 4.0,
+      "p90": 4.0,
+      "road_p50": 2.0,
+      "wait_p50": 2.0
+     },
+     "facility_id": "RBTC-A",
+     "facility_type": "regional_blood_centre",
+     "flags": [],
+     "has_backup_power": true,
+     "is_hospital": false,
+     "name": "Centre A",
+     "near_expiry": 0,
+     "rank": 1,
+     "reason": "Regional centre: yesterday's count shows 10 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 2.0 h on the road. Most likely 4.0 h; 8 in 10 arrive within 4.0-4.0 h.",
+     "spare": 10,
+     "spare_by_group": {
+      "A+": 5,
+      "A-": 0,
+      "O+": 5,
+      "O-": 0
+     },
+     "stock_seen": 10,
+     "travel_hours_map": 2.0
+    },
+    {
+     "connectivity": "4G",
+     "eta": {
+      "p10": 6.0,
+      "p50": 6.0,
+      "p90": 6.0,
+      "road_p50": 4.0,
+      "wait_p50": 2.0
+     },
+     "facility_id": "RBTC-B",
+     "facility_type": "regional_blood_centre",
+     "flags": [],
+     "has_backup_power": true,
+     "is_hospital": false,
+     "name": "Centre B",
+     "near_expiry": 0,
+     "rank": 2,
+     "reason": "Regional centre: yesterday's count shows 5 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 4.0 h on the road. Most likely 6.0 h; 8 in 10 arrive within 6.0-6.0 h.",
+     "spare": 5,
+     "spare_by_group": {
+      "A+": 5,
+      "A-": 0,
+      "O+": 0,
+      "O-": 0
+     },
+     "stock_seen": 5,
+     "travel_hours_map": 4.0
+    }
+   ],
+   "request": {
+    "as_of_stock_date": "2026-03-09",
+    "facility_id": "HSP-R",
+    "patient_group": "A+",
+    "requested_at": "2026-03-09T22:00:00+00:00",
+    "units_needed": 3
+   },
+   "sharing_allowed": true,
+   "stock_note": "Yesterday's closing count. Unconfirmed until the supplying site confirms."
+  },
+  "request": {
+   "clinician_limit_h": 6.0,
+   "component": "RBC",
+   "facility_id": "HSP-R",
+   "patient_group": "A+",
+   "requested_at": "2026-03-09T22:00:00+00:00",
+   "units_needed": 3
+  },
+  "selected_option": null,
+  "status": "pending",
+  "supplier_id": null,
+  "units": 3,
+  "updated_at": "2026-03-09T22:00:00+00:00"
+ },
+ "picked": {
+  "allocations": [
+   {
+    "blood_group": "A+",
+    "product": "red_cells",
+    "units": 3
+   }
+  ],
+  "attempt": 1,
+  "blood_group": "A+",
+  "created_at": "2026-03-09T22:00:00+00:00",
+  "deadline": "2026-03-09T22:10:00+00:00",
+  "facility_id": "HSP-R",
+  "id": "07875f4e-6435-46b7-8431-7cdd96399cf9",
+  "product": "red_cells",
+  "ranking": {
+   "advice": null,
+   "baseline": {
+    "facility_id": "RBTC-A",
+    "name": "Centre A",
+    "quote_hours": 4.0,
+    "rule": "Supply centre first, then the nearest regional centres. Quote = map time + 2 h."
+   },
+   "compatibility_note": "From a fixed table. A qualified person crossmatches and releases every unit.",
+   "mode": "model",
+   "model_used": true,
+   "options": [
+    {
+     "connectivity": "4G",
+     "eta": {
+      "p10": 4.0,
+      "p50": 4.0,
+      "p90": 4.0,
+      "road_p50": 2.0,
+      "wait_p50": 2.0
+     },
+     "facility_id": "RBTC-A",
+     "facility_type": "regional_blood_centre",
+     "flags": [],
+     "has_backup_power": true,
+     "is_hospital": false,
+     "name": "Centre A",
+     "near_expiry": 0,
+     "rank": 1,
+     "reason": "Regional centre: yesterday's count shows 10 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 2.0 h on the road. Most likely 4.0 h; 8 in 10 arrive within 4.0-4.0 h.",
+     "spare": 10,
+     "spare_by_group": {
+      "A+": 5,
+      "A-": 0,
+      "O+": 5,
+      "O-": 0
+     },
+     "stock_seen": 10,
+     "travel_hours_map": 2.0
+    },
+    {
+     "connectivity": "4G",
+     "eta": {
+      "p10": 6.0,
+      "p50": 6.0,
+      "p90": 6.0,
+      "road_p50": 4.0,
+      "wait_p50": 2.0
+     },
+     "facility_id": "RBTC-B",
+     "facility_type": "regional_blood_centre",
+     "flags": [],
+     "has_backup_power": true,
+     "is_hospital": false,
+     "name": "Centre B",
+     "near_expiry": 0,
+     "rank": 2,
+     "reason": "Regional centre: yesterday's count shows 5 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 4.0 h on the road. Most likely 6.0 h; 8 in 10 arrive within 6.0-6.0 h.",
+     "spare": 5,
+     "spare_by_group": {
+      "A+": 5,
+      "A-": 0,
+      "O+": 0,
+      "O-": 0
+     },
+     "stock_seen": 5,
+     "travel_hours_map": 4.0
+    }
+   ],
+   "request": {
+    "as_of_stock_date": "2026-03-09",
+    "facility_id": "HSP-R",
+    "patient_group": "A+",
+    "requested_at": "2026-03-09T22:00:00+00:00",
+    "units_needed": 3
+   },
+   "sharing_allowed": true,
+   "stock_note": "Yesterday's closing count. Unconfirmed until the supplying site confirms."
+  },
+  "request": {
+   "clinician_limit_h": 6.0,
+   "component": "RBC",
+   "facility_id": "HSP-R",
+   "patient_group": "A+",
+   "requested_at": "2026-03-09T22:00:00+00:00",
+   "units_needed": 3
+  },
+  "selected_option": {
+   "connectivity": "4G",
+   "eta": {
+    "p10": 4.0,
+    "p50": 4.0,
+    "p90": 4.0,
+    "road_p50": 2.0,
+    "wait_p50": 2.0
+   },
+   "facility_id": "RBTC-A",
+   "facility_type": "regional_blood_centre",
+   "flags": [],
+   "has_backup_power": true,
+   "is_hospital": false,
+   "name": "Centre A",
+   "near_expiry": 0,
+   "rank": 1,
+   "reason": "Regional centre: yesterday's count shows 10 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 2.0 h on the road. Most likely 4.0 h; 8 in 10 arrive within 4.0-4.0 h.",
+   "spare": 10,
+   "spare_by_group": {
+    "A+": 5,
+    "A-": 0,
+    "O+": 5,
+    "O-": 0
+   },
+   "stock_seen": 10,
+   "travel_hours_map": 2.0
+  },
+  "status": "awaiting_confirmation",
+  "supplier_id": "RBTC-A",
+  "units": 3,
+  "updated_at": "2026-03-09T22:00:00+00:00"
+ },
+ "audit": {
+  "items": [
+   {
+    "action": "created",
+    "created_at": "2026-03-09T22:00:00+00:00",
+    "details": {
+     "actor": {
+      "org_id": "org_demo",
+      "org_role": "org:admin",
+      "org_slug": "demo",
+      "session_id": null,
+      "user_id": "user_demo"
+     },
+     "clinician_limit_h": 6.0,
+     "component": "RBC",
+     "facility_id": "HSP-R",
+     "patient_group": "A+",
+     "requested_at": "2026-03-09T22:00:00+00:00",
+     "units_needed": 3
+    },
+    "id": 1,
+    "request_id": "07875f4e-6435-46b7-8431-7cdd96399cf9"
+   },
+   {
+    "action": "pick",
+    "created_at": "2026-03-09T22:00:00+00:00",
+    "details": {
+     "actor": {
+      "org_id": "org_demo",
+      "org_role": "org:admin",
+      "org_slug": "demo",
+      "session_id": null,
+      "user_id": "user_demo"
+     },
+     "supplier_id": "RBTC-A"
+    },
+    "id": 2,
+    "request_id": "07875f4e-6435-46b7-8431-7cdd96399cf9"
+   }
+  ],
+  "limit": 50,
+  "offset": 0
+ },
+ "facilities": {
+  "items": [
+   {
+    "details": {
+     "connectivity": "4G",
+     "county": "Kisumu",
+     "facility_type": "district_hospital",
+     "has_blood_fridge_backup_power": true,
+     "lat": -0.1,
+     "lon": 34.7,
+     "supply_centre_id": "RBTC-A"
+    },
+    "id": "HSP-R",
+    "kind": "hospital",
+    "name": "Hospital"
+   },
+   {
+    "id": "RBTC-A",
+    "kind": "centre",
+    "name": "Centre A"
+   },
+   {
+    "id": "RBTC-B",
+    "kind": "centre",
+    "name": "Centre B"
+   }
+  ],
+  "limit": 50,
+  "offset": 0
+ },
+ "health": {
+  "country": "KE",
+  "status": "ok"
+ },
+ "rejected": {
+  "allocations": [],
+  "attempt": 1,
+  "blood_group": "A+",
+  "created_at": "2026-03-09T22:00:00+00:00",
+  "deadline": null,
+  "facility_id": "HSP-R",
+  "id": "07875f4e-6435-46b7-8431-7cdd96399cf9",
+  "product": "red_cells",
+  "ranking": {
+   "advice": null,
+   "baseline": {
+    "facility_id": "RBTC-A",
+    "name": "Centre A",
+    "quote_hours": 4.0,
+    "rule": "Supply centre first, then the nearest regional centres. Quote = map time + 2 h."
+   },
+   "compatibility_note": "From a fixed table. A qualified person crossmatches and releases every unit.",
+   "mode": "model",
+   "model_used": true,
+   "options": [
+    {
+     "connectivity": "4G",
+     "eta": {
+      "p10": 4.0,
+      "p50": 4.0,
+      "p90": 4.0,
+      "road_p50": 2.0,
+      "wait_p50": 2.0
+     },
+     "facility_id": "RBTC-A",
+     "facility_type": "regional_blood_centre",
+     "flags": [],
+     "has_backup_power": true,
+     "is_hospital": false,
+     "name": "Centre A",
+     "near_expiry": 0,
+     "rank": 1,
+     "reason": "Regional centre: yesterday's count shows 10 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 2.0 h on the road. Most likely 4.0 h; 8 in 10 arrive within 4.0-4.0 h.",
+     "spare": 10,
+     "spare_by_group": {
+      "A+": 5,
+      "A-": 0,
+      "O+": 5,
+      "O-": 0
+     },
+     "stock_seen": 10,
+     "travel_hours_map": 2.0
+    },
+    {
+     "connectivity": "4G",
+     "eta": {
+      "p10": 6.0,
+      "p50": 6.0,
+      "p90": 6.0,
+      "road_p50": 4.0,
+      "wait_p50": 2.0
+     },
+     "facility_id": "RBTC-B",
+     "facility_type": "regional_blood_centre",
+     "flags": [],
+     "has_backup_power": true,
+     "is_hospital": false,
+     "name": "Centre B",
+     "near_expiry": 0,
+     "rank": 2,
+     "reason": "Regional centre: yesterday's count shows 5 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 4.0 h on the road. Most likely 6.0 h; 8 in 10 arrive within 6.0-6.0 h.",
+     "spare": 5,
+     "spare_by_group": {
+      "A+": 5,
+      "A-": 0,
+      "O+": 0,
+      "O-": 0
+     },
+     "stock_seen": 5,
+     "travel_hours_map": 4.0
+    }
+   ],
+   "request": {
+    "as_of_stock_date": "2026-03-09",
+    "facility_id": "HSP-R",
+    "patient_group": "A+",
+    "requested_at": "2026-03-09T22:00:00+00:00",
+    "units_needed": 3
+   },
+   "sharing_allowed": true,
+   "stock_note": "Yesterday's closing count. Unconfirmed until the supplying site confirms."
+  },
+  "request": {
+   "clinician_limit_h": 6.0,
+   "component": "RBC",
+   "facility_id": "HSP-R",
+   "patient_group": "A+",
+   "requested_at": "2026-03-09T22:00:00+00:00",
+   "units_needed": 3
+  },
+  "selected_option": {
+   "connectivity": "4G",
+   "eta": {
+    "p10": 4.0,
+    "p50": 4.0,
+    "p90": 4.0,
+    "road_p50": 2.0,
+    "wait_p50": 2.0
+   },
+   "facility_id": "RBTC-A",
+   "facility_type": "regional_blood_centre",
+   "flags": [],
+   "has_backup_power": true,
+   "is_hospital": false,
+   "name": "Centre A",
+   "near_expiry": 0,
+   "rank": 1,
+   "reason": "Regional centre: yesterday's count shows 10 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 2.0 h on the road. Most likely 4.0 h; 8 in 10 arrive within 4.0-4.0 h.",
+   "spare": 10,
+   "spare_by_group": {
+    "A+": 5,
+    "A-": 0,
+    "O+": 5,
+    "O-": 0
+   },
+   "stock_seen": 10,
+   "travel_hours_map": 2.0
+  },
+  "status": "pending",
+  "supplier_id": null,
+  "units": 3,
+  "updated_at": "2026-03-09T22:00:00+00:00"
+ },
+ "audit_rejected": {
+  "items": [
+   {
+    "action": "created",
+    "created_at": "2026-03-09T22:00:00+00:00",
+    "details": {
+     "actor": {
+      "org_id": "org_demo",
+      "org_role": "org:admin",
+      "org_slug": "demo",
+      "session_id": null,
+      "user_id": "user_demo"
+     },
+     "clinician_limit_h": 6.0,
+     "component": "RBC",
+     "facility_id": "HSP-R",
+     "patient_group": "A+",
+     "requested_at": "2026-03-09T22:00:00+00:00",
+     "units_needed": 3
+    },
+    "id": 1,
+    "request_id": "07875f4e-6435-46b7-8431-7cdd96399cf9"
+   },
+   {
+    "action": "pick",
+    "created_at": "2026-03-09T22:00:00+00:00",
+    "details": {
+     "actor": {
+      "org_id": "org_demo",
+      "org_role": "org:admin",
+      "org_slug": "demo",
+      "session_id": null,
+      "user_id": "user_demo"
+     },
+     "supplier_id": "RBTC-A"
+    },
+    "id": 2,
+    "request_id": "07875f4e-6435-46b7-8431-7cdd96399cf9"
+   },
+   {
+    "action": "supplier_skipped",
+    "created_at": "2026-03-09T22:00:00+00:00",
+    "details": {
+     "actor": {
+      "org_id": "org_demo",
+      "org_role": "org:admin",
+      "org_slug": "demo",
+      "session_id": null,
+      "user_id": "user_demo"
+     },
+     "reason": "Insufficient current RBC stock above safety reserves; partial or whole-blood fulfillment requires the phone process",
+     "supplier_id": "RBTC-B"
+    },
+    "id": 3,
+    "request_id": "07875f4e-6435-46b7-8431-7cdd96399cf9"
+   },
+   {
+    "action": "sources_exhausted",
+    "created_at": "2026-03-09T22:00:00+00:00",
+    "details": {
+     "actor": {
+      "org_id": "org_demo",
+      "org_role": "org:admin",
+      "org_slug": "demo",
+      "session_id": null,
+      "user_id": "user_demo"
+     },
+     "phone_process_required": true
+    },
+    "id": 4,
+    "request_id": "07875f4e-6435-46b7-8431-7cdd96399cf9"
+   },
+   {
+    "action": "reject",
+    "created_at": "2026-03-09T22:00:00+00:00",
+    "details": {
+     "actor": {
+      "org_id": "org_demo",
+      "org_role": "org:admin",
+      "org_slug": "demo",
+      "session_id": null,
+      "user_id": "user_demo"
+     },
+     "attempt": 1,
+     "reason": "Units not on the shelf",
+     "supplier_id": "RBTC-A"
+    },
+    "id": 5,
+    "request_id": "07875f4e-6435-46b7-8431-7cdd96399cf9"
+   }
+  ],
+  "limit": 50,
+  "offset": 0
+ },
+ "received": {
+  "allocations": [
+   {
+    "blood_group": "A+",
+    "product": "red_cells",
+    "units": 3
+   }
+  ],
+  "attempt": 1,
+  "blood_group": "A+",
+  "created_at": "2026-03-09T22:00:00+00:00",
+  "deadline": null,
+  "facility_id": "HSP-R",
+  "id": "dfc820cc-6a91-4b1a-8684-b563ffd29424",
+  "product": "red_cells",
+  "ranking": {
+   "advice": null,
+   "baseline": {
+    "facility_id": "RBTC-A",
+    "name": "Centre A",
+    "quote_hours": 4.0,
+    "rule": "Supply centre first, then the nearest regional centres. Quote = map time + 2 h."
+   },
+   "compatibility_note": "From a fixed table. A qualified person crossmatches and releases every unit.",
+   "mode": "model",
+   "model_used": true,
+   "options": [
+    {
+     "connectivity": "4G",
+     "eta": {
+      "p10": 4.0,
+      "p50": 4.0,
+      "p90": 4.0,
+      "road_p50": 2.0,
+      "wait_p50": 2.0
+     },
+     "facility_id": "RBTC-A",
+     "facility_type": "regional_blood_centre",
+     "flags": [],
+     "has_backup_power": true,
+     "is_hospital": false,
+     "name": "Centre A",
+     "near_expiry": 0,
+     "rank": 1,
+     "reason": "Regional centre: yesterday's count shows 10 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 2.0 h on the road. Most likely 4.0 h; 8 in 10 arrive within 4.0-4.0 h.",
+     "spare": 10,
+     "spare_by_group": {
+      "A+": 5,
+      "A-": 0,
+      "O+": 5,
+      "O-": 0
+     },
+     "stock_seen": 10,
+     "travel_hours_map": 2.0
+    },
+    {
+     "connectivity": "4G",
+     "eta": {
+      "p10": 6.0,
+      "p50": 6.0,
+      "p90": 6.0,
+      "road_p50": 4.0,
+      "wait_p50": 2.0
+     },
+     "facility_id": "RBTC-B",
+     "facility_type": "regional_blood_centre",
+     "flags": [],
+     "has_backup_power": true,
+     "is_hospital": false,
+     "name": "Centre B",
+     "near_expiry": 0,
+     "rank": 2,
+     "reason": "Regional centre: yesterday's count shows 5 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 4.0 h on the road. Most likely 6.0 h; 8 in 10 arrive within 6.0-6.0 h.",
+     "spare": 5,
+     "spare_by_group": {
+      "A+": 5,
+      "A-": 0,
+      "O+": 0,
+      "O-": 0
+     },
+     "stock_seen": 5,
+     "travel_hours_map": 4.0
+    }
+   ],
+   "request": {
+    "as_of_stock_date": "2026-03-09",
+    "facility_id": "HSP-R",
+    "patient_group": "A+",
+    "requested_at": "2026-03-09T22:00:00+00:00",
+    "units_needed": 3
+   },
+   "sharing_allowed": true,
+   "stock_note": "Yesterday's closing count. Unconfirmed until the supplying site confirms."
+  },
+  "request": {
+   "clinician_limit_h": 6.0,
+   "component": "RBC",
+   "facility_id": "HSP-R",
+   "patient_group": "A+",
+   "requested_at": "2026-03-09T22:00:00+00:00",
+   "units_needed": 3
+  },
+  "selected_option": {
+   "connectivity": "4G",
+   "eta": {
+    "p10": 4.0,
+    "p50": 4.0,
+    "p90": 4.0,
+    "road_p50": 2.0,
+    "wait_p50": 2.0
+   },
+   "facility_id": "RBTC-A",
+   "facility_type": "regional_blood_centre",
+   "flags": [],
+   "has_backup_power": true,
+   "is_hospital": false,
+   "name": "Centre A",
+   "near_expiry": 0,
+   "rank": 1,
+   "reason": "Regional centre: yesterday's count shows 10 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 2.0 h on the road. Most likely 4.0 h; 8 in 10 arrive within 4.0-4.0 h.",
+   "spare": 10,
+   "spare_by_group": {
+    "A+": 5,
+    "A-": 0,
+    "O+": 5,
+    "O-": 0
+   },
+   "stock_seen": 10,
+   "travel_hours_map": 2.0
+  },
+  "status": "received",
+  "supplier_id": "RBTC-A",
+  "units": 3,
+  "updated_at": "2026-03-09T22:00:00+00:00"
+ },
+ "audit_received": {
+  "items": [
+   {
+    "action": "created",
+    "created_at": "2026-03-09T22:00:00+00:00",
+    "details": {
+     "actor": {
+      "org_id": "org_demo",
+      "org_role": "org:admin",
+      "org_slug": "demo",
+      "session_id": null,
+      "user_id": "user_demo"
+     },
+     "clinician_limit_h": 6.0,
+     "component": "RBC",
+     "facility_id": "HSP-R",
+     "patient_group": "A+",
+     "requested_at": "2026-03-09T22:00:00+00:00",
+     "units_needed": 3
+    },
+    "id": 6,
+    "request_id": "dfc820cc-6a91-4b1a-8684-b563ffd29424"
+   },
+   {
+    "action": "pick",
+    "created_at": "2026-03-09T22:00:00+00:00",
+    "details": {
+     "actor": {
+      "org_id": "org_demo",
+      "org_role": "org:admin",
+      "org_slug": "demo",
+      "session_id": null,
+      "user_id": "user_demo"
+     },
+     "supplier_id": "RBTC-A"
+    },
+    "id": 7,
+    "request_id": "dfc820cc-6a91-4b1a-8684-b563ffd29424"
+   },
+   {
+    "action": "confirm",
+    "created_at": "2026-03-09T22:00:00+00:00",
+    "details": {
+     "actor": {
+      "org_id": "org_demo",
+      "org_role": "org:admin",
+      "org_slug": "demo",
+      "session_id": null,
+      "user_id": "user_demo"
+     },
+     "attempt": 1,
+     "confirmed_units": 3,
+     "supplier_id": "RBTC-A"
+    },
+    "id": 8,
+    "request_id": "dfc820cc-6a91-4b1a-8684-b563ffd29424"
+   },
+   {
+    "action": "dispatch",
+    "created_at": "2026-03-09T22:00:00+00:00",
+    "details": {
+     "actor": {
+      "org_id": "org_demo",
+      "org_role": "org:admin",
+      "org_slug": "demo",
+      "session_id": null,
+      "user_id": "user_demo"
+     },
+     "attempt": 1,
+     "confirmed_units": 3,
+     "supplier_id": "RBTC-A"
+    },
+    "id": 9,
+    "request_id": "dfc820cc-6a91-4b1a-8684-b563ffd29424"
+   },
+   {
+    "action": "receive",
+    "created_at": "2026-03-09T22:00:00+00:00",
+    "details": {
+     "actor": {
+      "org_id": "org_demo",
+      "org_role": "org:admin",
+      "org_slug": "demo",
+      "session_id": null,
+      "user_id": "user_demo"
+     },
+     "received_units": 3
+    },
+    "id": 10,
+    "request_id": "dfc820cc-6a91-4b1a-8684-b563ffd29424"
+   }
+  ],
+  "limit": 50,
+  "offset": 0
+ },
+ "rank": {
+  "ranking": {
+   "advice": null,
+   "baseline": {
+    "facility_id": "RBTC-A",
+    "name": "Centre A",
+    "quote_hours": 4.0,
+    "rule": "Supply centre first, then the nearest regional centres. Quote = map time + 2 h."
+   },
+   "compatibility_note": "From a fixed table. A qualified person crossmatches and releases every unit.",
+   "mode": "model",
+   "model_used": true,
+   "options": [
+    {
+     "connectivity": "4G",
+     "eta": {
+      "p10": 4.0,
+      "p50": 4.0,
+      "p90": 4.0,
+      "road_p50": 2.0,
+      "wait_p50": 2.0
+     },
+     "facility_id": "RBTC-A",
+     "facility_type": "regional_blood_centre",
+     "flags": [],
+     "has_backup_power": true,
+     "is_hospital": false,
+     "name": "Centre A",
+     "near_expiry": 0,
+     "rank": 1,
+     "reason": "Regional centre: yesterday's count shows 10 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 2.0 h on the road. Most likely 4.0 h; 8 in 10 arrive within 4.0-4.0 h.",
+     "spare": 10,
+     "spare_by_group": {
+      "A+": 5,
+      "A-": 0,
+      "O+": 5,
+      "O-": 0
+     },
+     "stock_seen": 10,
+     "travel_hours_map": 2.0
+    },
+    {
+     "connectivity": "4G",
+     "eta": {
+      "p10": 6.0,
+      "p50": 6.0,
+      "p90": 6.0,
+      "road_p50": 4.0,
+      "wait_p50": 2.0
+     },
+     "facility_id": "RBTC-B",
+     "facility_type": "regional_blood_centre",
+     "flags": [],
+     "has_backup_power": true,
+     "is_hospital": false,
+     "name": "Centre B",
+     "near_expiry": 0,
+     "rank": 2,
+     "reason": "Regional centre: yesterday's count shows 5 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 4.0 h on the road. Most likely 6.0 h; 8 in 10 arrive within 6.0-6.0 h.",
+     "spare": 5,
+     "spare_by_group": {
+      "A+": 5,
+      "A-": 0,
+      "O+": 0,
+      "O-": 0
+     },
+     "stock_seen": 5,
+     "travel_hours_map": 4.0
+    }
+   ],
+   "request": {
+    "as_of_stock_date": "2026-03-09",
+    "facility_id": "HSP-R",
+    "patient_group": "A+",
+    "requested_at": "2026-03-09T22:00:00+00:00",
+    "units_needed": 3
+   },
+   "sharing_allowed": true,
+   "stock_note": "Yesterday's closing count. Unconfirmed until the supplying site confirms."
+  },
+  "request": {
+   "clinician_limit_h": 6.0,
+   "component": "RBC",
+   "facility_id": "HSP-R",
+   "patient_group": "A+",
+   "requested_at": "2026-03-09T22:00:00+00:00",
+   "units_needed": 3
+  }
+ }
+}
