@@ -26,6 +26,7 @@ export const ICONS: Record<string, string> = {
   back: 'M15 5l-7 7 7 7',
   search: c(11, 11, 8) + 'M21 21l-4.3-4.3',
   check: 'M5 12l5 5 9-10',
+  plus: 'M12 5v14M5 12h14',
   close: 'M6 6l12 12M18 6L6 18',
   copy: 'M9 9h10v10H9zM5 15V5h10',
   list: 'M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01',

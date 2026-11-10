@@ -35,9 +35,9 @@ const { request } = useDispatch()
       <div class="bar">
         <NuxtLink to="/" class="brand" aria-label="Blood Dispatch home"><BrandLogo :size="34" /></NuxtLink>
         <nav class="nav" aria-label="Main">
-          <NuxtLink to="/request">New request</NuxtLink>
-          <NuxtLink v-if="request" to="/results">Results</NuxtLink>
-          <NuxtLink v-if="request" to="/track">Track</NuxtLink>
+          <NuxtLink to="/request" class="newreq"><AppIcon name="plus" :size="18" /> New request</NuxtLink>
+          <NuxtLink v-if="request" to="/results"><AppIcon name="results" :size="18" /> Results</NuxtLink>
+          <NuxtLink v-if="request" to="/track"><AppIcon name="clock" :size="18" /> Track</NuxtLink>
         </nav>
         <span class="grow" />
         <span class="status" :class="online && verified !== 'no' ? 'ok' : 'down'" role="status"><i />{{ label }}</span>
@@ -85,8 +85,15 @@ const { request } = useDispatch()
 .bar { height: 58px; display: flex; align-items: center; gap: 14px; padding: 0 10px 0 16px; border-radius: 99px; background: rgba(255, 255, 255, 0.93); border: 1px solid #ecd5d1; box-shadow: 0 12px 30px rgba(126, 16, 21, 0.12); backdrop-filter: blur(10px); }
 .brand { display: flex; align-items: center; text-decoration: none; }
 .nav { display: none; gap: 4px; margin-left: 14px; }
-.nav a { padding: 9px 18px; border-radius: 99px; text-decoration: none; font-weight: 700; font-size: 14px; color: #5a3c3f; }
-.nav a.router-link-exact-active { background: var(--blood-50); color: var(--blood-700); font-weight: 800; }
+.nav a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 99px; border: 1.5px solid transparent; text-decoration: none; font-weight: 800; font-size: 14px; color: #5a3c3f; transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; }
+.nav a:hover { background: var(--blood-50); color: var(--blood-700); transform: translateY(-1px); }
+.nav a:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(179, 23, 30, 0.2); }
+.nav a svg { color: var(--blood-500); transition: transform 0.3s cubic-bezier(0.2, 1.2, 0.3, 1); }
+.nav a:hover svg { transform: scale(1.15) rotate(-6deg); }
+.nav a.newreq { border-color: #f0c0ba; background: #fff; color: var(--blood-700); }
+.nav a.newreq:hover { border-color: var(--blood-500); box-shadow: 0 8px 18px rgba(179, 23, 30, 0.16); }
+.nav a.router-link-exact-active { background: linear-gradient(180deg, #c3282c, #9a1319); border-color: transparent; color: #fff; box-shadow: 0 8px 18px rgba(179, 23, 30, 0.3); }
+.nav a.router-link-exact-active svg { color: #fff; }
 .grow { flex: 1; }
 .status { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 800; padding: 7px 13px; border-radius: 99px; white-space: nowrap; }
 .status i { width: 8px; height: 8px; border-radius: 99px; background: currentColor; }
