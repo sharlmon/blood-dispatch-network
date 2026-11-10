@@ -33,8 +33,8 @@ const safety = [
 <template>
   <div class="landing">
     <section class="hero">
+      <div class="bgimg" aria-hidden="true"><img :src="img('transfusion.jpg')" alt=""></div>
       <div class="copy">
-        <p class="eyebrow rise">Terumo BCT Africa Hackathon 2026</p>
         <h1 class="rise" style="--d: 80ms">Spare blood<br>is already<br><span>nearby.</span></h1>
         <p class="lead rise" style="--d: 160ms">At 1 a.m. the hospital fridge does not have the right type. See every centre and hospital that can spare it, and when it will really arrive.</p>
         <div class="chips chips-d rise" style="--d: 240ms">
@@ -49,10 +49,6 @@ const safety = [
       </div>
 
       <div class="stage rise" style="--d: 200ms">
-        <div class="arch">
-          <img :src="img('hand-vial.jpg')" alt="A gloved hand holding a vial of blood">
-          <div class="tint" />
-        </div>
         <div class="fcard" aria-hidden="true">
           <small>FASTEST · B+ · 2 UNITS</small>
           <strong>{{ demo[0]!.name }}</strong>
@@ -149,6 +145,9 @@ const safety = [
 
 <style scoped>
 .hero { position: relative; overflow: hidden; padding: 14px 20px 150px; }
+.bgimg { position: absolute; inset: auto 0 0 0; height: 66%; z-index: 0; }
+.bgimg img { width: 100%; height: 100%; object-fit: cover; object-position: 66% 30%; filter: sepia(0.28) saturate(1.25) hue-rotate(-10deg) contrast(1.03); }
+.bgimg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #fdf1ef 0%, rgba(253, 241, 239, 0.55) 22%, rgba(253, 241, 239, 0) 48%, rgba(179, 23, 30, 0.14) 100%); }
 .copy { position: relative; z-index: 4; max-width: 720px; }
 .eyebrow { margin: 0; display: inline-block; padding: 7px 14px; border-radius: 99px; border: 1.5px solid var(--blood-500); background: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blood-700); }
 h1 { margin: 16px 0 0; font-size: clamp(46px, 6.1vw, 88px); line-height: 0.94; letter-spacing: -0.035em; font-weight: 800; text-transform: uppercase; color: var(--blood-600); }
@@ -265,6 +264,9 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
 
 
 @media (min-width: 900px) {
+  .bgimg { inset: 0; height: auto; }
+  .bgimg img { object-position: 62% 50%; }
+  .bgimg::after { background: linear-gradient(90deg, #fdf1ef 0%, rgba(253, 241, 239, 0.94) 34%, rgba(253, 241, 239, 0.45) 56%, rgba(253, 241, 239, 0) 78%), linear-gradient(180deg, rgba(253, 241, 239, 0.55) 0%, rgba(253, 241, 239, 0) 22%, rgba(253, 241, 239, 0) 70%, rgba(179, 23, 30, 0.18) 100%); }
   .hero { padding: 40px 64px clamp(190px, 16vw, 240px); min-height: clamp(740px, calc(100svh - var(--header-h)), 880px); }
   .chips-d { display: flex; }
   .cta-m { display: none; }

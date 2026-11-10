@@ -68,14 +68,14 @@ const petals = [
 
 .mark { position: relative; width: 84px; height: 84px; display: grid; place-items: center; }
 .mark svg { position: relative; width: 84px; height: 84px; overflow: visible; filter: drop-shadow(0 10px 22px rgba(60, 5, 10, 0.45)); }
-.pet { transform-box: view-box; transform-origin: 32px 32px; animation: lock 7s cubic-bezier(0.2, 0.9, 0.2, 1) infinite; animation-delay: calc(var(--i) * 0.12s); }
+.pet { transform-box: view-box; transform-origin: 32px 32px; animation: lock 5s cubic-bezier(0.2, 0.9, 0.2, 1) infinite; animation-delay: calc(var(--i) * 0.12s); }
 @keyframes lock {
   0% { opacity: 0; transform: translate(var(--x), var(--y)) scale(0.4) rotate(40deg); }
   12% { opacity: 1; }
   26%, 84% { opacity: 1; transform: none; }
   96%, 100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(0.4) rotate(-40deg); }
 }
-.ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.55); opacity: 0; animation: ping 7s ease-out infinite; }
+.ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.55); opacity: 0; animation: ping 5s ease-out infinite; }
 .r2 { animation-delay: 0.25s; }
 .r3 { animation-delay: 0.5s; }
 @keyframes ping { 0%, 24% { opacity: 0; transform: scale(0.6); } 28% { opacity: 0.9; } 52%, 100% { opacity: 0; transform: scale(2.3); } }

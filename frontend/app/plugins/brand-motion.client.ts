@@ -1,6 +1,6 @@
-// Every 30 seconds the logo re-forms: the shared tick makes each BrandMark replay its animation,
+// Every 5 seconds the logo re-forms: the shared tick makes each BrandMark replay its animation,
 // and the tab icon plays the same drops-gathering animation frame by frame.
-const PERIOD = 30_000
+const PERIOD = 5_000
 const FRAMES = 20
 const FRAME_MS = 75
 
