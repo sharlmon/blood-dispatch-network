@@ -32,3 +32,16 @@ def built_db(data_dir, tmp_path_factory):
 def frames(built_db):
     db, _ = built_db
     return load_frames(db)
+
+
+@pytest.fixture(scope="session")
+def eta_model(frames, tmp_path_factory):
+    """The real arrival model, fitted once, saved and loaded back as production does."""
+    from engine import eta
+
+    model, _ = eta.fit(frames, config.load_config("kenya")["eta_train_before"])
+    path = tmp_path_factory.mktemp("eta") / "eta_model.json"
+    eta.save_json(model, path)
+    loaded = eta.load_model(path)
+    assert loaded.model_used
+    return loaded

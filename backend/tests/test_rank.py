@@ -321,8 +321,8 @@ def test_missing_fields_and_bad_mode_are_rejected():
 # --------------------------------------------------------------------------- real data
 
 
-def test_real_requests_all_year_return_valid_json_fast(frames):
-    model = eta.EtaModel.from_dict(eta.fit(frames, CFG["eta_train_before"])[0])
+def test_real_requests_all_year_return_valid_json_fast(frames, eta_model):
+    model = eta_model
     rq = frames.requests
     sample = rq[(rq.urgency == "emergency") & (rq.component_requested == "RBC")].sample(120, random_state=3)
     rank.rank_sources(rank.request_from_dataset(frames, sample.iloc[0].request_id),
