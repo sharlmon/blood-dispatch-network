@@ -3,7 +3,6 @@ useHead({ title: 'Blood Dispatch · Find spare blood nearby' })
 
 const demo = mockRank({ id: '#demo', group: 'B+', units: 2, product: 'Red cells', limitH: 3, openedAt: '01:04' }).options
 const selected = demo[0]!.id
-const img = useImg()
 
 const stats = [
   { c: { to: 28, suffix: '%' }, text: 'of emergencies hit a hospital fridge that fell short.' },
@@ -33,7 +32,7 @@ const safety = [
 <template>
   <div class="landing">
     <section class="hero">
-      <div class="bgimg" aria-hidden="true"><img class="bgblur" :src="img('transfusion.jpg')" alt=""><img class="main" :src="img('transfusion.jpg')" alt=""></div>
+      <div class="bgimg" aria-hidden="true"><Pic class="bgblur" name="transfusion" small /><Pic class="main" name="transfusion" sizes="100vw" eager /></div>
       <div class="copy">
         <h1 class="rise" style="--d: 80ms">Spare blood<br>is already<br><span>nearby.</span></h1>
         <p class="lead rise" style="--d: 160ms">At 1 a.m. the hospital fridge does not have the right type. See every centre and hospital that can spare it, and when it will really arrive.</p>
@@ -63,7 +62,7 @@ const safety = [
 
     <section v-inview class="section" aria-labelledby="share">
       <div class="share">
-        <div class="photo-card organic"><img :src="img('blood-draw.jpg')" alt="A health worker drawing blood from a donor's arm"><span class="pc-tag">Hospitals share. Nobody runs short.</span></div>
+        <div class="photo-card organic"><Pic name="blood-draw" sizes="(min-width: 900px) 520px, 92vw" alt="A health worker drawing blood from a donor's arm" /><span class="pc-tag">Hospitals share. Nobody runs short.</span></div>
         <div class="share-copy">
           <h2 id="share">Hospitals have never shared. Now they can.</h2>
           <p>A hospital 30 minutes down the road often has spare bags of exactly the type you need. Nobody knows, because nobody can see.</p>
@@ -104,9 +103,9 @@ const safety = [
         </li>
       </ul>
       <div class="gallery">
-        <figure class="organic"><img :src="img('blood-bags.jpg')" alt="Three bags of donated blood, labelled A and B"><figcaption>On the shelf</figcaption></figure>
-        <figure class="organic"><img :src="img('paramedics.jpg')" alt="Paramedics loading a stretcher into an ambulance"><figcaption>In transit</figcaption></figure>
-        <figure class="organic"><img :src="img('care-team.jpg')" alt="A team of doctors and nurses standing together"><figcaption>At the bedside</figcaption></figure>
+        <figure class="organic"><Pic name="blood-bags" sizes="(min-width: 900px) 380px, 31vw" alt="Three bags of donated blood, labelled A and B" /><figcaption>On the shelf</figcaption></figure>
+        <figure class="organic"><Pic name="paramedics" sizes="(min-width: 900px) 380px, 31vw" alt="Paramedics loading a stretcher into an ambulance" /><figcaption>In transit</figcaption></figure>
+        <figure class="organic"><Pic name="care-team" sizes="(min-width: 900px) 380px, 31vw" alt="A team of doctors and nurses standing together" /><figcaption>At the bedside</figcaption></figure>
       </div>
       <div class="sms-card organic">
         <IconBadge size="lg"><ServiceIcon name="sms" :size="36" /></IconBadge>

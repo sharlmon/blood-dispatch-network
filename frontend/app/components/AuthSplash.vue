@@ -1,6 +1,5 @@
 <script setup lang="ts">
 withDefaults(defineProps<{ title: string; sub: string; cta?: string }>(), { cta: 'Login' })
-const img = useImg()
 </script>
 
 <template>
@@ -13,7 +12,7 @@ const img = useImg()
         <span class="dots" aria-hidden="true"><i /></span>
       </div>
       <div class="stage">
-        <div class="photo"><img :src="img('hand-tube.jpg')" alt="A gloved hand holding a tube of blood"></div>
+        <div class="photo"><Pic name="hand-tube" sizes="(min-width: 900px) 780px, 640px" alt="A gloved hand holding a tube of blood" eager /></div>
         <BlockWall class="wall" :max="10" :mobile-gap="1" :desktop-gap="3" />
       </div>
       <a href="#form" class="pill">{{ cta }}</a>

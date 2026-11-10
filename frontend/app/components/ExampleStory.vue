@@ -5,7 +5,6 @@ import type { Option } from '~/utils/mock'
 import { GLOBE } from '~/utils/globe'
 
 const props = defineProps<{ options: Option[]; limit: number; group: string; units: number; product: string; hospital: string }>()
-const img = useImg()
 
 const C = { x: GLOBE.me[0], y: GLOBE.me[1] }
 // where each source's ETA tag sits relative to its pin
@@ -119,7 +118,7 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
     </div>
 
     <figure class="road organic">
-      <img :src="img('ambulance.jpg')" alt="An ambulance driving along a road through green hills">
+      <Pic name="ambulance" sizes="(min-width: 900px) 1150px, 92vw" alt="An ambulance driving along a road through green hills" />
       <figcaption><b>01:06</b> You pick. The supplier checks the shelf. Then the blood is on its way.</figcaption>
     </figure>
   </div>
