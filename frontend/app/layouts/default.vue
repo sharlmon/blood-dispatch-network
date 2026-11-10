@@ -54,6 +54,7 @@ const { request } = useDispatch()
             <NuxtLink to="/request" class="findbtn">Find blood</NuxtLink>
           </template>
         </div>
+        <MobileMenu />
       </div>
     </header>
     <div v-if="!online" class="fallback" role="alert">
@@ -66,7 +67,7 @@ const { request } = useDispatch()
 
 <style scoped>
 .shell { position: relative; min-height: 100dvh; display: flex; flex-direction: column; }
-.shell > :not(.cells) { position: relative; z-index: 1; }
+.shell > .main, .shell > .fallback { position: relative; z-index: 1; }
 .barwrap { position: sticky; top: 0; z-index: 30; padding: 12px 14px 0; }
 .bar { height: 58px; display: flex; align-items: center; gap: 14px; padding: 0 10px 0 16px; border-radius: 99px; background: rgba(255, 255, 255, 0.93); border: 1px solid #ecd5d1; box-shadow: 0 12px 30px rgba(126, 16, 21, 0.12); backdrop-filter: blur(10px); }
 .brand { display: flex; align-items: center; text-decoration: none; }
@@ -79,12 +80,13 @@ const { request } = useDispatch()
 .status.ok { color: var(--teal-600); background: var(--teal-50); }
 .status.down { color: var(--amber-700); background: var(--amber-50); }
 .who { display: flex; align-items: center; gap: 10px; }
+.site, .findbtn { display: none; }
 .site { display: none; font-size: 13px; font-weight: 700; color: #5a3c3f; }
-.signin { padding: 9px 18px; border-radius: 99px; border: 1.5px solid var(--blood-500); color: var(--blood-700); font-weight: 800; font-size: 14px; text-decoration: none; background: #fff; }
+.signin { white-space: nowrap; padding: 9px 18px; border-radius: 99px; border: 1.5px solid var(--blood-500); color: var(--blood-700); font-weight: 800; font-size: 14px; text-decoration: none; background: #fff; }
 .findbtn { display: none; padding: 10px 20px; border-radius: 99px; background: var(--blood-500); color: #fff; font-weight: 800; font-size: 14px; text-decoration: none; box-shadow: 0 8px 18px rgba(179, 23, 30, 0.3); }
 .fallback { display: flex; align-items: center; gap: 8px; margin: 10px 14px 0; padding: 10px 16px; border-radius: 22px; background: var(--amber-50); color: var(--amber-900); font-size: 13px; font-weight: 700; border: 1.5px solid var(--amber-500); }
-.main { flex: 1; min-height: 0; display: flex; flex-direction: column; padding-bottom: 86px; }
-@media (max-width: 520px) { .status { display: none; } .signin { padding: 8px 14px; } }
+.main { flex: 1; min-height: 0; display: flex; flex-direction: column; padding-bottom: var(--dock-h); }
+@media (max-width: 520px) { .status { display: none; } .signin { padding: 8px 14px; min-height: 40px; display: inline-flex; align-items: center; } .bar { gap: 8px; } }
 @media (min-width: 900px) {
   .barwrap { padding: 16px 24px 0; }
   .bar { height: 62px; padding: 0 12px 0 20px; }

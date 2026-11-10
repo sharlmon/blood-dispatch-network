@@ -27,6 +27,17 @@
   --radius-md: 14px;
   --shadow-float: 0 4px 14px rgba(18, 32, 43, 0.14);
   --header-h: 78px;
+  --dock-h: 96px;
+  /* spacing scale (4/8) */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px;
+  /* radii: control, card, pill */
+  --r-sm: 14px; --r-md: 20px; --r-lg: 28px; --r-pill: 99px;
+  /* elevation scale: rest, floating, sheet */
+  --sh-1: 0 6px 16px rgba(126, 16, 21, 0.1);
+  --sh-2: 0 14px 32px rgba(126, 16, 21, 0.16);
+  --sh-3: 0 28px 64px rgba(126, 16, 21, 0.22);
+  /* type scale (app screens): overline 12 / caption 13 / body 15 / title 16 / h2 20 / h1 clamp */
+  --fs-overline: 12px; --fs-caption: 13px; --fs-body: 15px; --fs-title: 16px; --fs-h2: 20px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -65,7 +76,11 @@ h1, h2 { text-wrap: balance; }
 .btn { border-radius: 99px; transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease; }
 .btn:active { transform: scale(0.97); }
 .btn-primary { box-shadow: 0 8px 20px rgba(179, 23, 30, 0.28); }
-.card { background: rgba(255, 255, 255, 0.78); border-color: var(--line); backdrop-filter: blur(6px); }
+.card { background: rgba(255, 255, 255, 0.82); border: 1.5px solid var(--line); border-radius: var(--r-lg); backdrop-filter: blur(6px); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.overline { font-size: var(--fs-overline); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--slate); }
+.h2 { margin: 0; font-size: var(--fs-h2); font-weight: 800; color: var(--wine); letter-spacing: -0.01em; }
+.meta { font-size: var(--fs-caption); font-weight: 600; color: #6b4b4e; }
 .organic {
   background: linear-gradient(180deg, #fff 0%, var(--blood-50) 100%);
   border: 1.5px solid var(--blood-500);

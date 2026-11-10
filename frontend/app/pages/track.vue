@@ -17,6 +17,7 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
 
 <template>
   <div v-if="d.request.value && d.selected.value" class="wrap">
+    <h1 class="sr-only">Tracking your blood request</h1>
     <div class="map"><SourceMap :options="[d.selected.value]" :selected-id="d.selected.value.id" :pad-top="80" /></div>
 
     <section class="panel">
@@ -52,7 +53,7 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
 </template>
 
 <style scoped>
-.wrap { position: relative; flex: 1; min-height: calc(100dvh - var(--header-h) - 86px); background: var(--fog); overflow: hidden; }
+.wrap { position: relative; flex: 1; min-height: calc(100dvh - var(--header-h) - var(--dock-h)); background: var(--fog); overflow: hidden; }
 .map { position: absolute; inset: 0 0 auto 0; height: 32vh; }
 .panel { position: absolute; left: 0; right: 0; top: 30vh; bottom: 0; background: var(--white); border-radius: 26px 26px 0 0; box-shadow: 0 -8px 30px rgba(18, 32, 43, 0.16); padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
 .back { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; color: var(--slate); text-decoration: none; min-height: 32px; }

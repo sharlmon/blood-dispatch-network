@@ -22,6 +22,11 @@ withDefaults(defineProps<{ layout?: 'inline' | 'stacked'; size?: number; reverse
 .stacked .word { align-items: center; }
 .stacked .word strong { font-size: clamp(18px, 3vw, 26px); }
 .stacked .word small { font-size: 11px; }
+@media (max-width: 440px) {
+  .inline .word strong { font-size: 12.5px; letter-spacing: 0.1em; }
+  .inline .word small { letter-spacing: 0.26em; }
+  .inline { gap: 8px; }
+}
 .reverse { color: #fff; }
 .reverse .word small { color: #ffd2cf; }
 </style>
