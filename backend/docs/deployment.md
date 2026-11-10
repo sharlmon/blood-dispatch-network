@@ -37,8 +37,9 @@ Run the complete dataset test suite separately, using the same CSV directory:
 DATA_DIR=/absolute/path/to/starter-csvs .venv/bin/python -m pytest -ra
 ```
 
-Review every skip. Dataset tests still skip when DATA_DIR is absent. Backend CI
-runs all tests on Python 3.12 and 3.14; proprietary/ignored starter data is not
+Review every skip. Dataset tests still skip when DATA_DIR is absent. The prepared backend CI template (`deploy/backend-ci.yml`) tests Python 3.12 and
+3.14. It must be installed as `.github/workflows/backend-ci.yml` after granting
+GitHub workflow permission; it is not active yet. Ignored starter data is not
 uploaded to CI automatically.
 
 ## Identity and SMS setup

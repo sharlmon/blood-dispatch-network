@@ -67,7 +67,7 @@ Errors are JSON `{"error": {"code", "message"}}`: `401 missing_token | invalid_t
 
 See [deployment and acceptance instructions](docs/deployment.md) for isolated dataset
 verification, live identity checks, maintenance scheduling, Gunicorn/systemd templates,
-backups/restoration, and safe retry-response retention. Backend CI is defined in
-`.github/workflows/backend-ci.yml`; it does not require frontend dependencies.
+backups/restoration, and safe retry-response retention. The backend-only CI template is [deploy/backend-ci.yml](deploy/backend-ci.yml).
+Activation under `.github/workflows/` requires GitHub workflow permission.
 
 Starter-data results are recorded in [verification.md](docs/verification.md).

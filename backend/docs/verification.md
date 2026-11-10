@@ -30,3 +30,7 @@ Gunicorn configuration validation passed. The backup calendar expression was che
 as 02:00 Africa/Nairobi. Production system services have not been installed. Live
 Clerk issuer/mappings, SMS provider/account integration and the target host remain
 external setup requirements.
+
+The backend CI template is included under deploy/backend-ci.yml. GitHub rejected
+active workflow publication because the OAuth token lacks workflow scope; CI
+activation remains pending that authorization.
