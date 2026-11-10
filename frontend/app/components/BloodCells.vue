@@ -17,6 +17,7 @@
 .c3 { width: 60px; height: 34px; left: 38%; bottom: 10%; transform: rotate(-14deg); filter: blur(5px); opacity: 0.6; animation-duration: 16s; animation-delay: -8s; }
 .c4 { width: 150px; height: 84px; right: -50px; bottom: 22%; transform: rotate(18deg); filter: blur(2px); opacity: 0.85; animation-duration: 26s; animation-delay: -2s; }
 .c5 { width: 46px; height: 26px; left: 12%; top: 58%; transform: rotate(40deg); filter: blur(4px); opacity: 0.55; animation-duration: 20s; animation-delay: -11s; }
+@media (max-width: 700px) { .c2, .c4 { opacity: 0.3; } }
 @keyframes drift {
   0%, 100% { translate: 0 0; rotate: 0deg; }
   50% { translate: 14px -22px; rotate: 8deg; }

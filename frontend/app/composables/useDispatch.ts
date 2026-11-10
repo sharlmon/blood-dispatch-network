@@ -1,4 +1,4 @@
-import { mockRank, type DispatchRequest, type Option } from '~/utils/mock'
+import { mockRank, BASELINE_HOURS, type DispatchRequest, type Option } from '~/utils/mock'
 import { nowClock } from '~/utils/format'
 
 export interface AuditEntry { at: string; text: string }
@@ -13,6 +13,7 @@ export function useDispatch() {
 
   const selected = computed(() => options.value.find(o => o.id === selectedId.value) ?? null)
   const top = computed(() => options.value[0] ?? null)
+  const sooner = computed(() => (top.value ? BASELINE_HOURS - top.value.p50 : 0))
   const tooLong = computed(() => !!request.value && !!top.value && top.value.p90 > request.value.limitH)
 
   function log(text: string) {
@@ -66,5 +67,5 @@ export function useDispatch() {
     log(texts[stage.value] ?? '')
   }
 
-  return { request, options, baseline, selectedId, selected, top, tooLong, stage, audit, search, load, loadFromQuery, select, confirmSelection, decide, advance, log }
+  return { request, options, baseline, selectedId, selected, top, sooner, tooLong, stage, audit, search, load, loadFromQuery, select, confirmSelection, decide, advance, log }
 }

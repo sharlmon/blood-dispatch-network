@@ -7,7 +7,7 @@ useHead({ title: 'Create account · Blood Dispatch' })
 </script>
 
 <template>
-  <AuthSplash title="Join your hospital's network" sub="Create your account, then set up your hospital.">
+  <AuthSplash :title="'Join your\nhospital\'s network'" sub="Create your account, then set up your hospital.">
     <SignUp v-if="authEnabled" :appearance="clerkAppearance" sign-in-url="/sign-in" />
     <DemoNotice v-else />
   </AuthSplash>

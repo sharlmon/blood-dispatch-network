@@ -3,6 +3,7 @@ useHead({ title: 'Blood Dispatch · Find spare blood nearby' })
 
 const demo = mockRank({ id: '#demo', group: 'B+', units: 2, product: 'Red cells', limitH: 3, openedAt: '01:04' }).options
 const selected = demo[0]!.id
+const img = useImg()
 
 const stats = [
   { big: '28%', text: 'of emergencies (2,456 of 8,768) hit a hospital fridge that fell short.' },
@@ -65,37 +66,38 @@ const safety = [
     <section class="hero">
       <div class="copy">
         <p class="eyebrow rise">Terumo BCT Africa Hackathon 2026</p>
-        <h1 class="rise" style="--d: 80ms">Spare blood is already <span>nearby.</span></h1>
-        <p class="lead rise" style="--d: 160ms">
-          At 1 a.m. the hospital fridge does not have the right type. Type what the patient needs and see every centre and hospital that can spare it, with an honest arrival time.
-        </p>
-        <div class="chips rise" style="--d: 240ms">
+        <h1 class="rise" style="--d: 80ms">Spare blood<br>is already<br><span>nearby.</span></h1>
+        <p class="lead rise" style="--d: 160ms">At 1 a.m. the hospital fridge does not have the right type. See every centre and hospital that can spare it, and when it will really arrive.</p>
+        <div class="chips chips-d rise" style="--d: 240ms">
           <NuxtLink to="/request" class="chip"><span class="chip-ico"><ServiceIcon name="find" :size="30" /></span>Find blood</NuxtLink>
           <NuxtLink to="/results?group=B%2B&units=2&limit=3&demo=1" class="chip"><span class="chip-ico"><ServiceIcon name="window" :size="30" /></span>See an example</NuxtLink>
           <a href="#phone" class="chip"><span class="chip-ico"><ServiceIcon name="sms" :size="30" /></span>Text a request</a>
         </div>
-        <NuxtLink to="/request" class="btn btn-primary big rise" style="--d: 320ms"><AppIcon name="drop" :size="22" /> Find blood now</NuxtLink>
-        <ul class="trust rise" style="--d: 400ms">
-          <li><AppIcon name="check" :size="16" /> Works by text message</li>
-          <li><AppIcon name="check" :size="16" /> A person approves every request</li>
-          <li><AppIcon name="check" :size="16" /> Phone fallback if the tool is down</li>
-        </ul>
+        <div class="cta-m rise" style="--d: 240ms">
+          <NuxtLink to="/request" class="btn btn-primary">Find blood now</NuxtLink>
+          <a href="#phone" class="chip"><span class="chip-ico"><ServiceIcon name="sms" :size="26" /></span>By SMS</a>
+        </div>
       </div>
 
-      <div class="visual rise" style="--d: 200ms">
-        <div class="stage">
-          <div class="live" aria-hidden="true">
-            <div class="lh"><b>B+ · 2 units</b><small>Request 01:04</small></div>
-            <div v-for="(o, i) in demo" :key="o.id" class="lr">
-              <span class="ln" :class="o.kind">{{ i + 1 }}</span>
-              <span class="lw">{{ o.name.split(' ').slice(0, 2).join(' ') }}</span>
-              <span class="lt tnum">{{ fmtHours(o.p50) }}</span>
-            </div>
-          </div>
-          <BloodMosaic />
+      <div class="stage rise" style="--d: 200ms">
+        <div class="arch">
+          <img :src="img('hand-vial.jpg')" alt="A gloved hand holding a vial of blood">
+          <div class="tint" />
         </div>
-        <p class="cap">Hospitals share. Nobody runs short.</p>
+        <div class="fcard" aria-hidden="true">
+          <small>FASTEST OPTION · B+ · 2 UNITS</small>
+          <strong>{{ demo[0]!.name }}</strong>
+          <div class="ft"><b class="tnum">{{ fmtHours(demo[0]!.p50) }}</b><span>{{ fmtRange(demo[0]!.p10, demo[0]!.p90) }}</span></div>
+          <WindowBar :p10="demo[0]!.p10" :p50="demo[0]!.p50" :p90="demo[0]!.p90" :limit="3" />
+        </div>
+        <span class="fchip" aria-hidden="true">B+ · 2 units · red cells</span>
+        <div class="fmini" aria-hidden="true">
+          <span class="ln">2</span>
+          <span><strong>{{ demo[1]!.name }}</strong><small>{{ fmtHours(demo[1]!.p50) }} · {{ demo[1]!.km }} km</small></span>
+        </div>
       </div>
+
+      <BlockWall class="wall" :mobile-gap="3" :desktop-gap="13" />
     </section>
 
     <section id="data" class="band" aria-labelledby="why">
@@ -110,7 +112,7 @@ const safety = [
 
     <section class="section" aria-labelledby="share">
       <div class="share">
-        <div class="hands-card organic"><HandsPass /></div>
+        <div class="photo-card organic"><img :src="img('hand-tube.jpg')" alt="A gloved hand holding a tube of blood"><span class="pc-tag">Hospitals share. Nobody runs short.</span></div>
         <div class="share-copy">
           <h2 id="share">Hospitals have never shared. Now they can.</h2>
           <p>In the data, not one of 5,330 emergency transfers came from another hospital. Yet a hospital 30 minutes down the road often has spare bags of exactly that type. Nobody knows, because nobody can see.</p>
@@ -268,27 +270,30 @@ const safety = [
 </template>
 
 <style scoped>
-.hero { display: grid; gap: 28px; padding: 28px 16px 40px; max-width: 1200px; margin: 0 auto; align-items: center; }
-.eyebrow { margin: 0 0 12px; display: inline-block; padding: 6px 14px; border-radius: 99px; border: 1.5px solid var(--blood-500); background: #fff; font-size: 11.5px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blood-700); }
-h1 { margin: 0; font-size: clamp(36px, 7vw, 66px); line-height: 0.98; letter-spacing: -0.03em; font-weight: 800; text-transform: uppercase; color: var(--blood-600); }
+.hero { position: relative; overflow: hidden; padding: 14px 20px calc(100vw / 3 - 24px); }
+.copy { position: relative; z-index: 4; max-width: 720px; }
+.eyebrow { margin: 0; display: inline-block; padding: 7px 14px; border-radius: 99px; border: 1.5px solid var(--blood-500); background: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blood-700); }
+h1 { margin: 16px 0 0; font-size: clamp(46px, 6.1vw, 88px); line-height: 0.94; letter-spacing: -0.035em; font-weight: 800; text-transform: uppercase; color: var(--blood-600); }
 h1 span { color: var(--wine); }
-.lead { margin: 18px 0 0; font-size: 17px; line-height: 1.55; font-weight: 500; color: #5a3c3f; max-width: 540px; }
-.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
-.big { min-height: 58px; padding: 0 28px; font-size: 17px; margin-top: 22px; }
-.trust { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; font-weight: 700; color: #5a3c3f; }
-.trust li { display: flex; align-items: center; gap: 6px; }
-.trust svg { color: var(--teal-600); }
-.visual { display: flex; flex-direction: column; gap: 12px; }
-.stage { position: relative; border-radius: 44px 44px 36px 36px; padding: 150px 0 0; overflow: hidden; background: linear-gradient(180deg, #fff 0%, #fbe6e3 55%, #f3c6c0 100%); border: 1px solid var(--line); box-shadow: 0 24px 60px rgba(126, 16, 21, 0.18); }
-.live { position: absolute; top: 18px; left: 18px; right: 18px; background: rgba(255, 255, 255, 0.92); border: 1px solid var(--line); border-radius: 18px; padding: 10px 14px; display: flex; flex-direction: column; gap: 4px; z-index: 2; }
-.lh { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; }
-.lh small { font-size: 11px; font-weight: 700; color: var(--slate); }
-.lr { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; }
-.lw { flex: 1; }
-.lt { font-weight: 800; color: var(--teal-600); }
-.ln { width: 22px; height: 22px; border-radius: 99px; background: var(--slate); color: #fff; font-size: 11px; font-weight: 800; display: grid; place-items: center; flex-shrink: 0; }
-.ln.centre { border-radius: 6px; }
-.ln.first { background: var(--blood-500); }
+.lead { margin: 16px 0 0; font-size: clamp(15.5px, 1.35vw, 19px); line-height: 1.55; font-weight: 500; color: #5a3c3f; max-width: 520px; }
+.chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.chips-d { display: none; }
+.cta-m { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.cta-m .btn { min-height: 54px; padding: 0 26px; font-size: 16px; }
+.stage { position: relative; width: 214px; height: 330px; margin: 14px 0 0 auto; z-index: 3; --iw: 187%; --il: -70%; --it: -65%; }
+.arch { position: absolute; inset: 0; border-radius: 107px 107px 28px 28px; overflow: hidden; background: linear-gradient(180deg, #fdeeed, #f3c9c4); box-shadow: 0 20px 44px rgba(126, 16, 21, 0.22); }
+.arch img { position: absolute; width: var(--iw); left: var(--il); top: var(--it); max-width: none; height: auto; filter: sepia(0.4) saturate(1.5) hue-rotate(-14deg) brightness(1.1) contrast(1.04); }
+.tint { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(250, 205, 200, 0.6) 0%, rgba(243, 201, 196, 0.2) 55%, rgba(179, 23, 30, 0.22) 100%); }
+.fcard { position: absolute; z-index: 6; right: calc(100% - 54px); top: 130px; width: 190px; padding: 12px 14px 14px; border-radius: 22px; background: rgba(255, 255, 255, 0.95); border: 1px solid #ecd5d1; box-shadow: 0 14px 30px rgba(126, 16, 21, 0.2); display: flex; flex-direction: column; gap: 3px; }
+.fcard small { font-size: 9.5px; font-weight: 800; letter-spacing: 0.1em; color: var(--slate); }
+.fcard strong { font-size: 13.5px; color: #12202b; }
+.ft { display: flex; align-items: baseline; gap: 6px; margin: 2px 0 8px; }
+.ft b { font-size: 30px; line-height: 1; color: var(--blood-500); white-space: nowrap; flex-shrink: 0; }
+.ft span { font-size: 11px; font-weight: 700; color: var(--slate); }
+.fchip, .fmini { display: none; }
+.wall { position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; }
+@media (max-width: 899px) { .wall :deep(.block) { display: none; } }
+.ln { width: 30px; height: 30px; border-radius: 99px; background: var(--slate); color: #fff; font-size: 13px; font-weight: 800; display: grid; place-items: center; flex-shrink: 0; }
 .cap { margin: 0; text-align: center; font-weight: 800; font-size: 14px; color: var(--blood-700); }
 
 .band { background: linear-gradient(180deg, var(--wine), #2a0709); color: #fff; padding: 44px 16px 40px; }
@@ -304,7 +309,9 @@ h1 span { color: var(--wine); }
 h3 { margin: 0; font-size: 17px; font-weight: 800; }
 
 .share { display: grid; gap: 24px; align-items: center; }
-.hands-card { padding: 28px 20px 20px; background: linear-gradient(180deg, #fff, #fbe6e3); overflow: hidden; }
+.photo-card { position: relative; overflow: hidden; aspect-ratio: 4 / 3; background: linear-gradient(180deg, #f9d5d0 0%, #e58d86 45%, #b3171e 100%); }
+.photo-card img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 36%; filter: grayscale(1) contrast(1.25) brightness(1.15); mix-blend-mode: multiply; }
+.pc-tag { position: absolute; left: 16px; bottom: 16px; padding: 9px 16px; border-radius: 99px; background: #fdecea; color: var(--blood-700); font-weight: 800; font-size: 14px; box-shadow: 0 10px 22px rgba(60, 5, 10, 0.3); }
 .share-copy h2 { margin-bottom: 14px; }
 .share-copy p { margin: 0 0 16px; font-size: 16px; line-height: 1.6; font-weight: 500; color: #5a3c3f; }
 .share-copy ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
@@ -397,7 +404,21 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
 .foot { padding: 20px 16px 28px; text-align: center; font-size: 12px; font-weight: 600; color: var(--slate); }
 
 @media (min-width: 900px) {
-  .hero { grid-template-columns: 1.1fr 0.9fr; gap: 64px; padding: 64px 24px 80px; }
+  .hero { padding: 40px 64px clamp(190px, 16vw, 240px); min-height: min(calc(100svh - var(--header-h)), 860px); }
+  .chips-d { display: flex; }
+  .cta-m { display: none; }
+  .stage { position: absolute; right: 8%; top: 24px; width: min(500px, 36vw); height: auto; aspect-ratio: 500 / 610; margin: 0; --iw: 172%; --il: -66%; --it: -77%; }
+  .arch { border-radius: 50% 50% 40px 40px / 41% 41% 40px 40px; box-shadow: 0 30px 70px rgba(126, 16, 21, 0.22); }
+  .fcard { right: auto; left: -60px; top: 60%; width: 310px; padding: 18px 20px; border-radius: 26px; gap: 4px; box-shadow: 0 22px 50px rgba(126, 16, 21, 0.2); }
+  .fcard small { font-size: 11px; }
+  .fcard strong { font-size: 18px; }
+  .ft b { font-size: 44px; }
+  .ft span { font-size: 13px; }
+  .fchip { display: block; position: absolute; z-index: 6; top: 46px; right: -16px; white-space: nowrap; padding: 12px 18px; border-radius: 99px; background: var(--blood-500); color: #fff; font-weight: 800; font-size: 15px; box-shadow: 0 14px 28px rgba(179, 23, 30, 0.38); }
+  .fmini { display: flex; align-items: center; gap: 12px; position: absolute; z-index: 6; top: 30%; right: -70px; white-space: nowrap; padding: 12px 16px; border-radius: 20px; background: rgba(255, 255, 255, 0.95); border: 1px solid #ecd5d1; box-shadow: 0 16px 36px rgba(126, 16, 21, 0.18); }
+  .fmini span:last-child { display: flex; flex-direction: column; }
+  .fmini strong { font-size: 14px; color: #12202b; }
+  .fmini small { font-size: 12px; font-weight: 700; color: var(--teal-600); }
   .stats { grid-template-columns: repeat(3, 1fr); gap: 36px 48px; }
   .share { grid-template-columns: 1fr 1fr; gap: 56px; }
   .charts { grid-template-columns: 1fr 1fr; }

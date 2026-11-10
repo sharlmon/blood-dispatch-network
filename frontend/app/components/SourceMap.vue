@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Option } from '~/utils/mock'
 
-const props = withDefaults(defineProps<{ options: Option[]; selectedId: string | null; padTop?: number; padBottom?: number; padX?: number; maxZoom?: number }>(), {
-  padTop: 96, padBottom: 36, padX: 56, maxZoom: 2
+const props = withDefaults(defineProps<{ options: Option[]; selectedId: string | null; padTop?: number; padBottom?: number; padX?: number; maxZoom?: number; panels?: boolean }>(), {
+  padTop: 96, padBottom: 36, padX: 56, maxZoom: 2, panels: false
 })
 defineEmits<{ select: [id: string] }>()
 
@@ -31,12 +31,15 @@ const view = computed(() => {
   const minX = Math.min(...pts.map(p => p.x)), maxX = Math.max(...pts.map(p => p.x))
   const minY = Math.min(...pts.map(p => p.y)), maxY = Math.max(...pts.map(p => p.y))
   const bw = Math.max(maxX - minX, 40), bh = Math.max(maxY - minY, 40)
-  const availW = box.w - 2 * props.padX
+  // Wide screens with floating side panels: fit the pins into the free middle.
+  const insetL = props.panels && box.w >= 900 ? 510 : 0
+  const insetR = props.panels && box.w >= 900 ? 390 : 0
+  const availW = box.w - insetL - insetR - 2 * props.padX
   const availH = box.h - props.padTop - props.padBottom
   const s = Math.min(Math.max(Math.min(availW / bw, availH / bh), 0.2), props.maxZoom)
   const vw = box.w / s, vh = box.h / s
   const cx = (minX + maxX) / 2
-  const x0 = cx - vw / 2
+  const x0 = cx - (insetL + (box.w - insetL - insetR) / 2) / s
   const y0 = minY - (props.padTop + (availH - bh * s) / 2) / s
   return { box: `${x0} ${y0} ${vw} ${vh}`, k: 1 / s, x0, y0, vw, vh }
 })
