@@ -5,5 +5,6 @@
       <NuxtPage />
     </NuxtLayout>
     <ToastHost />
+    <SplashScreen />
   </div>
 </template>
