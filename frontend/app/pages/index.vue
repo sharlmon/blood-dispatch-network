@@ -129,7 +129,7 @@ const safety = [
 </template>
 
 <style scoped>
-.hero { position: relative; overflow: hidden; padding: 14px 20px 190px; min-height: max(680px, calc(100svh - var(--header-h))); }
+.hero { position: relative; overflow: hidden; padding: 14px 20px 120px; min-height: max(640px, calc(100svh - var(--header-h))); }
 .bgimg { position: absolute; inset: 0; z-index: 0; }
 .bgimg img { position: absolute; left: 0; width: 100%; object-fit: cover; }
 /* Phone: a soft blurred copy fills the whole hero, the sharp photo sits lower so the faces clear the headline. */
@@ -255,7 +255,7 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
   .bgimg .bgblur { display: none; }
   .bgimg .main { top: 0; height: 100%; object-position: 100% 50%; -webkit-mask-image: none; mask-image: none; }
   .bgimg::after { background: linear-gradient(90deg, #f3f8f7 0%, rgba(244, 248, 247, 0.94) 30%, rgba(244, 248, 247, 0.5) 48%, rgba(244, 248, 247, 0) 68%), linear-gradient(180deg, rgba(244, 248, 247, 0.55) 0%, rgba(244, 248, 247, 0) 22%, rgba(244, 248, 247, 0) 70%, rgba(10, 107, 98, 0.18) 100%); }
-  .hero { padding: 40px 64px clamp(190px, 16vw, 240px); min-height: clamp(740px, calc(100svh - var(--header-h)), 880px); }
+  .hero { padding: 40px 64px clamp(110px, 9vw, 150px); min-height: clamp(740px, calc(100svh - var(--header-h)), 880px); }
   .chips-d { display: flex; }
   .cta-m { display: none; }
   /* The arch stands on the hills: its base sits in the empty sky of the horizon, so no hospital or label is covered. */
