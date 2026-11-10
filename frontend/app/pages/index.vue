@@ -160,13 +160,7 @@ const safety = [
       </ul>
     </section>
 
-    <section v-inview class="final">
-      <BrandLogo layout="stacked" :size="64" reverse />
-      <h2>Ready when the next request comes in.</h2>
-      <NuxtLink to="/request" class="btn big"><AppIcon name="drop" :size="22" /> Find blood now</NuxtLink>
-    </section>
-
-    <footer class="foot">Blood Dispatch Network · Hackathon prototype · All data is synthetic and does not describe real facilities.</footer>
+    <SiteFooter />
   </div>
 </template>
 
@@ -298,10 +292,6 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
 .faq summary { cursor: pointer; font-weight: 800; font-size: 15px; min-height: 48px; display: flex; align-items: center; }
 .faq p { padding-bottom: 14px; }
 
-.final { margin-top: 56px; padding: 56px 16px; background: radial-gradient(600px 240px at 50% 0%, #cf2a30, var(--blood-600)); color: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 22px; }
-.final h2 { margin: 0; font-size: clamp(26px, 4.5vw, 40px); letter-spacing: -0.02em; text-transform: uppercase; }
-.final .btn { background: #fff; color: var(--blood-700); border-color: #fff; margin-top: 0; }
-.foot { padding: 20px 16px 28px; text-align: center; font-size: 12px; font-weight: 600; color: var(--slate); }
 
 @media (min-width: 900px) {
   .hero { padding: 40px 64px clamp(190px, 16vw, 240px); min-height: min(calc(100svh - var(--header-h)), 860px); }
