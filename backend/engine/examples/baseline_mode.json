@@ -1,0 +1,77 @@
+{
+  "request": {
+    "facility_id": "HSP-004",
+    "patient_group": "O+",
+    "units_needed": 1,
+    "requested_at": "2026-10-31T00:58:20",
+    "as_of_stock_date": "2026-10-30"
+  },
+  "mode": "baseline",
+  "model_used": true,
+  "sharing_allowed": true,
+  "compatibility_note": "From a fixed table. A qualified person crossmatches and releases every unit.",
+  "stock_note": "Yesterday's closing count. Unconfirmed until the supplying site confirms.",
+  "advice": "consider_emergency_O_or_transfer",
+  "options": [
+    {
+      "rank": 1,
+      "facility_id": "RBTC-ELD",
+      "name": "Eldoret Regional Blood Transfusion Centre",
+      "facility_type": "regional_blood_centre",
+      "is_hospital": false,
+      "spare": 61,
+      "stock_seen": 61,
+      "near_expiry": 0,
+      "has_backup_power": true,
+      "connectivity": "4G",
+      "travel_hours_map": 6.93,
+      "eta": {
+        "p10": 8.3,
+        "p50": 10.3,
+        "p90": 12.3,
+        "wait_p50": 2.0,
+        "road_p50": 8.27
+      },
+      "flags": [],
+      "reason": "Today's rule: the supply centre is short, so this is the nearest other regional centre with enough stock. Yesterday's count shows 61 compatible units (unconfirmed). Today's quote would be 8.9 h (map time + 2 h, no range). Past emergency deliveries like this took longer than the quote: about 2.0 h to pack and dispatch, 8.3 h on the road. Most likely 10.3 h; 8 in 10 arrive within 8.3-12.3 h.",
+      "spare_by_group": {
+        "O+": 61,
+        "O-": 0
+      }
+    },
+    {
+      "rank": 2,
+      "facility_id": "RBTC-MSA",
+      "name": "Mombasa Regional Blood Transfusion Centre",
+      "facility_type": "regional_blood_centre",
+      "is_hospital": false,
+      "spare": 65,
+      "stock_seen": 65,
+      "near_expiry": 4,
+      "has_backup_power": false,
+      "connectivity": "4G",
+      "travel_hours_map": 11.57,
+      "eta": {
+        "p10": 12.9,
+        "p50": 15.8,
+        "p90": 18.9,
+        "wait_p50": 2.0,
+        "road_p50": 13.81
+      },
+      "flags": [
+        "no_backup_power"
+      ],
+      "reason": "Today's rule: the supply centre is short, so this is the nearest other regional centre with enough stock. Yesterday's count shows 65 compatible units (unconfirmed). Today's quote would be 13.6 h (map time + 2 h, no range). Past emergency deliveries like this took longer than the quote: about 2.0 h to pack and dispatch, 13.8 h on the road. Most likely 15.8 h; 8 in 10 arrive within 12.9-18.9 h. Its blood fridge has no backup power.",
+      "spare_by_group": {
+        "O+": 63,
+        "O-": 2
+      }
+    }
+  ],
+  "baseline": {
+    "facility_id": "RBTC-ELD",
+    "name": "Eldoret Regional Blood Transfusion Centre",
+    "quote_hours": 8.9,
+    "rule": "Supply centre first, then the nearest regional centres. Quote = map time + 2 h."
+  }
+}
