@@ -239,3 +239,58 @@ def request_from_dataset(frames: Frames, request_id: str) -> dict:
         "clinical_indication": r["clinical_indication"],
         "requested_at": r["requested_at"],
     }
+
+
+# --------------------------------------------------------------------------- CLI
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Print the ranking JSON for one request.
+
+    Examples (from backend/, with DATA_DIR set):
+        python -m engine.rank --request-id REQ-020421
+        python -m engine.rank --request-id REQ-020421 --mode baseline
+        python -m engine.rank --facility HSP-004 --group O+ --units 1 --at 2026-10-31T00:58
+    """
+    import argparse
+    import json
+    import sys
+
+    parser = argparse.ArgumentParser(
+        prog="python -m engine.rank",
+        description="Rank sources for one emergency red cell request and print the JSON.",
+    )
+    parser.add_argument("--request-id", help="a request_id from requests.csv, e.g. REQ-020421")
+    parser.add_argument("--facility", help="requesting facility_id, e.g. HSP-004")
+    parser.add_argument("--group", help="patient blood group, e.g. O+ or unknown")
+    parser.add_argument("--units", type=int, help="units needed")
+    parser.add_argument("--at", help="request time, e.g. 2026-10-31T00:58")
+    parser.add_argument("--mode", choices=["model", "baseline"], default="model")
+    parser.add_argument("--top-n", type=int, default=5)
+    parser.add_argument("--country", default="kenya", help="settings file in config/ (default kenya)")
+    args = parser.parse_args(argv)
+
+    manual = [args.facility, args.group, args.units, args.at]
+    if args.request_id and any(v is not None for v in manual):
+        parser.error("use --request-id, or --facility/--group/--units/--at, not both")
+    if not args.request_id and not all(v is not None for v in manual):
+        parser.error("give --request-id, or all of --facility, --group, --units and --at")
+
+    try:
+        cfg = config_mod.load_config(args.country)
+        frames = load_frames(config_mod.db_path())
+        if args.request_id:
+            request = request_from_dataset(frames, args.request_id)
+        else:
+            request = {"facility_id": args.facility, "patient_group": args.group,
+                       "units_needed": args.units, "component": "RBC", "requested_at": args.at}
+        out = rank_sources(request, mode=args.mode, top_n=args.top_n, config=cfg, frames=frames)
+    except (ValueError, FileNotFoundError, config_mod.ConfigError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    print(json.dumps(out, indent=2, ensure_ascii=False))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
