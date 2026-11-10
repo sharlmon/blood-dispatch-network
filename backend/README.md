@@ -62,3 +62,20 @@ def create_request():
 | `@require_role("org:admin")` | the above plus one of the roles |
 
 Errors are JSON `{"error": {"code", "message"}}`: `401 missing_token | invalid_token`, `403 session_pending | hospital_required | forbidden`, `503 auth_not_configured | auth_unavailable`. **If Clerk is not configured, protected routes fail closed (503).** `AUTH_DISABLED=1` is an explicit local-demo switch and must never be set in production. `GET /api/me` echoes the verified identity. Tests: `pytest tests/test_clerk_auth.py` (no network, uses a generated key pair).
+
+
+## Deploying on Render
+
+`render.yaml` at the repo root describes the service (Python, gunicorn, health check at
+`/api/health`).
+
+1. Render dashboard, **New > Blueprint**, choose this repo and the `dev` branch.
+2. When asked, paste `CLERK_PUBLISHABLE_KEY` (the same `pk_test_...` the frontend uses).
+3. After the first deploy, open **Environment** and set `ORG_FACILITY_MAP`
+   (Clerk organization id to facility id). Redeploy.
+4. Swagger is at `https://<your-service>.onrender.com/api/docs`.
+
+On the free plan the SQLite file is in `/tmp` and starts empty after each restart or idle
+spin-down, and the starter CSVs are not in the repo, so `/api/ready` stays 503 and ranking has
+no data until a disk and the CSVs are added. The Clerk secret key is not needed by the API.
+Tokens from the frontend are accepted when their origin is listed in `CORS_ORIGINS`.
