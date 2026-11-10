@@ -177,3 +177,4 @@ flowchart TB
 | Every action is recorded | Audit log |
 | If the tool fails, everyone falls back to the phone process | Fallback mode |
 | A new country is a new settings file, no code change | Country settings |
+| No patient identifier is collected; the engine stores only the request fields it uses | Ranking (`load.py`); see [DATA_PROTECTION.md](../DATA_PROTECTION.md) |
