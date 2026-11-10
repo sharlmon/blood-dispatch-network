@@ -1,7 +1,7 @@
-fastapi
-uvicorn[standard]
-pydantic
-pyyaml
-pandas
-numpy
-pytest
+Flask>=3.1
+flask-cors>=5.0
+PyYAML>=6.0
+pandas>=2.2
+numpy>=2.0
+pytest>=8.0
+gunicorn>=23.0

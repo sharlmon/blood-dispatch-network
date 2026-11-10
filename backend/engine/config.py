@@ -4,7 +4,8 @@ Paths come from environment variables so nothing machine-specific is hard-coded:
 
 - ``DATA_DIR`` (required): folder holding the starter-kit CSVs. Engine outputs
   (``blood.db``, ``eta_model.json``, ``eta_metrics.json``) are written here too.
-- ``DB_PATH`` (optional): SQLite file. Defaults to ``$DATA_DIR/blood.db``.
+- ``ENGINE_DB_PATH`` (optional): the engine's SQLite file. Defaults to ``$DATA_DIR/blood.db``.
+  (Named apart from the Flask API's own ``DB_PATH`` so the two never collide.)
 
 Relative paths are resolved against the repository root, so the same ``.env``
 works whether you run from the repo root or from ``backend/``.
@@ -60,7 +61,7 @@ def data_dir() -> Path:
 
 
 def db_path() -> Path:
-    raw = os.environ.get("DB_PATH")
+    raw = os.environ.get("ENGINE_DB_PATH")
     return _resolve(raw) if raw else data_dir() / "blood.db"
 
 

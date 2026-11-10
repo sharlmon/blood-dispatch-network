@@ -22,7 +22,7 @@ def cli_env(built_db, frames, tmp_path_factory):
     data = tmp_path_factory.mktemp("cli_data")
     model, _ = eta.fit(frames, config.load_config("kenya")["eta_train_before"])
     eta.save_json(model, data / "eta_model.json")
-    return {**os.environ, "DATA_DIR": str(data), "DB_PATH": str(db)}
+    return {**os.environ, "DATA_DIR": str(data), "ENGINE_DB_PATH": str(db)}
 
 
 def run_cli(env, *args):
@@ -61,7 +61,7 @@ def test_cli_reports_bad_input_without_a_traceback(cli_env):
 
 
 def test_cli_explains_a_missing_database(cli_env, tmp_path):
-    result = run_cli({**cli_env, "DB_PATH": str(tmp_path / "none.db")}, "--request-id", "REQ-020421")
+    result = run_cli({**cli_env, "ENGINE_DB_PATH": str(tmp_path / "none.db")}, "--request-id", "REQ-020421")
     assert result.returncode == 2
     assert "build_db.py" in result.stderr
 

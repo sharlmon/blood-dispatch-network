@@ -20,7 +20,7 @@ from engine.load import load_frames, timed_build  # noqa: E402
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--data-dir", help="override DATA_DIR")
-    parser.add_argument("--db-path", help="override DB_PATH")
+    parser.add_argument("--db-path", help="override ENGINE_DB_PATH")
     args = parser.parse_args(argv)
 
     data_dir = Path(args.data_dir) if args.data_dir else config.data_dir()

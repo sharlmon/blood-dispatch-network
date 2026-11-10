@@ -59,7 +59,7 @@ DATA_DIR=data python -m pytest      # ~3 min; real-data tests skip if DATA_DIR i
 
 | File | What it does |
 |---|---|
-| `config.py` | `DATA_DIR` / `DB_PATH` from the environment; loads `config/<country>.yaml` |
+| `config.py` | `DATA_DIR` / `ENGINE_DB_PATH` from the environment; loads `config/<country>.yaml` |
 | `load.py` | CSV -> SQLite, data checks, `usual_level`, stock lookup |
 | `compat.py` | Fixed red cell compatibility table |
 | `stock.py` | Yesterday's stock, what each site can spare, near-expiry count |

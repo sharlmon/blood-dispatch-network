@@ -96,7 +96,7 @@ def test_missing_data_dir_gives_a_clear_error(monkeypatch):
 
 def test_db_path_defaults_to_data_dir(monkeypatch, tmp_path):
     monkeypatch.setenv("DATA_DIR", str(tmp_path))
-    monkeypatch.delenv("DB_PATH", raising=False)
+    monkeypatch.delenv("ENGINE_DB_PATH", raising=False)
     assert config.db_path() == tmp_path / "blood.db"
 
 
