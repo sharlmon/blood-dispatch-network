@@ -13,7 +13,7 @@ __pycache__/
 .pytest_cache/
 # node
 node_modules/
-dist/
+dist
 .next/
 # os/editor
 .DS_Store
