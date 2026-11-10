@@ -32,23 +32,29 @@ It's 1 a.m. A patient needs blood urgently and the hospital fridge doesn't have 
 ## Architecture (planned)
 
 ```
-SMS / Web UI ──► API + workflow ──► Ranking engine ──► Arrival-window model
+SMS / Frontend ──► API + workflow ──► Ranking engine ──► Arrival-window model
                      │                    ▲
                      ├─ audit log         └─ stock (yesterday + today's releases)
                      └─ fallback mode          config (country settings)
 ```
 
-| Path | Purpose |
-|---|---|
-| `engine/` | Ranking engine, arrival ranges, replay ladder, pre-alert test |
-| `api/` | API, workflow logic, audit log, fallback |
-| `sms/` | SMS parser |
-| `web/` | Screens and results tab |
-| `config/` | Settings file (country-portable: change config, not code) |
-| `docs/` | Architecture diagram, standards table, video script |
-| `results/` | Results JSON for the expert review |
-| `data/` | Dataset (git-ignored) |
-| `scripts/`, `tests/` | Tooling and tests |
+```
+.
+├── frontend/   screens, components, results tab
+├── backend/
+│   ├── api/        HTTP API
+│   ├── workflow/   request flow, audit log, fallback
+│   ├── engine/     ranking, arrival, replay, prealert
+│   ├── sms/        SMS parser
+│   ├── config/     country settings, demo clock
+│   └── tests/
+├── docs/       architecture diagram, standards table, video script
+├── results/    results JSON for the expert review
+├── data/       dataset (git-ignored)
+└── scripts/    tooling
+```
+
+See [backend/README.md](backend/README.md) and [frontend/README.md](frontend/README.md) for per-folder ownership.
 
 ## Roadmap
 
