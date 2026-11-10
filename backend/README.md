@@ -23,3 +23,11 @@ pytest
 | `sms/` | Full-stack 2 | SMS parser |
 | `config/` | Full-stack 2 | Settings file (country-portable), demo clock |
 | `tests/` | all | Backend tests |
+
+## Request workflow foundation
+
+See [the API contract and local walkthrough](docs/api.md) for implemented routes,
+request bodies, state transitions, and remaining work. Seed an empty local database
+with `flask --app wsgi seed-demo`; run `flask --app wsgi expire-confirmations`
+periodically to release expired supplier reservations. These commands are explicit;
+starting the server does not seed inventory or start a scheduler.
