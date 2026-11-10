@@ -1,0 +1,1 @@
+import{R as e,m as t,t as n}from"./DNFiNDOv.js";var r={},i={class:`note`};function a(n,r){return e(),t(`p`,i,`You decide. Crossmatch every unit before use.`)}var o=Object.assign(n(r,[[`render`,a],[`__scopeId`,`data-v-eae4d40f`]]),{__name:`SafetyNote`});export{o as t};

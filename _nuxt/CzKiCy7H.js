@@ -1,0 +1,1 @@
+import{t as e}from"./DwfNWAwy.js";import{H as t,R as n,m as r,t as i,y as a}from"./DNFiNDOv.js";var o={},s={class:`auth`};function c(i,o){let c=e;return n(),r(`div`,s,[a(c),t(i.$slots,`default`,{},void 0,!0)])}var l=i(o,[[`render`,c],[`__scopeId`,`data-v-8f764dbf`]]);export{l as default};

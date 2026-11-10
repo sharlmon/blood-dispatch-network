@@ -1,0 +1,1 @@
+import{v as e}from"./BJREOQEh.js";function t(){let t=e().app.baseURL||`/`;return e=>`${t}${t.endsWith(`/`)?``:`/`}images/${e}`}export{t};

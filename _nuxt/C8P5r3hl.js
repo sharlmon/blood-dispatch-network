@@ -1,0 +1,2 @@
+import{n as e,o as t,r as n,t as r}from"./BPUzSwOB.js";import{n as i,v as a}from"./BJREOQEh.js";import{R as o,Y as s,f as c,lt as l,x as u}from"./DNFiNDOv.js";var d=u({__name:`[...slug]`,setup(u){let{public:{authEnabled:d}}=a();return i({title:`Create account · Blood Dispatch`}),(i,a)=>{let u=t,f=n,p=e;return o(),c(p,{title:`Join your
+hospital's network`,sub:`Create your account, then set up your hospital.`},{default:s(()=>[l(d)?(o(),c(u,{key:0,appearance:l(r),"sign-in-url":`/sign-in`},null,8,[`appearance`])):(o(),c(f,{key:1}))]),_:1})}}});export{d as default};
