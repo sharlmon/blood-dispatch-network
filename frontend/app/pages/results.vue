@@ -4,7 +4,7 @@ useHead({ title: 'Results · Blood Dispatch' })
 const route = useRoute()
 const d = useDispatch()
 if (!d.request.value) d.loadFromQuery(route.query, route.query.pick as string | undefined)
-if (!d.request.value) await navigateTo('/')
+if (!d.request.value) await navigateTo('/request')
 
 const limitH = computed(() => d.request.value?.limitH ?? 3)
 const reasons = computed(() => d.selected.value?.reasons ?? [])
@@ -20,7 +20,7 @@ const reasons = computed(() => d.selected.value?.reasons ?? [])
       <div class="summary" aria-label="Your request">
         <span class="grp">{{ d.request.value.group }}</span>
         <span class="meta"><b>{{ d.request.value.units }} units · {{ d.request.value.product.toLowerCase() }}</b><small>{{ d.request.value.id }} · {{ d.request.value.openedAt }} · limit {{ d.request.value.limitH }} h</small></span>
-        <NuxtLink to="/" class="edit" aria-label="Edit request"><AppIcon name="edit" /></NuxtLink>
+        <NuxtLink to="/request" class="edit" aria-label="Edit request"><AppIcon name="edit" /></NuxtLink>
       </div>
 
       <div v-if="d.tooLong.value" class="warn" role="alert">

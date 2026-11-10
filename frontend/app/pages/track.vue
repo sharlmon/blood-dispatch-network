@@ -4,7 +4,7 @@ useHead({ title: 'Track · Blood Dispatch' })
 const route = useRoute()
 const d = useDispatch()
 if (!d.request.value) { d.loadFromQuery(route.query, route.query.pick as string | undefined); d.stage.value = Number(route.query.stage) || 1 }
-if (!d.request.value || !d.selected.value) await navigateTo('/')
+if (!d.request.value || !d.selected.value) await navigateTo('/request')
 
 const steps = computed(() => [
   { title: 'Request sent', sub: `${d.request.value?.openedAt} · logged` },

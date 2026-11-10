@@ -16,7 +16,8 @@ When the API is unreachable the header shows **Offline** and a banner tells the 
 
 | Route | What it is |
 |---|---|
-| `/` | New request: blood group, product, units, longest wait, SMS format hint |
+| `/` | Landing page: the 1 a.m. problem, key numbers, how it works, safety principles |
+| `/request` | New request: blood group, product, units, longest wait, SMS format hint |
 | `/results` | Map plus ranked sources with arrival-window bars, "why this source", and the **wait too long** state with emergency group O / transfer actions |
 | `/track` | Arrival window, shelf-confirmation timeline, audit log. "Demo: simulate next step" advances the stages |
 

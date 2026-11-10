@@ -13,7 +13,7 @@ const { request } = useDispatch()
         <span>Blood Dispatch</span>
       </NuxtLink>
       <nav class="nav" aria-label="Main">
-        <NuxtLink to="/">New request</NuxtLink>
+        <NuxtLink to="/request">New request</NuxtLink>
         <NuxtLink v-if="request" to="/results">Results</NuxtLink>
       </nav>
       <span class="site">Hillside Hospital · Lab</span>
