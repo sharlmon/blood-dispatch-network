@@ -330,7 +330,7 @@ const errorText = computed(() => {
   .results { height: calc(100dvh - var(--header-h)); min-height: 640px; }
   .map { inset: 0; height: auto; }
   .mapchip { display: block; position: absolute; left: 518px; top: 12px; z-index: 5; padding: 10px 20px; border-radius: 99px; background: rgba(255, 255, 255, 0.95); border: 1px solid #d8e4e2; box-shadow: 0 12px 28px rgba(6, 74, 68, 0.14); font-size: 14px; font-weight: 800; color: var(--ink-deep); }
-  .panel { left: 24px; right: auto; top: 12px; bottom: 24px; width: 470px; padding: 20px; border-radius: 40px 44px 40px 46px / 44px 40px 46px 40px; border: 1.5px solid var(--primary-500); box-shadow: 0 26px 60px rgba(6, 74, 68, 0.2); gap: 12px; }
+  .panel { left: 24px; right: auto; top: 12px; bottom: 92px; width: 470px; padding: 20px; border-radius: 40px 44px 40px 46px / 44px 40px 46px 40px; border: 1.5px solid var(--primary-500); box-shadow: 0 26px 60px rgba(6, 74, 68, 0.2); gap: 12px; }
   .grab { display: none; }
   .grp { font-size: 56px; }
   .edit { display: grid; }

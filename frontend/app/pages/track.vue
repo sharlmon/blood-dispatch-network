@@ -289,7 +289,7 @@ const errorText = computed(() => {
 @media (min-width: 900px) {
   .wrap { height: calc(100dvh - var(--header-h)); min-height: 640px; margin-top: 6px; }
   .map { inset: 0; height: auto; }
-  .panel { top: 12px; left: 24px; right: auto; bottom: 24px; width: 470px; border-radius: 40px 44px 40px 46px / 44px 40px 46px 40px; border: 1.5px solid var(--primary-500); box-shadow: 0 26px 60px rgba(6, 74, 68, 0.2); padding: 22px; }
+  .panel { top: 12px; left: 24px; right: auto; bottom: 92px; width: 470px; border-radius: 40px 44px 40px 46px / 44px 40px 46px 40px; border: 1.5px solid var(--primary-500); box-shadow: 0 26px 60px rgba(6, 74, 68, 0.2); padding: 22px; }
 }
 .auditbtn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 99px; border: 1.5px solid #d8e4e2; background: #fff; color: var(--primary-700); font-weight: 800; font-size: 14px; transition: transform 0.2s ease; }
 .auditbtn:hover { transform: translateY(-1px); }
