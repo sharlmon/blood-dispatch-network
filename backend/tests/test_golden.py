@@ -7,6 +7,9 @@ spec says ranks may shift slightly with the fit but the direction must hold.
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 import pytest
 
 from engine import config, eta, rank
@@ -165,3 +168,26 @@ def test_missing_model_file_falls_back_end_to_end(frames, tmp_path):
     assert out["options"][0]["facility_id"] == "HSP-001"  # stock-driven choice unchanged
     e = out["options"][0]["eta"]
     assert e["p10"] < e["p50"] < e["p90"]
+
+
+# --------------------------------------------------------------------------- hospital dispatch sensitivity
+
+
+def test_hospital_lending_still_wins_if_hospitals_dispatch_slower(frames, eta_model):
+    """The data has no hospital lending, so hospital dispatch time is an assumption.
+    Golden case 1 must keep its top choice, and beat today's quote, even with
+    hospitals up to 3 h slower to dispatch than regional centres."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    import sensitivity
+
+    rows = sensitivity.scenarios("REQ-020421", frames, eta_model, CFG)
+    off, *on = rows
+    assert off["facility_id"] == "RBTC-ELD"
+    assert off["p50"] == pytest.approx(10.3, abs=0.2)  # today's network, honestly
+    assert off["p50"] > off["quote"] == 8.9  # the 8.9 h quote is optimistic
+
+    assert [r["facility_id"] for r in on] == ["HSP-001"] * 4
+    p50s = [r["p50"] for r in on]
+    assert p50s == pytest.approx([2.6, 3.6, 4.6, 5.6], abs=0.15)
+    assert all(p < r["quote"] for p, r in zip(p50s, on))
+    assert [r["advice"] for r in on] == [None, None, None, "consider_emergency_O_or_transfer"]

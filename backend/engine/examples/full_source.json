@@ -1,0 +1,155 @@
+{
+  "request": {
+    "facility_id": "HSP-004",
+    "patient_group": "O+",
+    "units_needed": 1,
+    "requested_at": "2026-10-31T00:58:20",
+    "as_of_stock_date": "2026-10-30"
+  },
+  "mode": "model",
+  "model_used": true,
+  "sharing_allowed": true,
+  "compatibility_note": "From a fixed table. A qualified person crossmatches and releases every unit.",
+  "stock_note": "Yesterday's closing count. Unconfirmed until the supplying site confirms.",
+  "advice": null,
+  "options": [
+    {
+      "rank": 1,
+      "facility_id": "HSP-001",
+      "name": "National Referral Hospital (Nairobi)",
+      "facility_type": "national_referral",
+      "is_hospital": true,
+      "spare": 22,
+      "stock_seen": 96,
+      "near_expiry": 14,
+      "has_backup_power": true,
+      "connectivity": "4G",
+      "travel_hours_map": 0.48,
+      "eta": {
+        "p10": 1.4,
+        "p50": 2.6,
+        "p90": 3.8,
+        "wait_p50": 2.0,
+        "road_p50": 0.57
+      },
+      "flags": [],
+      "reason": "Yesterday's count shows 22 spare compatible units above its own safety stock (unconfirmed). Hospital dispatch time is assumed from regional-centre data: about 2.0 h to pack and dispatch, 0.6 h on the road. Most likely 2.6 h; 8 in 10 arrive within 1.4-3.8 h. 14 units expire within 10 days, so sharing them avoids waste. The lending hospital must agree before any unit moves.",
+      "spare_by_group": {
+        "O+": 21,
+        "O-": 1
+      }
+    },
+    {
+      "rank": 2,
+      "facility_id": "HSP-002",
+      "name": "Eastlands County Hospital",
+      "facility_type": "county_hospital",
+      "is_hospital": true,
+      "spare": 2,
+      "stock_seen": 6,
+      "near_expiry": 0,
+      "has_backup_power": true,
+      "connectivity": "4G",
+      "travel_hours_map": 0.68,
+      "eta": {
+        "p10": 1.6,
+        "p50": 2.8,
+        "p90": 4.0,
+        "wait_p50": 2.0,
+        "road_p50": 0.81
+      },
+      "flags": [],
+      "reason": "Yesterday's count shows 2 spare compatible units above its own safety stock (unconfirmed). Hospital dispatch time is assumed from regional-centre data: about 2.0 h to pack and dispatch, 0.8 h on the road. Most likely 2.8 h; 8 in 10 arrive within 1.6-4.0 h. The lending hospital must agree before any unit moves.",
+      "spare_by_group": {
+        "O+": 2,
+        "O-": 0
+      }
+    },
+    {
+      "rank": 3,
+      "facility_id": "HSP-023",
+      "name": "Naivasha Sub-County Hospital",
+      "facility_type": "sub_county_hospital",
+      "is_hospital": true,
+      "spare": 4,
+      "stock_seen": 10,
+      "near_expiry": 0,
+      "has_backup_power": true,
+      "connectivity": "4G",
+      "travel_hours_map": 2.17,
+      "eta": {
+        "p10": 3.3,
+        "p50": 4.6,
+        "p90": 5.9,
+        "wait_p50": 2.0,
+        "road_p50": 2.59
+      },
+      "flags": [],
+      "reason": "Yesterday's count shows 4 spare compatible units above its own safety stock (unconfirmed). Hospital dispatch time is assumed from regional-centre data: about 2.0 h to pack and dispatch, 2.6 h on the road. Most likely 4.6 h; 8 in 10 arrive within 3.3-5.9 h. The lending hospital must agree before any unit moves.",
+      "spare_by_group": {
+        "O+": 4,
+        "O-": 0
+      }
+    },
+    {
+      "rank": 4,
+      "facility_id": "HSP-024",
+      "name": "Narok County Referral Hospital",
+      "facility_type": "county_referral",
+      "is_hospital": true,
+      "spare": 6,
+      "stock_seen": 8,
+      "near_expiry": 0,
+      "has_backup_power": false,
+      "connectivity": "3G",
+      "travel_hours_map": 2.99,
+      "eta": {
+        "p10": 4.2,
+        "p50": 5.6,
+        "p90": 6.9,
+        "wait_p50": 2.0,
+        "road_p50": 3.57
+      },
+      "flags": [
+        "no_backup_power"
+      ],
+      "reason": "Yesterday's count shows 6 spare compatible units above its own safety stock (unconfirmed). Hospital dispatch time is assumed from regional-centre data: about 2.0 h to pack and dispatch, 3.6 h on the road. Most likely 5.6 h; 8 in 10 arrive within 4.2-6.9 h. Its blood fridge has no backup power. The lending hospital must agree before any unit moves.",
+      "spare_by_group": {
+        "O+": 6,
+        "O-": 0
+      }
+    },
+    {
+      "rank": 5,
+      "facility_id": "HSP-022",
+      "name": "Nakuru County Referral Hospital",
+      "facility_type": "county_referral",
+      "is_hospital": true,
+      "spare": 10,
+      "stock_seen": 36,
+      "near_expiry": 8,
+      "has_backup_power": true,
+      "connectivity": "4G",
+      "travel_hours_map": 3.75,
+      "eta": {
+        "p10": 5.0,
+        "p50": 6.5,
+        "p90": 7.9,
+        "wait_p50": 2.0,
+        "road_p50": 4.48
+      },
+      "flags": [],
+      "reason": "Yesterday's count shows 10 spare compatible units above its own safety stock (unconfirmed). Hospital dispatch time is assumed from regional-centre data: about 2.0 h to pack and dispatch, 4.5 h on the road. Most likely 6.5 h; 8 in 10 arrive within 5.0-7.9 h. 8 units expire within 10 days, so sharing them avoids waste. The lending hospital must agree before any unit moves.",
+      "spare_by_group": {
+        "O+": 10,
+        "O-": 0
+      }
+    }
+  ],
+  "baseline": {
+    "facility_id": "RBTC-ELD",
+    "name": "Eldoret Regional Blood Transfusion Centre",
+    "quote_hours": 8.9,
+    "rule": "Supply centre first, then the nearest regional centres. Quote = map time + 2 h."
+  }
+}

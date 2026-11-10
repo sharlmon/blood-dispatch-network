@@ -198,7 +198,7 @@ If your numbers are far off, check the join and the emergency-type filter before
 ```json
 {
   "request": {"facility_id": "HSP-004", "patient_group": "O+", "units_needed": 1,
-              "requested_at": "2026-10-31T00:58:00", "as_of_stock_date": "2026-10-30"},
+              "requested_at": "2026-10-31T00:58:20", "as_of_stock_date": "2026-10-30"},
   "mode": "model",
   "model_used": true,
   "sharing_allowed": true,
@@ -212,15 +212,16 @@ If your numbers are far off, check the join and the emergency-type filter before
       "name": "National Referral Hospital (Nairobi)",
       "facility_type": "national_referral",
       "is_hospital": true,
-      "spare": 24,
+      "spare": 22,
       "stock_seen": 96,
-      "near_expiry": 3,
+      "near_expiry": 14,
       "has_backup_power": true,
       "connectivity": "4G",
       "travel_hours_map": 0.48,
-      "eta": {"p10": 1.4, "p50": 2.6, "p90": 3.8, "wait_p50": 2.0, "road_p50": 0.58},
+      "eta": {"p10": 1.4, "p50": 2.6, "p90": 3.8, "wait_p50": 2.0, "road_p50": 0.57},
       "flags": [],
-      "reason": "Has 24 spare compatible units above its own safety stock. About 2.0 h to pack and dispatch, 0.6 h on the road. Most likely 2.6 h; 8 in 10 arrive within 1.4-3.8 h. 3 units expire within 10 days, so sharing them avoids waste."
+      "reason": "Yesterday's count shows 22 spare compatible units above its own safety stock (unconfirmed). Hospital dispatch time is assumed from regional-centre data: about 2.0 h to pack and dispatch, 0.6 h on the road. Most likely 2.6 h; 8 in 10 arrive within 1.4-3.8 h. 14 units expire within 10 days, so sharing them avoids waste. The lending hospital must agree before any unit moves.",
+      "spare_by_group": {"O+": 21, "O-": 1}
     }
   ],
   "baseline": {
@@ -231,6 +232,16 @@ If your numbers are far off, check the join and the emergency-type filter before
   }
 }
 ```
+
+The example above is the engine's real output for golden case 1 (updated 2026-11-10).
+The full set of sample outputs is in `backend/engine/examples/`.
+
+**Changes since the first version** (additive only; no key renamed or removed):
+- `spare_by_group` on each option (2026-11-10): `spare` split by blood group, so a
+  clinician sees which groups would be lent.
+- Reason wording (2026-11-10): stock is always "yesterday's count ... (unconfirmed)".
+  Hospital reasons say dispatch time is assumed from regional-centre data and that the
+  lending hospital must agree.
 
 Flags vocabulary: `no_backup_power`, `partial`, `group_unknown_emergency_O`,
 `o_neg_reserve_applied`, `low_connectivity_2g`.
