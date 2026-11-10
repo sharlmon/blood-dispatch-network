@@ -6,6 +6,22 @@ const { data: health, error } = demo
   ? { data: ref(null), error: ref(null) }
   : useFetch<{ status: string }>(`${apiBase}/api/health`, { lazy: true, server: false })
 const online = computed(() => demo || (health.value?.status === 'ok' && !error.value))
+
+// Signed in: ask the server who it thinks we are (it verifies the Clerk session itself).
+const verified = ref<'unknown' | 'ok' | 'no'>('unknown')
+onMounted(() => {
+  if (!authEnabled || demo) return
+  const { isSignedIn, orgId } = useAuth()
+  const { api } = useApi()
+  watch([isSignedIn, orgId], async ([signed]) => {
+    if (!signed) { verified.value = 'unknown'; return }
+    try {
+      const me = await api<{ org_id: string | null }>('/api/me')
+      verified.value = me.org_id ? 'ok' : 'unknown'
+    } catch { verified.value = 'no' }
+  }, { immediate: true })
+})
+const label = computed(() => demo ? 'Demo data' : !online.value ? 'Offline' : verified.value === 'no' ? 'Not verified' : verified.value === 'ok' ? 'Live · verified' : 'Live')
 const { request } = useDispatch()
 </script>
 
@@ -32,8 +48,8 @@ const { request } = useDispatch()
         </template>
         <span v-else class="site">Hillside Hospital · demo</span>
       </div>
-      <span class="status" :class="online ? 'ok' : 'down'" role="status">
-        <i /> {{ demo ? 'Demo data' : online ? 'Live' : 'Offline' }}
+      <span class="status" :class="online && verified !== 'no' ? 'ok' : 'down'" role="status">
+        <i /> {{ label }}
       </span>
     </header>
     <div v-if="!online" class="fallback" role="alert">
