@@ -127,7 +127,7 @@ def test_seed_empty_database(tmp_path):
     assert result.exit_code == 0
     client = app.test_client()
     assert len(client.get('/api/facilities').json['items']) == 2
-    assert client.get('/api/ready').status_code == 503  # no engine dataset loaded
+    assert client.get('/api/ready').status_code == 503  # seed stock is not a validated previous-day snapshot
 
 
 def test_insufficient_stock_rolls_back(client):

@@ -37,7 +37,7 @@ Every HTTP POST/PUT mutation except the separately signed SMS webhook requires a
 path, method and exact body returns the saved response. Reusing it with different
 input returns 409. Authorization context is part of the key scope. Response storage,
 stock changes, and audit writes commit in one SQLite transaction. Failed requests
-roll back and do not consume the key. There is no automatic retention cleanup yet.
+roll back and do not consume the key. Cached response payloads are compacted after the configured retention period by the maintenance worker. Retry-key tombstones remain, so an expired cached response returns 409 without repeating the mutation. See deployment.md.
 
 Errors use `{"error":{"code":"...","message":"..."}}`, including framework
 404/405 errors. Validation errors return 400, authorization failures 403, missing
@@ -256,3 +256,6 @@ CONTRIBUTING.md requires whole-team review for group-O fallback, lending limits 
 human-approval behavior before merging. Clerk organization mappings, gateway secrets,
 a real synthetic dataset, and deployment scheduling are environment configuration;
 this repository does not create them automatically.
+
+Production setup, scheduled maintenance, backup/restore and dataset acceptance tools
+are documented in [deployment.md](deployment.md).

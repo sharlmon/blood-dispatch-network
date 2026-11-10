@@ -27,11 +27,13 @@ def create_app(settings_path: str | None = None, test_config: dict | None = None
 
     from engine.config import load_config
     app.config.update(
+        APP_ENV=os.environ.get('APP_ENV', 'development'),
+        IDEMPOTENCY_RETENTION_DAYS=int(os.environ.get('IDEMPOTENCY_RETENTION_DAYS', '30')),
         ENGINE_CONFIG=load_config(path=os.environ.get('ENGINE_SETTINGS_FILE')),
         ORG_FACILITY_MAP=json.loads(os.environ.get('ORG_FACILITY_MAP', '{}')),
         SMS_SENDERS=json.loads(os.environ.get('SMS_SENDERS', '{}')),
         SMS_WEBHOOK_SECRET=os.environ.get('SMS_WEBHOOK_SECRET'),
-        RESULTS_DIR=str(Path(__file__).resolve().parents[2] / 'results'),
+        RESULTS_DIR=os.environ.get('RESULTS_DIR', str(Path(__file__).resolve().parents[2] / 'results')),
         MAX_CONTENT_LENGTH=64 * 1024,
     )
     if test_config:
@@ -46,6 +48,11 @@ def create_app(settings_path: str | None = None, test_config: dict | None = None
         for value in senders.values()
     ):
         raise ValueError('SMS_SENDERS must map sender numbers to user_id, org_id and facility_id')
+    if app.config['IDEMPOTENCY_RETENTION_DAYS'] < 1:
+        raise ValueError('IDEMPOTENCY_RETENTION_DAYS must be at least 1')
+    hour = app.config['SETTINGS'].get('prealert', {}).get('run_hour', 18)
+    if type(hour) is not int or not 0 <= hour <= 23:
+        raise ValueError('prealert.run_hour must be an integer from 0 to 23')
     app.config['ENGINE_CONFIG']['sharing_allowed'] = (app.config['ENGINE_CONFIG']['sharing_allowed'] and app.config['SETTINGS']['lending']['enabled'])
 
     from .storage import init_app
@@ -69,6 +76,19 @@ def create_app(settings_path: str | None = None, test_config: dict | None = None
     # Test/local configuration is applied after environment-derived auth defaults.
     if test_config and 'AUTH_DISABLED' in test_config:
         app.config['AUTH_DISABLED'] = test_config['AUTH_DISABLED']
+
+    from .deployment import production_errors
+    if app.config['APP_ENV'] == 'production':
+        errors = production_errors(app)
+        if errors:
+            raise ValueError('; '.join(errors))
+
+    from .observability import init_logging
+    init_logging(app)
+    from .ops_commands import register as register_operations
+    register_operations(app)
+    from .validation import register as register_validation
+    register_validation(app)
 
     from werkzeug.exceptions import HTTPException
     @app.errorhandler(HTTPException)

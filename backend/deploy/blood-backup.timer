@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily Blood Dispatch backup at 02:00 East Africa Time
+
+[Timer]
+OnCalendar=*-*-* 02:00:00 Africa/Nairobi
+Persistent=true
+RandomizedDelaySec=300
+Unit=blood-backup.service
+
+[Install]
+WantedBy=timers.target

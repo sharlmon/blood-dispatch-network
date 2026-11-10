@@ -1,0 +1,17 @@
+[Unit]
+Description=Verified Blood Dispatch workflow database backup
+
+[Service]
+Type=oneshot
+User=blood
+Group=blood
+WorkingDirectory=/opt/blood-dispatch-network/backend
+EnvironmentFile=/etc/blood-dispatch/backend.env
+Environment=APP_ENV=production
+ExecStart=/opt/blood-dispatch-network/backend/.venv/bin/python -m flask --app wsgi backup-db --directory /var/lib/blood-dispatch/backups
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/blood-dispatch

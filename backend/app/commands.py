@@ -1,4 +1,6 @@
 import click
+from flask import current_app
+from zoneinfo import ZoneInfo
 
 from .storage import get_db
 from .workflow import now
@@ -18,7 +20,7 @@ def register(app):
                 ('DEMO-C1', 'Synthetic Demo Centre', 'centre'),
             ])
             db.execute('INSERT INTO inventory VALUES(?,?,?,?,?,?,?)',
-                       ('DEMO-C1', 'A+', 'red_cells', 10, 0, 2, now().isoformat()))
+                       ('DEMO-C1', 'A+', 'red_cells', 10, 0, 2, now().astimezone(ZoneInfo(current_app.config['SETTINGS']['timezone'])).isoformat()))
         click.echo('Inserted synthetic DEMO-H1 and DEMO-C1; no real facility data used.')
 
 
