@@ -171,6 +171,7 @@ def rank_sources(
 
     ``request`` = {request_id?, facility_id, patient_group, units_needed, component: "RBC",
     clinical_indication?, requested_at}. Works for any requested_at in the dataset.
+    ``clinical_indication`` is accepted but not used or echoed; don't send patient identifiers.
     """
     if mode not in ("model", "baseline"):
         raise ValueError(f"mode must be 'model' or 'baseline', got {mode!r}.")
@@ -240,7 +241,6 @@ def request_from_dataset(frames: Frames, request_id: str) -> dict:
         "patient_group": r["patient_blood_group"],
         "units_needed": int(r["units_requested"]),
         "component": r["component_requested"],
-        "clinical_indication": r["clinical_indication"],
         "requested_at": r["requested_at"],
     }
 
