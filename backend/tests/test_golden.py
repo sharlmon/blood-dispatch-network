@@ -62,10 +62,15 @@ def test_case_1_westlands_nearby_hospitals_beat_todays_rule(golden, frames):
 
 
 def test_case_1_reason_text(golden):
-    reason = golden("REQ-020421")["options"][0]["reason"]
-    assert reason.startswith("Has 22 spare compatible units above its own safety stock.")
+    top = golden("REQ-020421")["options"][0]
+    reason = top["reason"]
+    assert reason.startswith(
+        "Yesterday's count shows 22 spare compatible units above its own safety stock (unconfirmed).")
+    assert "Hospital dispatch time is assumed from regional-centre data" in reason
     assert "Most likely 2.6 h" in reason
     assert "14 units expire within 10 days, so sharing them avoids waste." in reason
+    assert reason.endswith("The lending hospital must agree before any unit moves.")
+    assert top["spare_by_group"] == {"O+": 21, "O-": 1}
 
 
 # --------------------------------------------------------------------------- case 2

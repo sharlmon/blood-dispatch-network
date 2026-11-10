@@ -129,6 +129,9 @@ def _option_json(rank: int, s: Scored, extra_flags: list[str]) -> dict:
         "eta": _eta_json(s.eta),
         "flags": list(c.flags) + extra_flags,
         "reason": "",
+        # Added 2026-11-10 (additive): spare units per compatible blood group,
+        # e.g. {"O+": 21, "O-": 1}, so a clinician sees which groups would be lent.
+        "spare_by_group": {g: int(n) for g, n in c.spare_by_group.items()},
     }
 
 
@@ -192,7 +195,8 @@ def rank_sources(
         options = [_option_json(i, s, extra) for i, s in enumerate(picked, 1)]
         for opt in options:
             opt["reason"] = reasons.option_reason(
-                opt, need, config["near_expiry_days"], eta_model.model_used, group
+                opt, need, config["near_expiry_days"], eta_model.model_used, group,
+                hospital_extra_h=config["hospital_extra_dispatch_h"],
             )
     else:
         has_full = bool(baseline)

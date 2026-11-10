@@ -75,7 +75,8 @@ TOP_KEYS = ["request", "mode", "model_used", "sharing_allowed", "compatibility_n
 REQUEST_KEYS = ["facility_id", "patient_group", "units_needed", "requested_at", "as_of_stock_date"]
 OPTION_KEYS = ["rank", "facility_id", "name", "facility_type", "is_hospital", "spare", "stock_seen",
                "near_expiry", "has_backup_power", "connectivity", "travel_hours_map", "eta",
-               "flags", "reason"]
+               "flags", "reason",
+               "spare_by_group"]  # additive field, 2026-11-10
 ETA_KEYS = ["p10", "p50", "p90", "wait_p50", "road_p50"]
 BASELINE_KEYS = ["facility_id", "name", "quote_hours", "rule"]
 FLAG_VOCAB = {"no_backup_power", "partial", "group_unknown_emergency_O",
@@ -103,6 +104,9 @@ def assert_contract(out):
         assert o["eta"]["p10"] <= o["eta"]["p50"] <= o["eta"]["p90"]
         assert set(o["flags"]) <= FLAG_VOCAB
         assert isinstance(o["reason"], str) and o["reason"]
+        assert all(type(v) is int for v in o["spare_by_group"].values())
+        assert sum(o["spare_by_group"].values()) == o["spare"]
+        assert "unconfirmed" in o["reason"]
     json.loads(json.dumps(out))  # plain JSON types only
 
 
@@ -264,21 +268,54 @@ def test_missing_eta_model_falls_back_without_crashing(tmp_path):
 # --------------------------------------------------------------------------- reasons
 
 
-def test_reason_matches_the_spec_example_word_for_word():
-    option = {"is_hospital": True, "spare": 24, "near_expiry": 3, "flags": [],
-              "eta": {"p10": 1.4, "p50": 2.6, "p90": 3.8, "wait_p50": 2.0, "road_p50": 0.58}}
-    assert reasons.option_reason(option, need=1, days=10, model_used=True, patient_group="O+") == (
-        "Has 24 spare compatible units above its own safety stock. About 2.0 h to pack and "
+HOSPITAL_OPTION = {"is_hospital": True, "spare": 22, "near_expiry": 14, "flags": [],
+                   "eta": {"p10": 1.4, "p50": 2.6, "p90": 3.8, "wait_p50": 2.0, "road_p50": 0.57}}
+
+
+def test_hospital_reason_matches_the_spec_example_word_for_word():
+    assert reasons.option_reason(HOSPITAL_OPTION, need=1, days=10, model_used=True, patient_group="O+") == (
+        "Yesterday's count shows 22 spare compatible units above its own safety stock (unconfirmed). "
+        "Hospital dispatch time is assumed from regional-centre data: about 2.0 h to pack and "
         "dispatch, 0.6 h on the road. Most likely 2.6 h; 8 in 10 arrive within 1.4-3.8 h. "
-        "3 units expire within 10 days, so sharing them avoids waste."
+        "14 units expire within 10 days, so sharing them avoids waste. "
+        "The lending hospital must agree before any unit moves."
     )
+
+
+def test_hospital_reason_names_the_extra_dispatch_assumption():
+    r = reasons.option_reason(HOSPITAL_OPTION, need=1, days=10, model_used=True,
+                              patient_group="O+", hospital_extra_h=2.0)
+    assert "assumed from regional-centre data plus 2.0 h:" in r
+
+
+def test_centre_reason_never_states_stock_as_fact():
+    centre = {**HOSPITAL_OPTION, "is_hospital": False, "spare": 3, "near_expiry": 0}
+    r = reasons.option_reason(centre, need=1, days=10, model_used=True, patient_group="O+")
+    assert r.startswith("Regional centre: yesterday's count shows 3 compatible units (unconfirmed).")
+    assert "assumed" not in r and "must agree" not in r
+
+
+def test_baseline_reason_explains_a_quote_below_the_honest_range():
+    opt = {"flags": [], "spare": 61,
+           "eta": {"p10": 8.3, "p50": 10.3, "p90": 12.3, "wait_p50": 2.0, "road_p50": 8.3}}
+    r = reasons.baseline_reason(opt, is_supply_centre=False, quote=8.9, model_used=True)
+    assert "Today's quote would be 8.9 h (map time + 2 h, no range)." in r
+    assert "Past emergency deliveries like this took longer than the quote" in r
+    assert "Most likely 10.3 h" in r
+
+
+def test_spare_by_group_shows_which_groups_are_lent():
+    fr = make_frames([("HSP-B", "O+", 10), ("HSP-B", "O-", 6)],
+                     usual_rows=[("HSP-B", "O+", 4), ("HSP-B", "O-", 1)])
+    out = run(fr)
+    assert out["options"][0]["spare_by_group"] == {"O+": 6, "O-": 4}
 
 
 def test_reason_singular_and_site_flags():
     fr = make_frames([("HSP-C", "O+", 3)], unit_rows=expiring("HSP-C", 1))
     out = run(fr, request={**REQUEST, "units_needed": 1})
     r = out["options"][0]["reason"]
-    assert r.startswith("Has 1 spare compatible unit above its own safety stock.")
+    assert r.startswith("Yesterday's count shows 1 spare compatible unit above its own safety stock (unconfirmed).")
     assert "1 unit expires within 10 days" in r
     assert "Its blood fridge has no backup power." in r
     assert "It has 2G only, so confirmation may be slow." in r
