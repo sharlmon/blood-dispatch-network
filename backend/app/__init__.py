@@ -50,7 +50,7 @@ def _register_error_handlers(app: Flask) -> None:
 
 
 def _start_warm_up(engine) -> None:
-    """Load the engine in the background so the first click does not wait for the data (~15 s)."""
+    """Load the engine in the background so the first click does not wait for the data (~5 s on the starter data)."""
     if os.environ.get("ENGINE_WARMUP", "1").strip().lower() in ("0", "false", "no", "off"):
         return
     if engine.status()["state"] != "idle":  # an injected engine that is already ready

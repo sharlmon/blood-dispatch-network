@@ -9,6 +9,8 @@ Four views:
 
 Owners: **FS1** Full-stack 1 · **FS2** Full-stack 2 · **DS1** Data scientist 1 · **DS2** Data scientist 2 · **FE** Frontend.
 
+[Where it lives now](#where-it-lives-now) maps each component to its code and endpoints.
+
 ## 1. Whole system
 
 ```mermaid
@@ -30,7 +32,7 @@ flowchart TB
         RTAB["Results tab · FE"]
     end
 
-    subgraph BACKEND["Backend · Python · FastAPI"]
+    subgraph BACKEND["Backend · Python · Flask"]
         direction LR
         SMSP["SMS parser · FS2<br/>text to structured request"]
         API["HTTP API · FS1"]
@@ -157,11 +159,27 @@ flowchart TB
     ADV -- yes --> ADV2["advice: consider_emergency_O_or_transfer"] --> OUT
     ADV -- no --> OUT
 
-    REQ --> BASE["Baseline mode · today's rule, also the fallback<br/>supply centre if it has enough,<br/>else 2 nearest regional centres by road_km<br/>quote = map time + 2 h, no range"]
+    REQ --> BASE["Baseline mode · today's rule, also the fallback<br/>supply centre if it has enough,<br/>else the nearest other regional centre<br/>with enough stock, by road_km<br/>quote = map time + 2 h, no range"]
     BASE --> OUT
 
     OUT["reasons.py · string templates filled with computed numbers<br/>JSON: options + baseline + notes + flags"]
 ```
+
+## Where it lives now
+
+| Component | Code and endpoints | Notes |
+|---|---|---|
+| Web screens | `frontend/app/pages/`: `request.vue`, `results.vue`, `track.vue`, `prealerts.vue`, `evidence.vue` | API contract and adapter in `frontend/app/utils/engine.ts`; see [frontend/README.md](../../frontend/README.md) |
+| HTTP API | `backend/app/` (`routes.py`), all under `/api` | Flask; endpoint list in [backend/README.md](../../backend/README.md#endpoints) |
+| Workflow and audit log | `backend/workflow/store.py`; `POST /api/requests`, `GET /api/requests/<id>`, `POST /api/requests/<id>/events` | The API's own SQLite (`DB_PATH`). A person records every step, including the confirmation timeout; no server timer |
+| Ranking | `backend/engine/` (`rank.py`, `stock.py`, `compat.py`, `reasons.py`), served by `backend/app/engine_service.py`; `POST /api/rank`, `POST /api/requests` | Data from `data/blood.db`, built by `backend/scripts/build_db.py` |
+| Arrival ranges | Live: `backend/engine/eta.py` (`data/eta_model.json`, from `backend/scripts/fit_eta.py`). Replay and evaluation: `backend/engine/arrival/` | |
+| Evening pre-alert | `backend/engine/prealert/`, run by `scripts/evaluate_ds2.py` into `results/prealerts.json`; `GET /api/prealerts`; the `/prealerts` screen | Generated offline, not at the evening hour |
+| Replay | `backend/engine/replay/` (`runner.py`, `ds1_provider.py`), run by `scripts/evaluate_ds2.py` into `results/*.json` | Independent requests, not a stateful simulation |
+| Results tab | The `/evidence` screen; `GET /api/results`, `GET /api/results/<name>?scenario=<folder>` | Public; the static demo build reads the same committed files |
+| Country settings | `backend/config/kenya.yaml` (engine, `ENGINE_COUNTRY`), `backend/config/settings.default.yaml` (API and DS2), `DEMO_CLOCK` | |
+| SMS parser | `backend/sms/` | Not built yet |
+| Fallback mode | The phone-process banner in `frontend/app/layouts/default.vue` | Shown when the API is unreachable or the engine is down |
 
 ## Safety principles and where they live
 
@@ -174,7 +192,7 @@ flowchart TB
 | No LLM produces any number; reasons are templates | Ranking (`reasons.py`) |
 | A hospital lends only what it can spare; O- reserve is protected | Ranking (`stock.py`) + country settings |
 | Stock is yesterday's count until the supplying site confirms | Workflow confirm step + `stock_note` |
-| Every action is recorded | Audit log |
-| If the tool fails, everyone falls back to the phone process | Fallback mode |
+| Every action is recorded | Audit log (`workflow/store.py`) |
+| If the tool fails, everyone falls back to the phone process | Fallback mode (the phone-process banner) |
 | A new country is a new settings file, no code change | Country settings |
-| No patient identifier is collected; the engine stores only the request fields it uses | Ranking (`load.py`); see [DATA_PROTECTION.md](../DATA_PROTECTION.md) |
+| No patient identifier is collected; the engine stores only the request fields it uses | Ranking (`load.py`) and the API's request store (`workflow/store.py`); see [DATA_PROTECTION.md](../DATA_PROTECTION.md) |
