@@ -8,7 +8,7 @@ It's 1 a.m. A patient needs blood urgently and the hospital fridge doesn't have 
 
 1. The lab worker enters what the patient needs, on a computer or by **SMS from a basic phone**.
 2. The tool checks every nearby blood centre and hospital and lists those with **spare, compatible units**. A hospital only shares what it can spare, so it never leaves itself short.
-3. Each option gets an **honest arrival window**, e.g. "most likely 2½ h, almost certainly 2–3½ h".
+3. Each option gets an **honest arrival window**, e.g. "median 2½ h, estimated 80% interval 2–3½ h".
 4. The lab worker picks one. The supplying site **confirms the units are on the shelf**, then dispatches.
 5. If the wait is too long, the tool says so plainly so the clinician can act now (emergency group O, or transfer the patient).
 6. **Evening pre-alert:** lists hospitals that have run out of the most common blood type so the centre can top them up before the 1 a.m. emergency.
@@ -23,11 +23,15 @@ It's 1 a.m. A patient needs blood urgently and the hospital fridge doesn't have 
 
 ## Why it matters (synthetic data, Nov 2025 – Oct 2026)
 
-- Blood would have arrived ~**2 hours sooner** on average.
-- ~**290** patients who got nothing could have had blood within 6 hours.
-- Checking the six regional centres alone reaches 208 of 617 unmet requests within 6 h; hospital lending adds ~80.
+The earlier concept estimates (~2 hours sooner and ~290 additional patients)
+have not been reproduced by the implementation in this repository. The DS2
+pipeline now produces a chronological held-out evaluation, baseline comparisons,
+and explicit assumptions in `results/*.json`.
 
-**Limitations:** hospital lending is assumed (none observed in data); yesterday's stock may be gone by request time (confirmation timeout moves to next site); remote hospitals gain little; all figures are synthetic and exploratory.
+See [DS2 implementation and reproducible evaluation](docs/ds2-implementation.md)
+for commands, integration contracts, data cleaning, test periods and limitations.
+Snapshot replay counts potential opportunities, not unique patients served;
+hospital lending remains an unobserved assumption.
 
 ## Architecture
 
@@ -139,6 +143,12 @@ See [backend/README.md](backend/README.md) and [frontend/README.md](frontend/REA
 | Frontend | Screens, results tab, video script and recording |
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for workflow.
+
+## AI tools
+
+Codex assisted with the DS2 arrival model, data cleaning, replay evaluation,
+pre-alert tests, documentation and results artifacts. The numerical results come
+from deterministic code operating on the synthetic starter dataset.
 
 ## License
 
