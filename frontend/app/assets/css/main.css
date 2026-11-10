@@ -1,0 +1,99 @@
+/* Triage palette: red is reserved for blood and the single next action. */
+:root {
+  --blood-500: #b3171e;
+  --blood-600: #9a1319;
+  --blood-700: #7e1015;
+  --blood-50: #fdecea;
+  --blush: #f8e4e1;
+  --wine: #3b0a0e;
+  --ink: #12202b;
+  --slate: #4a5b68;
+  --line: #e6d3cf;
+  --fog: #e9eef1;
+  --paper: #fbf3f1;
+  --white: #fff;
+  --water: #cfe3ee;
+  --park: #dceadf;
+  --alt-route: #7c909f;
+  --azure-600: #1d6fd8;
+  --azure-50: #e5f0fd;
+  --teal-600: #0b7f73;
+  --teal-50: #e2f3f0;
+  --amber-500: #c77700;
+  --amber-700: #8a4b00;
+  --amber-900: #5a3000;
+  --amber-50: #fff1d6;
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --shadow-float: 0 4px 14px rgba(18, 32, 43, 0.14);
+  --header-h: 78px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: Manrope, system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--azure-600); outline-offset: 2px; }
+.tnum { font-variant-numeric: tabular-nums; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 0 20px; border-radius: 16px; border: 1px solid var(--line);
+  background: var(--white); font-weight: 800; font-size: 15px; text-decoration: none; color: var(--ink);
+}
+.btn-primary { background: var(--blood-500); border-color: var(--blood-500); color: #fff; }
+.btn-primary:hover { background: var(--blood-700); border-color: var(--blood-700); }
+.btn-dark { background: var(--ink); border-color: var(--ink); color: #fff; }
+.btn-outline-blood { border: 2px solid var(--blood-500); color: var(--blood-500); }
+.card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.muted { color: var(--slate); }
+
+/* ---------- Theme: blush, grain, organic shapes ---------- */
+body {
+  background:
+    radial-gradient(900px 520px at 15% -8%, #fff 0%, rgba(255, 255, 255, 0) 70%),
+    linear-gradient(180deg, #fdf7f5 0%, #f8e6e2 100%);
+  background-attachment: fixed;
+}
+h1, h2 { text-wrap: balance; }
+.btn { border-radius: 99px; transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease; }
+.btn:active { transform: scale(0.97); }
+.btn-primary { box-shadow: 0 8px 20px rgba(179, 23, 30, 0.28); }
+.card { background: rgba(255, 255, 255, 0.78); border-color: var(--line); backdrop-filter: blur(6px); }
+.organic {
+  background: linear-gradient(180deg, #fff 0%, var(--blood-50) 100%);
+  border: 1.5px solid var(--blood-500);
+  border-radius: 30px 38px 32px 40px / 36px 30px 40px 32px;
+}
+.chip {
+  display: inline-flex; align-items: center; gap: 10px; padding: 6px 18px 6px 6px; border-radius: 99px;
+  border: 1.5px solid var(--blood-500); background: linear-gradient(180deg, #fff, var(--blood-50));
+  color: var(--blood-700); font-weight: 800; font-size: 14px; text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.chip:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(179, 23, 30, 0.18); }
+.chip-ico { width: 38px; height: 38px; border-radius: 99px; display: grid; place-items: center; background: radial-gradient(circle at 30% 25%, #fff, #f3c9c4); color: var(--blood-500); }
+
+/* ---------- Small animations (all respect reduced motion) ---------- */
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes pop { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: none; } }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes ring { 0% { box-shadow: 0 0 0 0 rgba(179, 23, 30, 0.45); } 100% { box-shadow: 0 0 0 12px rgba(179, 23, 30, 0); } }
+.rise { animation: rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--d, 0ms); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ---------- Grain, like a printed poster ---------- */
+body::after {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 60; opacity: 0.16; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .1 0 0 0 0 .1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.hand { font-family: Caveat, cursive; }
+.organic-card { border-radius: 40px 44px 40px 46px / 44px 40px 46px 40px; }

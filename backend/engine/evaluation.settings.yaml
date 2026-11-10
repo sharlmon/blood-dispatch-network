@@ -1,0 +1,15 @@
+# Offline experiment settings only. This file does not change live lending rules.
+arrival:
+  min_training_samples: 20
+  seed: 42
+prealert:
+  blood_groups: [O+]
+  components: [RBC, WB]  # Separate alerts; these components are never pooled.
+  run_hour: 18
+  horizon_hours: 24
+replay:
+  components: [RBC]
+  urgencies: [emergency]
+  deadline_hours: 6
+  # No hospital is assumed eligible without an explicit experimental reserve.
+  hospital_reserve_units: {}

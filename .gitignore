@@ -2,15 +2,20 @@
 data/*
 !data/README.md
 .env
+.env.*
+!.env.example
+.clerk/
 *.pdf
 # python
 __pycache__/
 *.pyc
 .venv/
 .pytest_cache/
+.test-tmp/
+.pytest-tmp*/
 # node
 node_modules/
-dist/
+dist
 .next/
 # os/editor
 .DS_Store

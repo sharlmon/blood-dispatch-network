@@ -1,0 +1,266 @@
+{
+  "cleaning_performed": true,
+  "dataset_manifest": {
+    "daily_stock.csv": {
+      "rows": 185785,
+      "sha256": "b57e9df0622b1d7318e37da44969d07bd8b1f6a235f0be3021538dcf5a2f5130"
+    },
+    "facilities.csv": {
+      "rows": 47,
+      "sha256": "9cb53f2975de71ce1aa3f43f1e6d9ebf19901e8c77c56c27071ca2eeb1e1cf13"
+    },
+    "requests.csv": {
+      "rows": 17430,
+      "sha256": "68dc3cc50343d2ef306ebb8a3afb75adc6766c5ef95d1eb01d7d566d9bfbb557"
+    },
+    "routes.csv": {
+      "rows": 2162,
+      "sha256": "e7e6bcbeb199f99e52c72e990f156d7dc1df2d4a36faf5204933c81e5a934e74"
+    },
+    "transfers.csv": {
+      "rows": 35181,
+      "sha256": "00ca80de55df4489987e364e03ca4a52105af9519d5e86e6045a99f1cdf45987"
+    }
+  },
+  "generated_at": "2026-11-10T15:00:56.963574+03:00",
+  "result": {
+    "cleaning_policy_version": "conservative_v1",
+    "corrections": {
+      "components_normalized": 0,
+      "facility_names_canonicalized": 1314,
+      "temperature_sentinels_removed": 55,
+      "timestamps_normalized": 0,
+      "whitespace_trimmed_cells": 618
+    },
+    "exclusions": {
+      "exact_duplicate_rows": 0,
+      "other_rows": 0
+    },
+    "files": {
+      "daily_stock.csv": {
+        "cleaned_rows": 185785,
+        "cleaned_sha256": "b57e9df0622b1d7318e37da44969d07bd8b1f6a235f0be3021538dcf5a2f5130",
+        "exact_duplicate_rows_removed": 0,
+        "flagged_rows": 0,
+        "flags": {},
+        "source_rows": 185785,
+        "source_sha256": "d053c55436b888463ac32d9a771f5ea070a62b4f90c3bd212a8b814f2ac73ef0"
+      },
+      "donations.csv": {
+        "cleaned_rows": 47363,
+        "cleaned_sha256": "ca98ea5f826dcb0d7765d55ed2144055ed5fba60043e4a7dd453c776b1b8ce07",
+        "exact_duplicate_rows_removed": 0,
+        "flagged_rows": 102,
+        "flags": {
+          "short_donation_gap_review": 102
+        },
+        "source_rows": 47363,
+        "source_sha256": "0740465505a33657da206a0a1b0a878a2f1c4697002633bb7a6dda7378a531cf"
+      },
+      "donors.csv": {
+        "cleaned_rows": 43363,
+        "cleaned_sha256": "dd69b462b2749bf8c36edf0dc7c200240964d9771ddfd145cbd1d067be7cd547",
+        "exact_duplicate_rows_removed": 0,
+        "flagged_rows": 1392,
+        "flags": {
+          "missing_blood_group": 506,
+          "possible_duplicate_donor_review": 904
+        },
+        "source_rows": 43363,
+        "source_sha256": "b59ed099e20a7c27f5edc45e9d121b0245a45b7f1e30d2de189b58ef77e47486"
+      },
+      "drives.csv": {
+        "cleaned_rows": 1091,
+        "cleaned_sha256": "e0db6f64ae27d088d263f95cdcfe438d7d80cb31f9c1d52ebb72d7e4cee322ea",
+        "exact_duplicate_rows_removed": 0,
+        "flagged_rows": 0,
+        "flags": {},
+        "source_rows": 1091,
+        "source_sha256": "c3329f42c88314e79cb486e37cfddca3ecfaadbcd9005920ed4189f51bfe6bc6"
+      },
+      "facilities.csv": {
+        "cleaned_rows": 47,
+        "cleaned_sha256": "9cb53f2975de71ce1aa3f43f1e6d9ebf19901e8c77c56c27071ca2eeb1e1cf13",
+        "exact_duplicate_rows_removed": 0,
+        "flagged_rows": 0,
+        "flags": {},
+        "source_rows": 47,
+        "source_sha256": "270565fd9431fc184e786faf82cded0539078b4b4b37942cda4bf3a4a7742d03"
+      },
+      "power_outages.csv": {
+        "cleaned_rows": 2609,
+        "cleaned_sha256": "8a00c708d77bd2ae2b26d2c995dbf29551b713d408eecfc5b6c6daeeb39029e0",
+        "exact_duplicate_rows_removed": 0,
+        "flagged_rows": 0,
+        "flags": {},
+        "source_rows": 2609,
+        "source_sha256": "b413c9aab57321c7fa13beb38580e1df5a7eacde5fb6699102514753aed84536"
+      },
+      "requests.csv": {
+        "cleaned_rows": 17430,
+        "cleaned_sha256": "68dc3cc50343d2ef306ebb8a3afb75adc6766c5ef95d1eb01d7d566d9bfbb557",
+        "exact_duplicate_rows_removed": 0,
+        "flagged_rows": 442,
+        "flags": {
+          "unknown_patient_blood_group": 442
+        },
+        "source_rows": 17430,
+        "source_sha256": "6d654c57e0257e89fedb69a26627e4956f03e173504837ded0cd8dae487c086c"
+      },
+      "routes.csv": {
+        "cleaned_rows": 2162,
+        "cleaned_sha256": "e7e6bcbeb199f99e52c72e990f156d7dc1df2d4a36faf5204933c81e5a934e74",
+        "exact_duplicate_rows_removed": 0,
+        "flagged_rows": 0,
+        "flags": {},
+        "source_rows": 2162,
+        "source_sha256": "9574213eb5772c27f0fff6d13a58bd84b64330d3760a48ba24884745a80fa389"
+      },
+      "temperature_logs.csv": {
+        "cleaned_rows": 399280,
+        "cleaned_sha256": "39bcf7c5c9ae5df89dacc73ff3853206c9ff8082b3242c4af496debc6652cb79",
+        "exact_duplicate_rows_removed": 0,
+        "flagged_rows": 55,
+        "flags": {
+          "documented_temperature_sensor_glitch": 55
+        },
+        "source_rows": 399280,
+        "source_sha256": "aa1aa915ac7c9e3329f70ec06431d0f1ca210d11a5c0f98c06d3d06e3a158d01"
+      },
+      "transfers.csv": {
+        "cleaned_rows": 35181,
+        "cleaned_sha256": "00ca80de55df4489987e364e03ca4a52105af9519d5e86e6045a99f1cdf45987",
+        "exact_duplicate_rows_removed": 0,
+        "flagged_rows": 1046,
+        "flags": {
+          "missing_received_at": 1046
+        },
+        "source_rows": 35181,
+        "source_sha256": "1bebdc1a9632f37bb08d59df5576940c410d7f029aaece9f61e125c8a7092a48"
+      },
+      "units.csv": {
+        "cleaned_rows": 49426,
+        "cleaned_sha256": "49053aee72cc122bad7c3906830d359644e79cf7c90f51794e54443fa9b5ca90",
+        "exact_duplicate_rows_removed": 0,
+        "flagged_rows": 0,
+        "flags": {},
+        "source_rows": 49426,
+        "source_sha256": "4237752f1eca226628a43466bd8bdd9c2b66b1b00e5e8ba77aa9b53c14e2af33"
+      }
+    },
+    "limitations": [
+      "Synthetic data only; findings do not describe real facilities or patients.",
+      "Missing values, unknown blood groups, and absent stock series are not imputed.",
+      "Possible duplicate donor identities and short donation gaps require review; identities and dates are unchanged.",
+      "Flagged rows remain present; consuming models must enforce their own eligibility and complete-observation rules.",
+      "No clinical compatibility, hospital reserves, unit final-state history, or safe lending eligibility is inferred.",
+      "Only the three documented temperature sentinel values are blanked; other readings remain for review.",
+      "Files publish atomically one at a time, with the manifest last; do not run concurrent cleaners against one output directory."
+    ],
+    "missingness": {
+      "daily_stock.csv": {},
+      "donations.csv": {
+        "deferral_reason": 42265,
+        "screening_result": 5098,
+        "tested_date": 5098,
+        "tti_marker": 44172,
+        "volume_ml": 5098
+      },
+      "donors.csv": {
+        "blood_group": 506
+      },
+      "drives.csv": {},
+      "facilities.csv": {
+        "keph_level": 15,
+        "routine_deliveries_per_week": 15,
+        "supply_centre_id": 6
+      },
+      "power_outages.csv": {},
+      "requests.csv": {
+        "emergency_supplied_from_id": 14760,
+        "last_unit_available_at": 1986
+      },
+      "routes.csv": {},
+      "temperature_logs.csv": {
+        "temp_c": 55
+      },
+      "transfers.csv": {
+        "received_at": 1046,
+        "request_id": 29851
+      },
+      "units.csv": {
+        "issued_request_id": 19776,
+        "status_date": 8666
+      }
+    },
+    "review_flags": {
+      "documented_temperature_sensor_glitch": 55,
+      "missing_blood_group": 506,
+      "missing_received_at": 1046,
+      "possible_duplicate_donor_review": 904,
+      "short_donation_gap_review": 102,
+      "unknown_patient_blood_group": 442
+    },
+    "schema_version": 1,
+    "status": "complete",
+    "time_basis": "Unzoned timestamps represent East Africa Time (UTC+03:00); zoned timestamps are converted to that local time."
+  },
+  "schema_version": 1,
+  "seed": 42,
+  "settings": {
+    "arrival": {
+      "confirmation_timeout_minutes": 10,
+      "dispatch_wait_hours": 2.0,
+      "min_training_samples": 20,
+      "road_time_multiplier": 1.2,
+      "seed": 42,
+      "too_long_hours": 6,
+      "window_percentiles": [
+        10,
+        50,
+        90
+      ]
+    },
+    "country": "KE",
+    "demo_clock": null,
+    "lending": {
+      "enabled": true,
+      "protect_o_negative": true,
+      "safety_stock_units": {}
+    },
+    "prealert": {
+      "blood_groups": [
+        "O+"
+      ],
+      "components": [
+        "RBC",
+        "WB"
+      ],
+      "horizon_hours": 24,
+      "run_hour": 18
+    },
+    "replay": {
+      "components": [
+        "RBC"
+      ],
+      "deadline_hours": 6,
+      "hospital_reserve_units": {},
+      "urgencies": [
+        "emergency"
+      ]
+    },
+    "sms": {
+      "gateway": null
+    },
+    "timezone": "Africa/Nairobi",
+    "unknown_group_policy": "group_o_only"
+  },
+  "settings_sha256": "5598aaac361ea689daefd1ebdf09009971755c74249b2364057c24be2b4d1de5",
+  "split": {
+    "test_end_exclusive": "2026-11-01T00:00:00",
+    "training_end_exclusive": "2026-07-01T00:00:00",
+    "validation_end_exclusive": "2026-09-01T00:00:00"
+  },
+  "synthetic_data": true,
+  "timezone": "Africa/Nairobi"
+}
