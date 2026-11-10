@@ -62,3 +62,12 @@ def create_request():
 | `@require_role("org:admin")` | the above plus one of the roles |
 
 Errors are JSON `{"error": {"code", "message"}}`: `401 missing_token | invalid_token`, `403 session_pending | hospital_required | forbidden`, `503 auth_not_configured | auth_unavailable`. **If Clerk is not configured, protected routes fail closed (503).** `AUTH_DISABLED=1` is an explicit local-demo switch and must never be set in production. `GET /api/me` echoes the verified identity. Tests: `pytest tests/test_clerk_auth.py` (no network, uses a generated key pair).
+
+## Verification and deployment
+
+See [deployment and acceptance instructions](docs/deployment.md) for isolated dataset
+verification, live identity checks, maintenance scheduling, Gunicorn/systemd templates,
+backups/restoration, and safe retry-response retention. Backend CI is defined in
+`.github/workflows/backend-ci.yml`; it does not require frontend dependencies.
+
+Starter-data results are recorded in [verification.md](docs/verification.md).

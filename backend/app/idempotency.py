@@ -2,6 +2,7 @@
 import hashlib
 import json
 from functools import wraps
+from datetime import datetime, timezone
 
 from flask import current_app, g, jsonify, make_response, request
 
@@ -22,10 +23,12 @@ def idempotent(fn):
             if saved:
                 if saved['fingerprint'] != fingerprint:
                     raise APIError('Idempotency key was used for a different request', 409)
+                if saved['response'] == 'null':
+                    raise APIError('Cached response expired; inspect request state before proceeding', 409)
                 return jsonify(json.loads(saved['response'])), saved['status']
             response = make_response(fn(*args, **kwargs))
             if response.status_code < 400:
-                db.execute('INSERT INTO idempotency VALUES(?,?,?,?,?)',
-                           (actor, key, fingerprint, json.dumps(response.get_json()), response.status_code))
+                db.execute('INSERT INTO idempotency(actor,key,fingerprint,response,status,created_at) VALUES(?,?,?,?,?,?)',
+                           (actor, key, fingerprint, json.dumps(response.get_json()), response.status_code, datetime.now(timezone.utc).isoformat()))
             return response
     return wrapped

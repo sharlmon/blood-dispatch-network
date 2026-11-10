@@ -1,6 +1,7 @@
 import sqlite3
 from pathlib import Path
 from contextlib import contextmanager
+from datetime import datetime, timezone
 
 from flask import current_app, g
 
@@ -35,7 +36,14 @@ CREATE TABLE IF NOT EXISTS allocations (
 );
 CREATE TABLE IF NOT EXISTS idempotency (
  actor TEXT NOT NULL, key TEXT NOT NULL, fingerprint TEXT NOT NULL,
- response TEXT NOT NULL, status INTEGER NOT NULL, PRIMARY KEY(actor,key)
+ response TEXT NOT NULL, status INTEGER NOT NULL, created_at TEXT NOT NULL, PRIMARY KEY(actor,key)
+);
+CREATE TABLE IF NOT EXISTS schema_migrations (
+ version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS scheduled_jobs (
+ name TEXT PRIMARY KEY, completed_key TEXT, lease_token TEXT, lease_until TEXT,
+ last_error TEXT, updated_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS operations (
  key TEXT PRIMARY KEY, value TEXT NOT NULL
@@ -73,7 +81,26 @@ def init_app(app):
             db.close()
 
     with app.app_context():
-        get_db().executescript(SCHEMA)
+        db = get_db()
+        if app.config['DB_PATH'] != ':memory:':
+            db.execute('PRAGMA journal_mode=WAL')
+        try:
+            db.executescript('BEGIN IMMEDIATE;\n' + SCHEMA)
+            columns = {row['name'] for row in db.execute('PRAGMA table_info(idempotency)')}
+            if 'created_at' not in columns:
+                db.execute('ALTER TABLE idempotency ADD COLUMN created_at TEXT')
+            stamp = datetime.now(timezone.utc).isoformat()
+            db.execute('UPDATE idempotency SET created_at=? WHERE created_at IS NULL', (stamp,))
+            db.execute('CREATE INDEX IF NOT EXISTS idx_idempotency_created ON idempotency(created_at)')
+            db.execute('CREATE INDEX IF NOT EXISTS idx_requests_facility ON requests(facility_id,status,created_at)')
+            db.execute('CREATE INDEX IF NOT EXISTS idx_requests_supplier ON requests(supplier_id,status)')
+            db.execute('CREATE INDEX IF NOT EXISTS idx_confirmation_deadline ON requests(status,deadline)')
+            db.execute('CREATE INDEX IF NOT EXISTS idx_audit_request ON audit(request_id,id)')
+            db.execute('INSERT OR IGNORE INTO schema_migrations VALUES(1,?)', (stamp,))
+            db.commit()
+        except Exception:
+            db.rollback()
+            raise
 
 
 @contextmanager

@@ -4,6 +4,7 @@ import hmac
 import json
 import re
 import time
+from datetime import datetime, timezone
 
 from flask import Blueprint, current_app, g, jsonify, request
 
@@ -47,6 +48,8 @@ def inbound():
         if saved:
             if saved['fingerprint'] != fingerprint:
                 raise APIError('Gateway message_id reused for a different message', 409)
+            if saved['response'] == 'null':
+                raise APIError('Cached SMS response expired; check request status', 409)
             return jsonify(json.loads(saved['response'])), saved['status']
         g.auth = AuthContext(user_id=mapping['user_id'], session_id=None,
                              org_id=mapping['org_id'], org_role='org:member')
@@ -88,5 +91,5 @@ def inbound():
         else:
             raise APIError('Supported commands: REQUEST, STATUS, PICK, CONFIRM, REJECT, DISPATCH')
         response = {'message_id': message_id, 'request': result, 'reply': f"Request {result['id']}: {result['status']}. A trained lab worker must crossmatch and release every unit."}
-        db.execute('INSERT INTO idempotency VALUES(?,?,?,?,?)', (actor, message_id, fingerprint, json.dumps(response), status))
+        db.execute('INSERT INTO idempotency(actor,key,fingerprint,response,status,created_at) VALUES(?,?,?,?,?,?)', (actor, message_id, fingerprint, json.dumps(response), status, datetime.now(timezone.utc).isoformat()))
         return jsonify(response), status
