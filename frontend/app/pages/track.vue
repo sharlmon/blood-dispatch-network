@@ -6,6 +6,8 @@ const d = useDispatch()
 if (!d.request.value) { d.loadFromQuery(route.query, route.query.pick as string | undefined); d.stage.value = Number(route.query.stage) || 1 }
 if (!d.request.value || !d.selected.value) await navigateTo('/request')
 
+const { toast } = useToast()
+const showAudit = ref(false)
 const steps = computed(() => [
   { title: 'Request sent', sub: `${d.request.value?.openedAt} · logged` },
   { title: 'Waiting for shelf check', sub: `${d.selected.value?.name.split(' ').slice(0, 2).join(' ')} confirms the units are on the shelf. If no answer in 10 min, we move to the next source.` },
@@ -39,16 +41,17 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
 
       <div class="actions">
         <NuxtLink to="/results" class="btn">Try next source</NuxtLink>
-        <button type="button" class="btn btn-dark"><AppIcon name="call" :size="20" /> Call site</button>
+        <button type="button" class="btn btn-dark" @click="toast({ title: `Call ${d.selected.value?.name}`, body: 'Ask them to confirm the units are on the shelf. Log the answer here.' })"><AppIcon name="call" :size="20" /> Call site</button>
       </div>
       <button v-if="d.stage.value < 3" type="button" class="demo" @click="d.advance()">Demo: simulate next step</button>
       <SafetyNote />
 
-      <details class="audit">
-        <summary><AppIcon name="audit" :size="18" /> Audit log ({{ d.audit.value.length }})</summary>
-        <ul><li v-for="(a, i) in d.audit.value" :key="i"><time>{{ a.at }}</time> {{ a.text }}</li></ul>
-      </details>
+      <button type="button" class="auditbtn" @click="showAudit = true"><AppIcon name="audit" :size="18" /> Audit log ({{ d.audit.value.length }})</button>
     </section>
+
+    <AppModal v-model="showAudit" title="Audit log" sub="Every action is recorded. A person approves every step.">
+      <ul class="alog"><li v-for="(a, i) in d.audit.value" :key="i"><time>{{ a.at }}</time><span>{{ a.text }}</span></li></ul>
+    </AppModal>
   </div>
 </template>
 
@@ -92,4 +95,9 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
   .map { inset: 0; height: auto; }
   .panel { top: 12px; left: 24px; right: auto; bottom: 24px; width: 470px; border-radius: 40px 44px 40px 46px / 44px 40px 46px 40px; border: 1.5px solid var(--blood-500); box-shadow: 0 26px 60px rgba(126, 16, 21, 0.2); padding: 22px; }
 }
+.auditbtn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 99px; border: 1.5px solid #ecd5d1; background: #fff; color: var(--blood-700); font-weight: 800; font-size: 14px; align-self: flex-start; transition: transform 0.2s ease; }
+.auditbtn:hover { transform: translateY(-1px); }
+.alog { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.alog li { display: flex; gap: 12px; padding: 10px 14px; border-radius: var(--r-md); background: #fff; border: 1.5px solid #ecd5d1; font-size: 14px; font-weight: 600; color: var(--slate); }
+.alog time { font-weight: 800; color: var(--ink); flex-shrink: 0; }
 </style>

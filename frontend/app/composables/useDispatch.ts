@@ -11,6 +11,7 @@ export function useDispatch() {
   const stage = useState<number>('dispatch.stage', () => 0) // 0 sent, 1 awaiting shelf, 2 dispatched, 3 arrived
   const audit = useState<AuditEntry[]>('dispatch.audit', () => [])
 
+  const { toast } = useToast()
   const selected = computed(() => options.value.find(o => o.id === selectedId.value) ?? null)
   const top = computed(() => options.value[0] ?? null)
   const sooner = computed(() => (top.value ? BASELINE_HOURS - top.value.p50 : 0))
@@ -53,11 +54,13 @@ export function useDispatch() {
     if (!selected.value) return
     stage.value = 1
     log(`Lab worker chose ${selected.value.name}. Waiting for shelf check.`)
+    toast({ tone: 'ok', title: 'Request sent', body: `${selected.value.name} will confirm the shelf. A person approves every step.` })
     return navigateTo('/track')
   }
 
   function decide(kind: 'groupO' | 'transfer') {
     log(kind === 'groupO' ? 'Clinician chose emergency group O.' : 'Clinician chose to transfer the patient.')
+    toast({ tone: 'warn', title: kind === 'groupO' ? 'Emergency group O recorded' : 'Transfer recorded', body: 'Saved in the audit log. Crossmatch every unit before use.' })
   }
 
   function advance() {
@@ -65,6 +68,7 @@ export function useDispatch() {
     stage.value += 1
     const texts = ['', 'Awaiting shelf check', 'Supplier confirmed the shelf and dispatched.', 'Units arrived. Lab worker checks every bag.']
     log(texts[stage.value] ?? '')
+    toast({ tone: stage.value === 3 ? 'ok' : 'info', title: texts[stage.value] ?? '' })
   }
 
   return { request, options, baseline, selectedId, selected, top, sooner, tooLong, stage, audit, search, load, loadFromQuery, select, confirmSelection, decide, advance, log }

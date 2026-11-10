@@ -3,6 +3,7 @@
 const props = defineProps<{ mode: 'in' | 'up' }>()
 const { find, signUp, signIn } = useDemoAccount()
 const route = useRoute()
+const { toast } = useToast()
 
 const name = ref('')
 const email = ref(typeof route.query.email === 'string' ? route.query.email : '')
@@ -20,11 +21,14 @@ function submit() {
   error.value = ''
   if (!validEmail(email.value)) { error.value = 'Enter an email like you@hospital.org.'; return }
   if (props.mode === 'in') {
-    if (!signIn(email.value)) { error.value = 'We have no account for that email here yet. Create one in a few seconds.'; return }
+    const who = signIn(email.value)
+    if (who) toast({ tone: 'ok', title: `Welcome back, ${who.name.split(' ')[0]}`, body: who.hospital })
+    if (!who) { error.value = 'We have no account for that email here yet. Create one in a few seconds.'; return }
   } else {
     if (name.value.trim().length < 2) { error.value = 'Add your name.'; return }
     if (hospital.value.trim().length < 2) { error.value = 'Add your hospital or centre.'; return }
     signUp({ name: name.value, email: email.value, hospital: hospital.value, role: role.value })
+    toast({ tone: 'ok', title: 'Account created', body: `You are set up for ${hospital.value.trim()}.` })
   }
   busy.value = true
   navigateTo('/request')

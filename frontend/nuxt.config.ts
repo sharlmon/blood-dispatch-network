@@ -30,6 +30,7 @@ export default defineNuxtConfig({
   },
   app: {
     baseURL: base,
+    pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       htmlAttrs: { lang: 'en' },
       title: 'Blood Dispatch',

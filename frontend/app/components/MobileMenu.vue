@@ -3,7 +3,8 @@
 // destinations; this sheet holds account, hospital, status and secondary links.
 const { public: { authEnabled, demoAuth } } = useRuntimeConfig()
 const { account, signOut } = useDemoAccount()
-const leave = () => { signOut(); open.value = false; navigateTo('/') }
+const { toast } = useToast()
+const leave = () => { signOut(); open.value = false; navigateTo('/'); toast({ title: 'Signed out', body: 'See you next time.' }) }
 const { hospital } = useSite()
 const route = useRoute()
 const open = ref(route.query.menu === 'open')

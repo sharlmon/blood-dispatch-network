@@ -100,7 +100,7 @@ const safety = [
       <NetworkHorizon class="wall" />
     </section>
 
-    <section id="data" class="band" aria-labelledby="why">
+    <section v-inview id="data" class="band" aria-labelledby="why">
       <div class="inner">
         <h2 id="why">The gap, in the data</h2>
         <p class="sub">Last year's requests, from the synthetic hackathon dataset (November 2025 to October 2026).</p>
@@ -110,7 +110,7 @@ const safety = [
       </div>
     </section>
 
-    <section class="section" aria-labelledby="share">
+    <section v-inview class="section" aria-labelledby="share">
       <div class="share">
         <div class="photo-card organic"><img :src="img('hand-tube.jpg')" alt="A gloved hand holding a tube of blood"><span class="pc-tag">Hospitals share. Nobody runs short.</span></div>
         <div class="share-copy">
@@ -125,7 +125,7 @@ const safety = [
       </div>
     </section>
 
-    <section class="section" aria-labelledby="funnel">
+    <section v-inview class="section" aria-labelledby="funnel">
       <h2 id="funnel">Where the blood goes missing</h2>
       <div class="charts">
         <Reveal class="chart organic">
@@ -150,7 +150,7 @@ const safety = [
       </div>
     </section>
 
-    <section class="section" aria-labelledby="how">
+    <section v-inview class="section" aria-labelledby="how">
       <h2 id="how">How it works</h2>
       <ol class="steps">
         <li v-for="(st, i) in steps" :key="st.title" class="organic rise" :style="{ '--d': i * 90 + 'ms' }">
@@ -166,7 +166,7 @@ const safety = [
       </div>
     </section>
 
-    <section class="section" aria-labelledby="example">
+    <section v-inview class="section" aria-labelledby="example">
       <h2 id="example">One request, end to end</h2>
       <div class="example">
         <div class="ex-card organic">
@@ -195,7 +195,7 @@ const safety = [
       </div>
     </section>
 
-    <section id="phone" class="section" aria-labelledby="roles">
+    <section v-inview id="phone" class="section" aria-labelledby="roles">
       <h2 id="roles">Who uses it</h2>
       <ul class="roles">
         <li v-for="(r, i) in roles" :key="r.who" class="organic rise" :style="{ '--d': i * 80 + 'ms' }">
@@ -215,7 +215,7 @@ const safety = [
       </div>
     </section>
 
-    <section class="section" aria-labelledby="honest">
+    <section v-inview class="section" aria-labelledby="honest">
       <h2 id="honest">What we are honest about</h2>
       <ul class="honest">
         <li v-for="h in honest" :key="h.title" class="card rise">
@@ -231,7 +231,7 @@ const safety = [
       </Reveal>
     </section>
 
-    <section class="section" aria-labelledby="built">
+    <section v-inview class="section" aria-labelledby="built">
       <h2 id="built">How it is built</h2>
       <ol class="pipe">
         <li v-for="(n, i) in pipeline" :key="n"><span>{{ n }}</span><AppIcon v-if="i < pipeline.length - 1" name="back" :size="18" class="arrow" /></li>
@@ -239,14 +239,14 @@ const safety = [
       <p class="pnote">Settings live in one file per country: lending rules, safety stock, arrival parameters. A new country is a new settings file, not a code change. The ranking engine uses fixed lookups and a seeded simulation; no AI model writes the numbers.</p>
     </section>
 
-    <section class="section" aria-labelledby="road">
+    <section v-inview class="section" aria-labelledby="road">
       <h2 id="road">Where it goes next</h2>
       <ol class="road">
         <li v-for="r in roadmap" :key="r.title" class="card"><small>{{ r.n }}</small><h3>{{ r.title }}</h3><p>{{ r.body }}</p></li>
       </ol>
     </section>
 
-    <section class="section" aria-labelledby="safe">
+    <section v-inview class="section" aria-labelledby="safe">
       <h2 id="safe">Built to be safe</h2>
       <ul class="safety">
         <li v-for="t in safety" :key="t"><AppIcon name="check" :size="20" />{{ t }}</li>
@@ -259,7 +259,7 @@ const safety = [
       </div>
     </section>
 
-    <section class="final">
+    <section v-inview class="final">
       <BrandLogo layout="stacked" :size="64" reverse />
       <h2>Ready when the next request comes in.</h2>
       <NuxtLink to="/request" class="btn big"><AppIcon name="drop" :size="22" /> Find blood now</NuxtLink>

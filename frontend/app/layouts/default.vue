@@ -1,7 +1,8 @@
 <script setup lang="ts">
 const { public: { apiBase, authEnabled, demoAuth } } = useRuntimeConfig()
 const { account, signOut } = useDemoAccount()
-const leave = () => { signOut(); navigateTo('/') }
+const { toast } = useToast()
+const leave = () => { signOut(); navigateTo('/'); toast({ title: 'Signed out', body: 'See you next time.' }) }
 // No API configured (static demo): run on built-in demo data instead of showing "Offline".
 const demo = !apiBase
 const { data: health, error } = demo
