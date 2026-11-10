@@ -17,7 +17,7 @@ const label = computed(() => `${props.rank}. ${props.option.name}, ${fmtHours(pr
         <small>{{ option.kind === 'hospital' ? 'Hospital' : 'Centre' }} · {{ option.spare }} · {{ option.km }} km</small>
       </span>
       <span class="when">
-        <strong class="tnum">{{ fmtHours(option.p50) }}</strong>
+        <strong><Dur :h="option.p50" /></strong>
         <small>{{ fmtRange(option.p10, option.p90) }}</small>
       </span>
     </span>

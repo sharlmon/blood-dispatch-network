@@ -11,6 +11,7 @@ const CIRCLE_PIN = 'M0 0C-9-10-14-16-14-23a14 14 0 0 1 28 0c0 7-5 13-14 23z'
 const SQUARE_PIN = 'M-12-36h24a3 3 0 0 1 3 3v21a3 3 0 0 1-3 3h-8L0 0l-4-9h-8a3 3 0 0 1-3-3v-21a3 3 0 0 1 3-3z'
 const DROP_SMALL = 'M0-31c3.5 4 5.5 6.5 5.5 9a5.5 5.5 0 0 1-11 0c0-2.5 2-5 5.5-9z'
 
+const chipW = (o: Option) => Math.max(54, fmtHours(o.p50).length * 7.6 + 20)
 const routePath = (o: Option) => `M${YOU.x} ${YOU.y} Q${(YOU.x + o.x) / 2} ${(YOU.y + o.y) / 2 - 24} ${o.x} ${o.y}`
 
 // Fit the pins into whatever size the map is drawn at, keeping pin size constant in px.
@@ -81,7 +82,7 @@ const view = computed(() => {
         <path v-else :d="DROP_SMALL" fill="#fff" />
       </g>
       <g :transform="`translate(0 ${o.id === selectedId ? -54 : -46})`">
-        <rect x="-26" y="-12" width="52" height="22" rx="11" fill="#fff" stroke="#d5dde3" />
+        <rect :x="-chipW(o) / 2" y="-12" :width="chipW(o)" height="22" rx="11" fill="#fff" stroke="#d5dde3" />
         <text x="0" y="3.5" text-anchor="middle" font-size="12" font-weight="800" fill="#12202b" font-family="Manrope, sans-serif">{{ fmtHours(o.p50) }}</text>
       </g>
      </g>

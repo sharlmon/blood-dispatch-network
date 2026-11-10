@@ -1,96 +1,204 @@
 <script setup lang="ts">
+import { mockRank, RECENT } from '~/utils/mock'
+
 useHead({ title: 'New request · Blood Dispatch' })
 
+const route = useRoute()
 const { search } = useDispatch()
-const group = ref('B+')
+const { firstName, hospital } = useSite()
+const img = useImg()
+
+const group = ref(route.query.sos ? 'Unknown' : 'B+')
 const product = ref('Red cells')
 const units = ref(2)
 const limitH = ref(3)
 
-const products = ['Red cells', 'Whole blood']
-const submit = () => search({ group: group.value, units: units.value, product: product.value, limitH: limitH.value })
+const hello = ref('Hello')
+onMounted(() => {
+  const h = new Date().getHours()
+  hello.value = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
+})
+
+const unknown = computed(() => group.value === 'Unknown')
+const effective = computed(() => (unknown.value ? 'O' : group.value))
+// Live preview of who could spare this, before the full search.
+const nearby = computed(() => mockRank({ id: '#n', group: effective.value, units: units.value, product: product.value, limitH: limitH.value, openedAt: '00:00' }).options)
+
+const form = ref<HTMLElement | null>(null)
+function sos() {
+  group.value = 'Unknown'
+  form.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+const submit = () => search({ group: effective.value, units: units.value, product: product.value, limitH: limitH.value, unknownGroup: unknown.value })
+const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', Escalated: 'st-amber' }[s] ?? '')
 </script>
 
 <template>
   <div class="page">
-    <form class="form" @submit.prevent="submit">
-      <h1>New request</h1>
+    <header class="greet">
+      <div>
+        <p class="hi">{{ hello }}<span v-if="firstName">, {{ firstName }}</span></p>
+        <p class="where"><AppIcon name="pin" :size="16" /> {{ hospital }}</p>
+      </div>
+      <NuxtLink to="/track" class="bell" aria-label="Notifications"><AppIcon name="bell" :size="22" /><i /></NuxtLink>
+    </header>
 
-      <section class="card block">
-        <h2>Patient blood group</h2>
-        <BloodGroupPicker v-model="group" />
-        <p class="hint">
-          <AppIcon name="drop" :size="18" />
-          Group unknown? Request group O only, per hospital protocol.
-        </p>
-      </section>
+    <section class="hero organic-card">
+      <div class="hc">
+        <h1>Urgently need blood?</h1>
+        <p>Tell us what the patient needs. We find every source that can spare it, and when it will really arrive.</p>
+        <button type="button" class="sosbtn" @click="sos"><AppIcon name="drop" :size="18" /> Group unknown? Request group O</button>
+      </div>
+      <div class="thumb" aria-hidden="true"><img :src="img('hand-vial.jpg')" alt=""></div>
+    </section>
 
-      <div class="two">
-        <section class="card block">
-          <h2>Product</h2>
-          <div class="stack">
-            <button
-              v-for="p in products" :key="p" type="button" class="choice" :class="{ on: product === p }"
-              :aria-pressed="product === p" @click="product = p"
-            >{{ p }}</button>
-          </div>
-        </section>
+    <form ref="form" class="form card" @submit.prevent="submit">
+      <h2>Quick request</h2>
 
-        <section class="card block">
-          <h2>Units</h2>
-          <div class="stepper">
-            <button type="button" aria-label="One more unit" @click="units = Math.min(units + 1, 10)">+</button>
-            <output class="tnum" aria-live="polite">{{ units }}</output>
-            <button type="button" aria-label="One fewer unit" @click="units = Math.max(units - 1, 1)">−</button>
-          </div>
-        </section>
+      <div class="block">
+        <label class="lbl">Patient blood group</label>
+        <BloodGroupPicker v-model="group" allow-unknown />
+        <p v-if="unknown" class="unk-note"><AppIcon name="warning" :size="18" /> Unknown group: only group O is requested, per hospital protocol. A person confirms the group before use.</p>
       </div>
 
-      <section class="card block limit">
-        <AppIcon name="clock" :size="24" />
-        <div class="grow">
-          <h2>Longest the patient can wait</h2>
-          <p class="muted small">Used to flag a wait that is too long</p>
+      <div class="rows">
+        <div class="row">
+          <span class="ico"><ServiceIcon name="bag" :size="30" /></span>
+          <span class="rl"><b>Product</b><small>What the patient needs</small></span>
+          <select v-model="product" class="sel" aria-label="Product"><option>Red cells</option><option>Whole blood</option></select>
         </div>
-        <div class="lim">
-          <button type="button" aria-label="Shorter limit" @click="limitH = Math.max(1, limitH - 1)">−</button>
-          <output class="tnum">{{ limitH }} h</output>
-          <button type="button" aria-label="Longer limit" @click="limitH = Math.min(12, limitH + 1)">+</button>
+        <div class="row">
+          <span class="ico"><ServiceIcon name="find" :size="30" /></span>
+          <span class="rl"><b>Units needed</b><small>Bags for this patient</small></span>
+          <span class="step"><button type="button" aria-label="One fewer unit" @click="units = Math.max(1, units - 1)">−</button><output class="tnum" aria-live="polite">{{ units }}</output><button type="button" aria-label="One more unit" @click="units = Math.min(10, units + 1)">+</button></span>
         </div>
-      </section>
-
-      <p class="sms">
-        <AppIcon name="sms" :size="22" />
-        <span>No data? Text <b>{{ group }} {{ units }} RBC {{ limitH }}H</b> to [SHORTCODE].</span>
-      </p>
+        <div class="row">
+          <span class="ico"><ServiceIcon name="window" :size="30" /></span>
+          <span class="rl"><b>Longest wait</b><small>Used to flag a wait that is too long</small></span>
+          <span class="step"><button type="button" aria-label="Shorter limit" @click="limitH = Math.max(1, limitH - 1)">−</button><output class="tnum">{{ limitH }}h</output><button type="button" aria-label="Longer limit" @click="limitH = Math.min(12, limitH + 1)">+</button></span>
+        </div>
+        <div class="row">
+          <span class="ico"><ServiceIcon name="shield" :size="30" /></span>
+          <span class="rl"><b>Requesting hospital</b><small>From your account</small></span>
+          <span class="hosp">{{ hospital }}</span>
+        </div>
+      </div>
 
       <button type="submit" class="btn btn-primary go"><AppIcon name="search" /> Find sources</button>
+      <p class="sms"><AppIcon name="sms" :size="22" /><span>No data? Text <b>{{ effective }} {{ units }} RBC {{ limitH }}H</b> to [SHORTCODE].</span></p>
       <SafetyNote />
     </form>
+
+    <aside class="side">
+      <section>
+        <div class="sh"><h2>Recent requests</h2></div>
+        <ul class="recent">
+          <li v-for="r in RECENT" :key="r.when">
+            <NuxtLink to="/results?group=B%2B&units=2&limit=3&demo=1" class="rcard">
+              <span class="rg">{{ r.group }}</span>
+              <span class="rb">
+                <b>{{ r.units }} {{ r.units === 1 ? 'unit' : 'units' }} needed</b>
+                <small>{{ r.where }}</small>
+                <small class="when"><i v-if="r.urgent" class="dot" />{{ r.urgent ? 'Urgent' : 'Planned' }} · {{ r.when }}</small>
+              </span>
+              <span class="chipst" :class="statusClass(r.status)">{{ r.status }}</span>
+            </NuxtLink>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="sh"><h2>Nearby sources</h2><span>Yesterday's stock</span></div>
+        <ul class="near">
+          <li v-for="o in nearby" :key="o.id" class="ncard rise">
+            <div class="nt">
+              <span class="ni" :class="o.kind"><AppIcon :name="o.kind" :size="24" /></span>
+              <span class="nb">
+                <b>{{ o.name }}</b>
+                <small><AppIcon name="drop" :size="13" /> {{ effective }} <i>·</i> <AppIcon name="route" :size="13" /> {{ fmtHours(o.p50) }} away</small>
+              </span>
+              <span class="avail">{{ o.avail }} units<br>available</span>
+            </div>
+            <a href="#" class="contact"><AppIcon name="call" :size="18" /> Contact site</a>
+          </li>
+        </ul>
+      </section>
+    </aside>
   </div>
 </template>
 
 <style scoped>
-.page { flex: 1; display: flex; justify-content: center; padding: 20px 16px 28px; }
-.form { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 14px; }
-h1 { margin: 0 0 2px; font-size: 26px; font-weight: 800; letter-spacing: -0.01em; }
-h2 { margin: 0 0 10px; font-size: 13px; font-weight: 800; }
-.block { padding: 16px; }
-.hint { display: flex; align-items: center; gap: 10px; margin: 12px 0 0; padding: 10px 12px; border-radius: 12px; background: var(--paper); color: var(--slate); font-size: 12.5px; font-weight: 600; }
-.two { display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; }
-.stack { display: flex; flex-direction: column; gap: 8px; }
-.choice { min-height: 44px; border-radius: 12px; border: 1px solid var(--line); background: var(--white); font-weight: 700; font-size: 14px; }
-.choice.on { background: var(--blood-50); border: 2px solid var(--blood-500); color: var(--blood-700); font-weight: 800; }
-.stepper { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.stepper button, .lim button { width: 48px; height: 44px; border-radius: 12px; border: 1px solid var(--line); background: var(--white); font-size: 22px; font-weight: 700; }
-.stepper output { font-size: 36px; font-weight: 800; line-height: 1; }
-.limit { display: flex; align-items: center; gap: 12px; color: var(--amber-500); }
-.limit h2 { margin: 0; color: var(--ink); }
-.grow { flex: 1; }
-.small { margin: 1px 0 0; font-size: 12px; font-weight: 600; }
-.lim { display: flex; align-items: center; gap: 8px; color: var(--ink); }
-.lim output { min-width: 44px; text-align: center; font-size: 20px; font-weight: 800; }
-.sms { display: flex; align-items: center; gap: 10px; margin: 4px 0; padding: 11px 14px; border-radius: 14px; background: var(--azure-50); color: var(--azure-600); font-size: 12.5px; font-weight: 600; }
+.page { width: 100%; max-width: 1180px; margin: 0 auto; padding: 14px 16px 28px; display: grid; gap: 16px; align-content: start; }
+.greet { display: flex; align-items: center; justify-content: space-between; }
+.hi { margin: 0; font-size: 22px; font-weight: 800; color: var(--wine); }
+.where { margin: 4px 0 0; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #5a3c3f; }
+.where svg { color: var(--blood-500); }
+.bell { position: relative; width: 46px; height: 46px; border-radius: 99px; background: #fff; border: 1.5px solid #ecd5d1; display: grid; place-items: center; color: var(--blood-700); }
+.bell i { position: absolute; top: 9px; right: 11px; width: 9px; height: 9px; border-radius: 99px; background: var(--blood-500); border: 2px solid #fff; }
+
+.hero { position: relative; display: flex; align-items: center; gap: 14px; padding: 22px 22px 22px 24px; background: linear-gradient(135deg, #fdecea 0%, #f9d3ce 100%); border: 1.5px solid var(--blood-500); overflow: hidden; }
+.hc { flex: 1; min-width: 0; position: relative; z-index: 1; }
+.hero h1 { margin: 0; font-size: clamp(26px, 5vw, 38px); line-height: 1; letter-spacing: -0.03em; font-weight: 800; text-transform: uppercase; color: var(--blood-600); }
+.hero p { margin: 10px 0 0; font-size: 14.5px; line-height: 1.5; font-weight: 500; color: #5a3c3f; max-width: 420px; }
+.sosbtn { margin-top: 16px; display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 18px; border-radius: 99px; background: #fff; border: 1.5px solid var(--blood-500); color: var(--blood-700); font-weight: 800; font-size: 14px; box-shadow: 0 8px 18px rgba(179, 23, 30, 0.18); }
+.thumb { width: 96px; height: 96px; flex-shrink: 0; border-radius: 99px; overflow: hidden; border: 4px solid #fff; box-shadow: 0 12px 26px rgba(126, 16, 21, 0.25); position: relative; background: #f3c9c4; }
+.thumb img { position: absolute; width: 330%; left: -115%; top: -257%; max-width: none; height: auto; filter: sepia(0.4) saturate(1.5) hue-rotate(-14deg) brightness(1.1); }
+
+.form { padding: 20px; display: flex; flex-direction: column; gap: 16px; border-radius: 32px; }
+.form h2, .side h2 { margin: 0; font-size: 18px; font-weight: 800; color: var(--wine); }
+.lbl { display: block; font-size: 13px; font-weight: 800; color: var(--wine); margin-bottom: 10px; }
+.unk-note { margin: 12px 0 0; display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 18px; background: var(--amber-50); color: var(--amber-900); font-size: 13px; font-weight: 600; line-height: 1.45; }
+.unk-note svg { flex-shrink: 0; color: var(--amber-700); margin-top: 1px; }
+.rows { border: 1.5px solid #ecd5d1; border-radius: 26px; background: #fff; overflow: hidden; }
+.row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+.row + .row { border-top: 1px solid #f0e1de; }
+.ico { width: 46px; height: 46px; border-radius: 99px; background: radial-gradient(circle at 30% 25%, #fff, #f6d3ce); display: grid; place-items: center; flex-shrink: 0; }
+.rl { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.rl b { font-size: 14.5px; color: var(--ink); }
+.rl small { font-size: 12px; font-weight: 600; color: #7a5a5d; margin-top: 1px; }
+.sel { appearance: none; min-height: 44px; padding: 0 34px 0 16px; border-radius: 99px; border: 1.5px solid #e6c4c0; font-weight: 800; font-size: 14px; color: var(--blood-700); background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%237e1015' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center; }
+.step { display: inline-flex; align-items: center; gap: 4px; }
+.step button { width: 40px; height: 40px; border-radius: 99px; border: 1.5px solid #e6c4c0; background: #fff; font-size: 20px; font-weight: 700; color: var(--blood-700); }
+.step output { min-width: 40px; text-align: center; font-size: 20px; font-weight: 800; }
+.hosp { font-size: 13px; font-weight: 800; color: var(--blood-700); text-align: right; max-width: 130px; }
+.go { min-height: 56px; font-size: 16px; }
+.sms { margin: 0; display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 18px; background: var(--azure-50); color: var(--azure-600); font-size: 12.5px; font-weight: 600; }
 .sms span { color: var(--ink); line-height: 1.35; }
-.go { min-height: 54px; font-size: 16px; }
+
+.side { display: grid; gap: 18px; align-content: start; }
+.sh { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.sh span { font-size: 12px; font-weight: 700; color: #7a5a5d; }
+.recent, .near { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.rcard { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 24px; background: #fff; border: 1.5px solid #ecd5d1; text-decoration: none; color: inherit; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.rcard:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(126, 16, 21, 0.12); }
+.rg { width: 52px; height: 52px; border-radius: 99px; background: var(--blood-50); border: 1.5px solid #f0c0ba; color: var(--blood-500); font-weight: 800; font-size: 17px; display: grid; place-items: center; flex-shrink: 0; }
+.rb { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.rb b { font-size: 14.5px; }
+.rb small { font-size: 12px; font-weight: 600; color: #7a5a5d; margin-top: 1px; }
+.rb .when { display: flex; align-items: center; gap: 6px; }
+.dot { width: 8px; height: 8px; border-radius: 99px; background: var(--blood-500); display: inline-block; }
+.chipst { padding: 5px 11px; border-radius: 99px; font-size: 11.5px; font-weight: 800; white-space: nowrap; }
+.st-red { background: var(--blood-50); color: var(--blood-700); }
+.st-teal { background: var(--teal-50); color: var(--teal-600); }
+.st-amber { background: var(--amber-50); color: var(--amber-700); }
+.ncard { padding: 14px; border-radius: 26px; background: #fff; border: 1.5px solid #ecd5d1; display: flex; flex-direction: column; gap: 12px; }
+.nt { display: flex; align-items: center; gap: 12px; }
+.ni { width: 50px; height: 50px; border-radius: 99px; background: var(--blood-500); color: #fff; display: grid; place-items: center; flex-shrink: 0; }
+.ni.centre { border-radius: 16px; }
+.nb { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.nb b { font-size: 14.5px; color: var(--ink); }
+.nb small { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: #7a5a5d; margin-top: 3px; flex-wrap: wrap; }
+.nb small svg { color: var(--blood-500); }
+.nb small i { font-style: normal; opacity: 0.5; }
+.avail { font-size: 12px; font-weight: 800; color: var(--teal-600); text-align: right; line-height: 1.3; }
+.contact { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; border-radius: 99px; background: var(--blood-50); color: var(--blood-700); font-weight: 800; font-size: 14px; text-decoration: none; border: 1.5px solid #f0c0ba; }
+
+@media (min-width: 1000px) {
+  .page { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 20px 28px; padding: 22px 24px 40px; }
+  .greet, .hero { grid-column: 1 / -1; }
+  .side { position: sticky; top: 96px; }
+  .thumb { width: 150px; height: 150px; }
+  .hero { padding: 28px 36px; }
+  .hero p { font-size: 16px; }
+}
 </style>
