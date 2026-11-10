@@ -1,0 +1,18 @@
+# data & secrets
+data/*
+!data/README.md
+.env
+*.pdf
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+# node
+node_modules/
+dist/
+.next/
+# os/editor
+.DS_Store
+.idea/
+.vscode/
