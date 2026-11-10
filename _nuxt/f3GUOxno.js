@@ -1,1 +1,0 @@
-import{v as e}from"./sG3eabQm.js";function t(){let t=e().app.baseURL||`/`;return e=>`${t}${t.endsWith(`/`)?``:`/`}images/${e}`}export{t};
