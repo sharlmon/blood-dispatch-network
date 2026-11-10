@@ -11,8 +11,9 @@ export default defineNuxtConfig({
     head: {
       htmlAttrs: { lang: 'en' },
       title: 'Blood Dispatch',
-      meta: [{ name: 'description', content: 'Find spare compatible blood nearby with honest arrival windows.' }],
+      meta: [{ name: 'theme-color', content: '#b3171e' }, { name: 'description', content: 'Find spare compatible blood nearby with honest arrival windows.' }],
       link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap' }

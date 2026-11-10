@@ -10,8 +10,7 @@ const { request } = useDispatch()
     <BloodCells />
     <header class="bar">
       <NuxtLink to="/" class="brand" aria-label="Blood Dispatch home">
-        <span class="logo"><AppIcon name="drop" :size="20" /></span>
-        <span>Blood Dispatch</span>
+        <BrandLogo :size="34" />
       </NuxtLink>
       <nav class="nav" aria-label="Main">
         <NuxtLink to="/request">New request</NuxtLink>
@@ -34,8 +33,7 @@ const { request } = useDispatch()
 .shell { position: relative; min-height: 100dvh; display: flex; flex-direction: column; }
 .shell > :not(.cells) { position: relative; z-index: 1; }
 .bar { height: var(--header-h); display: flex; align-items: center; gap: 16px; padding: 0 16px; background: rgba(255, 255, 255, 0.82); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); flex-shrink: 0; }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 16px; text-decoration: none; color: var(--ink); }
-.logo { width: 32px; height: 32px; border-radius: 12px 12px 12px 4px; background: var(--blood-500); color: #fff; display: grid; place-items: center; }
+.brand { display: flex; align-items: center; text-decoration: none; }
 .nav { display: none; gap: 4px; flex: 1; margin-left: 12px; }
 .nav a { padding: 8px 14px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 14px; color: var(--slate); }
 .nav a.router-link-exact-active { background: var(--blood-50); color: var(--blood-700); }

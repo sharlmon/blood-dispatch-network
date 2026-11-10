@@ -90,6 +90,7 @@ const safety = [
     </section>
 
     <section class="final">
+      <BrandLogo layout="stacked" :size="64" reverse />
       <h2>Ready when the next request comes in.</h2>
       <NuxtLink to="/request" class="btn big"><AppIcon name="drop" :size="22" /> Find blood now</NuxtLink>
     </section>

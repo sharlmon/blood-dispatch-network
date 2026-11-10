@@ -35,6 +35,10 @@ When the API is unreachable the header shows **Offline** and a banner tells the 
 | `app/utils/icons.ts` | The icon set (24px grid, 1.75 stroke) |
 | `app/layouts/default.vue` | Header, live status, phone-process fallback banner |
 
+## Brand
+
+Logo: **Convergence** (four drops closing in on one point; three red sources, one dark drop for your hospital). Components `BrandMark` and `BrandLogo` (`inline` and `stacked`, with `reverse` for dark and red backgrounds). SVGs live in `frontend/public/` and `docs/brand/convergence/` (colour, black, reverse, lockup); `favicon.svg` is the app icon.
+
 ## Look and motion
 
 Blush gradient with floating blood cells, brick-red palette, uppercase headlines, outlined pill chips, organic cards and a floating red nav pill on mobile. Motion: staggered rise-in, tile mosaic where a spare bag lands in a gap, pins dropping onto the map, flowing route line, pulsing location dot, growing arrival-window bars. All motion is off under `prefers-reduced-motion`.
