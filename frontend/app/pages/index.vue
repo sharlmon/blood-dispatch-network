@@ -81,7 +81,7 @@ const safety = [
 
     <section v-inview class="section" aria-labelledby="share">
       <div class="share">
-        <div class="photo-card organic"><img :src="img('nurse.jpg')" alt="A nurse in scrubs and a mask checking a tablet"><span class="pc-tag">Hospitals share. Nobody runs short.</span></div>
+        <div class="photo-card organic"><img :src="img('blood-draw.jpg')" alt="A health worker drawing blood from a donor's arm"><span class="pc-tag">Hospitals share. Nobody runs short.</span></div>
         <div class="share-copy">
           <h2 id="share">Hospitals have never shared. Now they can.</h2>
           <p>A hospital 30 minutes down the road often has spare bags of exactly the type you need. Nobody knows, because nobody can see.</p>
@@ -124,7 +124,7 @@ const safety = [
           </ul>
           <NuxtLink to="/results?group=B%2B&units=2&limit=3&demo=1" class="btn btn-primary">Open this example on the map</NuxtLink>
         </div>
-        <figure class="ex-photo organic"><img :src="img('nurse-wide.jpg')" alt="A nurse reading a tablet in a hospital corridor"><figcaption>The lab worker picks. A person approves every step.</figcaption></figure>
+        <figure class="ex-photo organic"><img :src="img('ambulance.jpg')" alt="An ambulance driving along a road through green hills"><figcaption>Once it is approved, the blood is on its way.</figcaption></figure>
       </div>
     </section>
 
@@ -139,9 +139,9 @@ const safety = [
         </li>
       </ul>
       <div class="gallery">
-        <figure class="organic"><img :src="img('lab-gloves.jpg')" alt="A gloved hand holding a tube of blood in a lab"><figcaption>At the bench</figcaption></figure>
-        <figure class="organic"><img :src="img('tubes.jpg')" alt="Two blood sample tubes held in a gloved hand"><figcaption>On the shelf</figcaption></figure>
-        <figure class="organic"><img :src="img('nurse.jpg')" alt="A nurse writing on a tablet"><figcaption>At the bedside</figcaption></figure>
+        <figure class="organic"><img :src="img('blood-bags.jpg')" alt="Three bags of donated blood, labelled A and B"><figcaption>On the shelf</figcaption></figure>
+        <figure class="organic"><img :src="img('paramedics.jpg')" alt="Paramedics loading a stretcher into an ambulance"><figcaption>In transit</figcaption></figure>
+        <figure class="organic"><img :src="img('care-team.jpg')" alt="A team of doctors and nurses standing together"><figcaption>At the bedside</figcaption></figure>
       </div>
       <div class="sms-card organic">
         <IconBadge size="lg"><ServiceIcon name="sms" :size="36" /></IconBadge>
