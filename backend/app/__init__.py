@@ -37,7 +37,17 @@ def create_app(settings_path: str | None = None, test_config: dict | None = None
         ENGINE_CONFIG=load_config(path=os.environ.get('ENGINE_SETTINGS_FILE')),
         ORG_FACILITY_MAP=json.loads(os.environ.get('ORG_FACILITY_MAP', '{}')),
         SMS_SENDERS=json.loads(os.environ.get('SMS_SENDERS', '{}')),
+        SMS_FACILITY_CONTACTS=json.loads(os.environ.get('SMS_FACILITY_CONTACTS', '{}')),
         SMS_WEBHOOK_SECRET=os.environ.get('SMS_WEBHOOK_SECRET'),
+        SMS_ENABLED=os.environ.get('SMS_ENABLED') == '1',
+        SMS_ENVIRONMENT=os.environ.get('SMS_ENVIRONMENT', 'sandbox'),
+        AFRICASTALKING_USERNAME=os.environ.get('AFRICASTALKING_USERNAME', ''),
+        AFRICASTALKING_API_KEY=os.environ.get('AFRICASTALKING_API_KEY', ''),
+        AFRICASTALKING_SANDBOX_API_KEY=os.environ.get('AFRICASTALKING_SANDBOX_API_KEY', ''),
+        AFRICASTALKING_SENDER_ID=os.environ.get('AFRICASTALKING_SENDER_ID', ''),
+        AFRICASTALKING_SANDBOX_SENDER_ID=os.environ.get('AFRICASTALKING_SANDBOX_SENDER_ID', ''),
+        AFRICASTALKING_CALLBACK_TOKEN=os.environ.get('AFRICASTALKING_CALLBACK_TOKEN', ''),
+        AFRICASTALKING_INBOUND_NUMBERS=json.loads(os.environ.get('AFRICASTALKING_INBOUND_NUMBERS', '[]')),
         RESULTS_DIR=os.environ.get('RESULTS_DIR', str(Path(__file__).resolve().parents[2] / 'results')),
         MAX_CONTENT_LENGTH=64 * 1024,
     )
@@ -55,6 +65,8 @@ def create_app(settings_path: str | None = None, test_config: dict | None = None
         raise ValueError('SMS_SENDERS must map sender numbers to user_id, org_id and facility_id')
     if app.config['IDEMPOTENCY_RETENTION_DAYS'] < 1:
         raise ValueError('IDEMPOTENCY_RETENTION_DAYS must be at least 1')
+    from .sms_provider import validate_config
+    validate_config(app.config)
     hour = app.config['SETTINGS'].get('prealert', {}).get('run_hour', 18)
     if type(hour) is not int or not 0 <= hour <= 23:
         raise ValueError('prealert.run_hour must be an integer from 0 to 23')

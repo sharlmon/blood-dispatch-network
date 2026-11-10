@@ -64,6 +64,8 @@ def log(db, identifier, action, details):
     event = {**details, 'actor': actor.public() if actor else {'user_id': 'system'}}
     db.execute('INSERT INTO audit(request_id,action,details,created_at) VALUES(?,?,?,?)',
                (identifier, action, json.dumps(event), now().isoformat()))
+    from .sms_provider import queue_workflow_event
+    queue_workflow_event(db, identifier, action, details)
 
 
 def metadata(db, identifier):
@@ -273,6 +275,6 @@ def expire():
         for row in rows:
             release(db, row)
             db.execute("UPDATE requests SET status='pending',supplier_id=NULL,deadline=NULL,updated_at=? WHERE id=?", (now().isoformat(), row['id']))
-            log(db, row['id'], 'confirmation_expired', {'attempt': row['attempt']})
+            log(db, row['id'], 'confirmation_expired', {'attempt': row['attempt'], 'supplier_id': row['supplier_id']})
             advance(db, row['id'])
     return len(rows)

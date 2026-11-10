@@ -13,6 +13,21 @@ from engine import config
 from engine.load import build_db, load_frames
 
 
+@pytest.fixture(autouse=True)
+def isolate_sms_configuration(monkeypatch):
+    """Private developer SMS settings must never enable external test traffic."""
+    monkeypatch.setenv('SMS_ENABLED', '0')
+    monkeypatch.setenv('SMS_ENVIRONMENT', 'sandbox')
+    monkeypatch.setenv('SMS_SENDERS', '{}')
+    monkeypatch.setenv('SMS_FACILITY_CONTACTS', '{}')
+    monkeypatch.setenv('AFRICASTALKING_INBOUND_NUMBERS', '[]')
+    for key in ('SMS_WEBHOOK_SECRET', 'AFRICASTALKING_CALLBACK_TOKEN',
+                'AFRICASTALKING_USERNAME', 'AFRICASTALKING_API_KEY',
+                'AFRICASTALKING_SANDBOX_API_KEY', 'AFRICASTALKING_SENDER_ID',
+                'AFRICASTALKING_SANDBOX_SENDER_ID'):
+        monkeypatch.delenv(key, raising=False)
+
+
 @pytest.fixture(scope="session")
 def data_dir():
     try:

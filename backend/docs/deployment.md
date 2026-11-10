@@ -1,7 +1,7 @@
 # Backend verification and deployment
 
 The backend has local operational tools and service templates. They do not create
-Clerk accounts, select an SMS vendor, install system services or deploy a server.
+Clerk accounts, provision SMS services, install system services or deploy a server.
 
 ## Verify the starter dataset without touching operational stock
 
@@ -62,10 +62,9 @@ session tokens into Git, logs, reports or chat. Tests additionally exercise genu
 RS256 signatures with local test keys through the complete workflow; they do not
 contact or claim verification of the live Clerk tenant.
 
-SMS currently accepts the signed provider-neutral envelope documented in api.md.
-The chosen provider must adapt its webhook to that envelope and deliver the returned
-reply. No vendor, account, destination number, provider secret or outbound delivery
-is assumed. Do not enable registered senders until that adapter is ready. Production
+SMS supports the signed provider-neutral envelope and a dedicated Africa's Talking
+adapter with queued outbound notifications, replies and delivery reports. See
+[sms.md](sms.md) for configuration, callback protection and the worker. Production
 requires a webhook secret of at least 32 characters when senders are configured.
 
 ## Production process and configuration
@@ -179,8 +178,13 @@ shape and must not run concurrently with the migrated schema. Request and audit 
 ## Remaining external acceptance
 
 Starter-data verification in this workspace is recorded in verification.md.
-Live Clerk organization IDs, the SMS provider/account and target hosting environment
-are still required to complete live acceptance. Compatibility,
+Live Clerk organization IDs, authorized SMS facility/phone mappings, receiving
+shortcode and public callback URLs, and target hosting environment are still
+required to complete live acceptance. Compatibility,
 lending and human-approval behavior still need the team review required by
 CONTRIBUTING.md before merging PR #30. Partial/whole-blood fulfillment and receipt
 discrepancies remain on the existing phone process.
+
+For Africa's Talking configuration, public callbacks and the optional
+`blood-sms.service` worker, follow [sms.md](sms.md). Enable sending only after
+registering the facility phone mappings; API keys alone do not enable messages.
