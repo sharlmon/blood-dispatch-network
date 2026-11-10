@@ -1,5 +1,8 @@
 # backend/ (Flask)
 
+Swagger UI: **http://localhost:5000/api/docs** (use your chosen server port).
+OpenAPI: **http://localhost:5000/api/openapi.json**.
+
 ```bash
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
@@ -9,7 +12,7 @@ flask --app wsgi run --debug --port 5001
 pytest
 ```
 
-`app/` is the Flask app factory and routes (`/api/health` works now). Other folders below are imported by it.
+`app/` provides the Flask API, persistent workflow, Clerk authorization, engine adapters, SMS intake and operational commands. See [the API contract](docs/api.md) for all routes, configuration, and examples.
 
 | Path | Owner | Purpose |
 |---|---|---|
@@ -24,6 +27,13 @@ pytest
 | `config/` | Full-stack 2 | Settings file (country-portable), demo clock |
 | `tests/` | all | Backend tests |
 
+## Request workflow foundation
+
+See [the API contract and local walkthrough](docs/api.md) for implemented routes,
+request bodies, state transitions, and remaining work. Seed an empty local database
+with `flask --app wsgi seed-demo`; run `flask --app wsgi expire-confirmations`
+periodically to release expired supplier reservations. These commands are explicit;
+starting the server does not seed inventory or start a scheduler.
 ## Authentication (Clerk session verification)
 
 `app/clerk_auth.py` verifies the signed-in user's Clerk session token on the server. The frontend sends it as `Authorization: Bearer <jwt>` (`useApi()` does this). Flask checks the RS256 signature against Clerk's public keys (cached), `exp`/`nbf`, the issuer, the authorized origin (`azp`), and rejects `pending` sessions (user has not chosen a hospital yet). A hospital is a Clerk Organization.
