@@ -24,8 +24,17 @@ AFRICASTALKING_INBOUND_NUMBERS=["your_shortcode"]
 SMS_SENDERS={"+254700000001":{"user_id":"clerk_user_id","org_id":"clerk_org_id","facility_id":"HSP-004"}}
 ```
 
-Only explicitly registered `SMS_SENDERS` receive workflow notifications or issue
-commands. Do not guess facility/user mappings from test handset numbers. Map each
+Outbound-only contacts can be configured separately, without Clerk identities:
+
+```dotenv
+SMS_FACILITY_CONTACTS={"HSP-004":["+254700000001"],"RBTC-ELD":["+254700000001"]}
+```
+
+A shared number receives one notification per event even when multiple involved
+facilities use it. These contacts cannot issue incoming SMS commands. Only
+explicitly registered `SMS_SENDERS` can issue commands; they also receive
+workflow notifications. Configure actual recipients explicitly; for a synthetic demo, one authorized test
+number can be assigned to every facility. Map each
 phone to its actual authorized user, organization and facility. Requester and
 current supplier contacts receive lifecycle notifications, including confirmation
 expiry and automatic selection of the next supplier. Replies suppress duplicate

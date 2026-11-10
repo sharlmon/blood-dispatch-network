@@ -23,6 +23,13 @@ def stamp():
 
 
 def validate_config(config):
+    contacts = config['SMS_FACILITY_CONTACTS']
+    if not isinstance(contacts, dict) or any(
+        not isinstance(facility, str) or not facility.strip() or not isinstance(phones, list)
+        or any(not isinstance(phone, str) or not PHONE.fullmatch(phone) for phone in phones)
+        for facility, phones in contacts.items()
+    ):
+        raise ValueError('SMS_FACILITY_CONTACTS must map facility IDs to lists of E.164 phone numbers')
     if config['SMS_ENVIRONMENT'] not in {'live', 'sandbox'}:
         raise ValueError('SMS_ENVIRONMENT must be live or sandbox')
     numbers = config['AFRICASTALKING_INBOUND_NUMBERS']
@@ -59,8 +66,12 @@ def queue_workflow_event(db, identifier, action, details):
     facilities = {row['facility_id'], row['supplier_id'], details.get('supplier_id')}
     # No patient details, blood group or clinical instructions in notifications.
     body = f"Blood Dispatch: {identifier}; {action}; status {row['status']}; attempt {row['attempt']}. Check app or call facility."
-    for number, mapping in current_app.config['SMS_SENDERS'].items():
-        if mapping['facility_id'] in facilities and number != getattr(g, 'sms_sender', None):
+    recipients = {number for number, mapping in current_app.config['SMS_SENDERS'].items()
+                  if mapping['facility_id'] in facilities}
+    for facility in facilities:
+        recipients.update(current_app.config['SMS_FACILITY_CONTACTS'].get(facility, []))
+    for number in sorted(recipients):
+        if number != getattr(g, 'sms_sender', None):
             enqueue(db, f'audit:{event_id}:{number}', number, body, identifier)
 
 

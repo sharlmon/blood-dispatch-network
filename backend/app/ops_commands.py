@@ -123,7 +123,8 @@ def register(app):
                   'sms_outbound_enabled': current_app.config['SMS_ENABLED'],
                   'sms_environment': current_app.config['SMS_ENVIRONMENT'],
                   'sms_callbacks_configured': bool(current_app.config['AFRICASTALKING_CALLBACK_TOKEN']),
-                  'sms_sender_count': len(current_app.config['SMS_SENDERS'])}
+                  'sms_sender_count': len(current_app.config['SMS_SENDERS']),
+                  'sms_contact_facility_count': len(current_app.config['SMS_FACILITY_CONTACTS'])}
         click.echo(json.dumps(result))
         if errors or not data_ready:
             raise click.ClickException('Deployment prerequisites are incomplete')

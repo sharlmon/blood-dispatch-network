@@ -32,6 +32,7 @@ def create_app(settings_path: str | None = None, test_config: dict | None = None
         ENGINE_CONFIG=load_config(path=os.environ.get('ENGINE_SETTINGS_FILE')),
         ORG_FACILITY_MAP=json.loads(os.environ.get('ORG_FACILITY_MAP', '{}')),
         SMS_SENDERS=json.loads(os.environ.get('SMS_SENDERS', '{}')),
+        SMS_FACILITY_CONTACTS=json.loads(os.environ.get('SMS_FACILITY_CONTACTS', '{}')),
         SMS_WEBHOOK_SECRET=os.environ.get('SMS_WEBHOOK_SECRET'),
         SMS_ENABLED=os.environ.get('SMS_ENABLED') == '1',
         SMS_ENVIRONMENT=os.environ.get('SMS_ENVIRONMENT', 'sandbox'),

@@ -19,6 +19,7 @@ def isolate_sms_configuration(monkeypatch):
     monkeypatch.setenv('SMS_ENABLED', '0')
     monkeypatch.setenv('SMS_ENVIRONMENT', 'sandbox')
     monkeypatch.setenv('SMS_SENDERS', '{}')
+    monkeypatch.setenv('SMS_FACILITY_CONTACTS', '{}')
     monkeypatch.setenv('AFRICASTALKING_INBOUND_NUMBERS', '[]')
     for key in ('SMS_WEBHOOK_SECRET', 'AFRICASTALKING_CALLBACK_TOKEN',
                 'AFRICASTALKING_USERNAME', 'AFRICASTALKING_API_KEY',

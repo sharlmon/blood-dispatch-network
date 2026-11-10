@@ -252,3 +252,22 @@ def test_environment_never_falls_back_to_other_key(enabled):
     config['AFRICASTALKING_SANDBOX_API_KEY'] = ''
     with pytest.raises(ValueError):
         provider.validate_config(config)
+
+
+def test_shared_outbound_contact_deduplicates_without_inbound_permission(enabled, client):
+    enabled.config['SMS_SENDERS'] = {}
+    enabled.config['SMS_FACILITY_CONTACTS'] = {'HSP-R': [REQUESTER], 'RBTC-A': [REQUESTER]}
+    identifier = create(client).json['id']
+    assert pick(client, identifier).status_code == 200
+    queued = rows(enabled)
+    assert len(queued) == 2  # one per event, even when both facilities share a phone
+    assert {r['recipient'] for r in queued} == {REQUESTER}
+    assert inbound(client).status_code == 403
+
+
+@pytest.mark.parametrize('contacts', [[], {'HSP-R': 'not-a-list'}, {'HSP-R': ['0700000001']}, {'': [REQUESTER]}])
+def test_outbound_contact_config_validation(enabled, contacts):
+    config = dict(enabled.config)
+    config['SMS_FACILITY_CONTACTS'] = contacts
+    with pytest.raises(ValueError):
+        provider.validate_config(config)
