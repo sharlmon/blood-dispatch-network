@@ -2,12 +2,18 @@
 // who belongs to a hospital (a Clerk organization).
 const PUBLIC = ['/', '/sign-in', '/sign-up']
 
-export default defineNuxtRouteMiddleware((to) => {
+export default defineNuxtRouteMiddleware(async (to) => {
   if (!useRuntimeConfig().public.authEnabled) return // static demo build: no login
   const isPublic = PUBLIC.some(p => to.path === p || to.path.startsWith(p + '/')) || to.query.demo === '1'
   if (isPublic) return
 
-  const { isSignedIn, orgId } = useAuth()
+  const { isLoaded, isSignedIn, orgId } = useAuth()
+  // Static (SPA) build: Clerk loads in the browser, so wait for it before deciding.
+  if (import.meta.client && !isLoaded.value) {
+    await new Promise<void>((resolve) => {
+      const stop = watch(isLoaded, (v) => { if (v) { stop(); resolve() } }, { immediate: true })
+    })
+  }
   if (!isSignedIn.value) return navigateTo('/sign-in')
   if (!orgId.value && to.path !== '/onboarding') return navigateTo('/onboarding')
 })
