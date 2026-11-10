@@ -1,0 +1,180 @@
+{
+  "cleaning_performed": false,
+  "dataset_manifest": {
+    "daily_stock.csv": {
+      "rows": 185785,
+      "sha256": "b57e9df0622b1d7318e37da44969d07bd8b1f6a235f0be3021538dcf5a2f5130"
+    },
+    "facilities.csv": {
+      "rows": 47,
+      "sha256": "9cb53f2975de71ce1aa3f43f1e6d9ebf19901e8c77c56c27071ca2eeb1e1cf13"
+    },
+    "requests.csv": {
+      "rows": 17430,
+      "sha256": "68dc3cc50343d2ef306ebb8a3afb75adc6766c5ef95d1eb01d7d566d9bfbb557"
+    },
+    "routes.csv": {
+      "rows": 2162,
+      "sha256": "e7e6bcbeb199f99e52c72e990f156d7dc1df2d4a36faf5204933c81e5a934e74"
+    },
+    "transfers.csv": {
+      "rows": 35181,
+      "sha256": "00ca80de55df4489987e364e03ca4a52105af9519d5e86e6045a99f1cdf45987"
+    }
+  },
+  "generated_at": "2026-11-10T15:01:16.194125+03:00",
+  "result": {
+    "test": {
+      "arrival_endpoint": "receiving_facility",
+      "evaluation_period": {
+        "end_exclusive": "2026-10-31T21:00:00+00:00",
+        "start_inclusive": "2026-08-31T21:00:00+00:00"
+      },
+      "exclusions": {
+        "collapsed_unit_rows": 2542,
+        "emergency_transfer_rows": 5330,
+        "grouped_shipments": 2788,
+        "input_transfer_rows": 35181,
+        "missing_or_invalid_timestamp_shipments": 27,
+        "non_emergency_transfer_rows": 29851,
+        "outside_request_window_shipments": 2320,
+        "receipt_at_or_after_cutoff_shipments": 3,
+        "valid_shipments": 438
+      },
+      "interval_sample_count": 438,
+      "limitations": [
+        "Synthetic starter data; performance does not establish clinical or real-world validity.",
+        "Completed emergency shipments only; unconfirmed or censored shipments are excluded.",
+        "Pooled route distribution; hospital-to-hospital lending is not validated.",
+        "Receiving-facility arrival excludes bedside preparation and crossmatching.",
+        "Completion means all recorded units in a request-source batch, not all units originally requested."
+      ],
+      "metrics": {
+        "baseline_map_plus_2_mean_absolute_error_hours": 1.3326338153221715,
+        "baseline_map_plus_2_median_absolute_error_hours": 1.0159722222222225,
+        "fraction_after_p90": 0.1050228310502283,
+        "mean_absolute_error_hours": 0.8899372885270107,
+        "mean_interval_width_hours": 3.0323073839163754,
+        "median_absolute_error_hours": 0.6946279296153324,
+        "nominal_interval_probability": 0.8,
+        "p10_p90_coverage": 0.8082191780821918
+      },
+      "model_type": "paired_empirical_v1",
+      "sample_count": 438,
+      "schema_version": 1,
+      "time_origin": "request_submission",
+      "trained_before": "2026-06-30T21:00:00+00:00",
+      "training_sample_count": 1762,
+      "unit_of_analysis": "request_source_batch_last_receipt"
+    },
+    "validation": {
+      "arrival_endpoint": "receiving_facility",
+      "evaluation_period": {
+        "end_exclusive": "2026-08-31T21:00:00+00:00",
+        "start_inclusive": "2026-06-30T21:00:00+00:00"
+      },
+      "exclusions": {
+        "collapsed_unit_rows": 2542,
+        "emergency_transfer_rows": 5330,
+        "grouped_shipments": 2788,
+        "input_transfer_rows": 35181,
+        "missing_or_invalid_timestamp_shipments": 27,
+        "non_emergency_transfer_rows": 29851,
+        "outside_request_window_shipments": 2335,
+        "receipt_at_or_after_cutoff_shipments": 3,
+        "valid_shipments": 423
+      },
+      "interval_sample_count": 423,
+      "limitations": [
+        "Synthetic starter data; performance does not establish clinical or real-world validity.",
+        "Completed emergency shipments only; unconfirmed or censored shipments are excluded.",
+        "Pooled route distribution; hospital-to-hospital lending is not validated.",
+        "Receiving-facility arrival excludes bedside preparation and crossmatching.",
+        "Completion means all recorded units in a request-source batch, not all units originally requested."
+      ],
+      "metrics": {
+        "baseline_map_plus_2_mean_absolute_error_hours": 1.4198824533753611,
+        "baseline_map_plus_2_median_absolute_error_hours": 1.1124999999999998,
+        "fraction_after_p90": 0.12529550827423167,
+        "mean_absolute_error_hours": 0.9767223641418723,
+        "mean_interval_width_hours": 3.055813775677711,
+        "median_absolute_error_hours": 0.8050826106572653,
+        "nominal_interval_probability": 0.8,
+        "p10_p90_coverage": 0.7588652482269503
+      },
+      "model_type": "paired_empirical_v1",
+      "sample_count": 423,
+      "schema_version": 1,
+      "time_origin": "request_submission",
+      "trained_before": "2026-06-30T21:00:00+00:00",
+      "training_sample_count": 1762,
+      "unit_of_analysis": "request_source_batch_last_receipt"
+    }
+  },
+  "schema_version": 1,
+  "seed": 42,
+  "settings": {
+    "arrival": {
+      "confirmation_timeout_minutes": 10,
+      "dispatch_wait_hours": 2.0,
+      "min_training_samples": 20,
+      "road_time_multiplier": 1.2,
+      "seed": 42,
+      "too_long_hours": 6,
+      "window_percentiles": [
+        10,
+        50,
+        90
+      ]
+    },
+    "country": "KE",
+    "demo_clock": null,
+    "lending": {
+      "enabled": true,
+      "protect_o_negative": true,
+      "safety_stock_units": {}
+    },
+    "prealert": {
+      "blood_groups": [
+        "O+"
+      ],
+      "components": [
+        "RBC",
+        "WB"
+      ],
+      "horizon_hours": 24,
+      "run_hour": 18
+    },
+    "replay": {
+      "components": [
+        "RBC"
+      ],
+      "deadline_hours": 6,
+      "hospital_reserve_units": {
+        "A+": 10,
+        "A-": 10,
+        "AB+": 10,
+        "AB-": 10,
+        "B+": 10,
+        "B-": 10,
+        "O+": 10
+      },
+      "urgencies": [
+        "emergency"
+      ]
+    },
+    "sms": {
+      "gateway": null
+    },
+    "timezone": "Africa/Nairobi",
+    "unknown_group_policy": "group_o_only"
+  },
+  "settings_sha256": "e39fcf4f6f7b01121c5966f5d701898d7dd1008cfc53e3a9f935085683723fbe",
+  "split": {
+    "test_end_exclusive": "2026-11-01T00:00:00",
+    "training_end_exclusive": "2026-07-01T00:00:00",
+    "validation_end_exclusive": "2026-09-01T00:00:00"
+  },
+  "synthetic_data": true,
+  "timezone": "Africa/Nairobi"
+}
