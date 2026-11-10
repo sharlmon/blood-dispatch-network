@@ -5,7 +5,7 @@
 </template>
 
 <style scoped>
-.cells { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.cells { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; opacity: 0.32; }
 .c {
   position: absolute; display: block; border-radius: 50%;
   background: radial-gradient(ellipse at 35% 30%, #e8665f 0%, #b3171e 55%, #8c1015 100%);

@@ -49,12 +49,12 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
       <div class="map organic" aria-label="Sources placed by distance from the requesting hospital">
         <svg viewBox="0 0 560 410" role="img" :aria-label="`${pins.length} sources around ${hospital}, drawn on a globe`">
           <defs>
-            <linearGradient id="gl-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" /><stop offset="1" stop-color="#fbe3df" /></linearGradient>
+            <linearGradient id="gl-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" /><stop offset="1" stop-color="#e3efed" /></linearGradient>
             <radialGradient id="gl-ball" :cx="GLOBE.cx" :cy="GLOBE.cy - GLOBE.r * 0.55" :r="GLOBE.r * 1.15" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#fff3f1" /><stop offset="0.7" stop-color="#f5cdc8" /><stop offset="1" stop-color="#e9a79f" />
+              <stop offset="0" stop-color="#f6faf9" /><stop offset="0.7" stop-color="#c4dcd8" /><stop offset="1" stop-color="#9fcfc8" />
             </radialGradient>
             <radialGradient id="gl-halo" :cx="GLOBE.cx" :cy="GLOBE.cy" :r="GLOBE.r + 46" gradientUnits="userSpaceOnUse">
-              <stop :offset="GLOBE.r / (GLOBE.r + 46)" stop-color="#ff8a80" stop-opacity="0.55" /><stop offset="1" stop-color="#ff8a80" stop-opacity="0" />
+              <stop :offset="GLOBE.r / (GLOBE.r + 46)" stop-color="#7fd6c9" stop-opacity="0.55" /><stop offset="1" stop-color="#7fd6c9" stop-opacity="0" />
             </radialGradient>
             <clipPath id="gl-clip"><circle :cx="GLOBE.cx" :cy="GLOBE.cy" :r="GLOBE.r" /></clipPath>
           </defs>
@@ -136,18 +136,18 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
 <style scoped>
 .story { display: grid; gap: 18px; }
 .req { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.clock { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 99px; background: var(--wine); color: #fff; font-weight: 800; font-size: 13px; letter-spacing: 0.04em; }
-.grp { font-size: 34px; font-weight: 800; color: var(--blood-600); line-height: 1; }
+.clock { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 99px; background: var(--ink-deep); color: #fff; font-weight: 800; font-size: 13px; letter-spacing: 0.04em; }
+.grp { font-size: 34px; font-weight: 800; color: var(--blood-500); line-height: 1; }
 .rt { display: flex; flex-direction: column; }
 .rt b { font-size: 16px; }
 .rt small { font-size: 13px; font-weight: 600; color: var(--slate); }
 .body { display: grid; gap: 18px; align-items: stretch; }
-.map { position: relative; overflow: hidden; border: 1.5px solid var(--blood-500); min-height: 280px; background: #fff; }
+.map { position: relative; overflow: hidden; border: 1.5px solid var(--primary-500); min-height: 280px; background: #fff; }
 .map svg { display: block; width: 100%; height: 100%; }
-.hint { position: absolute; left: 14px; bottom: 12px; padding: 5px 12px; border-radius: 99px; background: rgba(255, 255, 255, 0.92); font-size: 12px; font-weight: 800; color: var(--blood-700); box-shadow: 0 6px 14px rgba(126, 16, 21, 0.14); }
-.land { stroke: #c24a47; stroke-width: 3.6; stroke-linecap: round; fill: none; opacity: 0.72; }
+.hint { position: absolute; left: 14px; bottom: 12px; padding: 5px 12px; border-radius: 99px; background: rgba(255, 255, 255, 0.92); font-size: 12px; font-weight: 800; color: var(--primary-700); box-shadow: 0 6px 14px rgba(6, 74, 68, 0.14); }
+.land { stroke: #2f8f84; stroke-width: 3.6; stroke-linecap: round; fill: none; opacity: 0.72; }
 .route { stroke: #d9aaa5; stroke-width: 3; stroke-dasharray: 2 9; transition: stroke 0.3s ease; }
-.route.on { stroke: #b3171e; stroke-width: 4; stroke-dasharray: 3 10; animation: flow 1s linear infinite; }
+.route.on { stroke: #0a6b62; stroke-width: 4; stroke-dasharray: 3 10; animation: flow 1s linear infinite; }
 @keyframes flow { to { stroke-dashoffset: -26; } }
 .pulse { fill: none; stroke: #1b1b1f; stroke-opacity: 0.5; stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: ping 2.6s ease-out infinite; }
 .p2 { animation-delay: 1.3s; }
@@ -156,33 +156,33 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
 .pin { cursor: pointer; outline: none; }
 .pin .dot { fill: #4a5b68; stroke: #fff; stroke-width: 3; transition: fill 0.25s ease; }
 .pin .num { font-size: 15px; font-weight: 800; fill: #fff; }
-.pin .tagbg { fill: #fff; stroke: #ecd5d1; stroke-width: 1.5; transition: fill 0.25s ease, stroke 0.25s ease; }
+.pin .tagbg { fill: #fff; stroke: #d8e4e2; stroke-width: 1.5; transition: fill 0.25s ease, stroke 0.25s ease; }
 .pin .tagtx { font-size: 14px; font-weight: 800; fill: #12202b; }
-.pin.on .dot { fill: #b3171e; }
-.pin.on .tagbg { fill: #b3171e; stroke: #b3171e; }
+.pin.on .dot { fill: #0a6b62; }
+.pin.on .tagbg { fill: #0a6b62; stroke: #0a6b62; }
 .pin.on .tagtx { fill: #fff; }
-.pin:hover .dot, .pin:focus-visible .dot { fill: #b3171e; }
+.pin:hover .dot, .pin:focus-visible .dot { fill: #0a6b62; }
 .pin { transition: transform 0.2s ease; }
-.drop { filter: drop-shadow(0 3px 4px rgba(60, 5, 10, 0.35)); }
+.drop { filter: drop-shadow(0 3px 4px rgba(4, 40, 38, 0.35)); }
 
 .side { display: flex; flex-direction: column; gap: 14px; }
 .pick { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.pick button { width: 100%; min-height: 64px; padding: 8px 6px; border-radius: 22px; border: 1.5px solid #ecd5d1; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 2px; font: inherit; transition: all 0.25s ease; }
+.pick button { width: 100%; min-height: 64px; padding: 8px 6px; border-radius: 22px; border: 1.5px solid #d8e4e2; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 2px; font: inherit; transition: all 0.25s ease; }
 .pick button:hover { transform: translateY(-2px); }
 .pick .n { width: 22px; height: 22px; border-radius: 99px; background: var(--slate); color: #fff; font-size: 12px; font-weight: 800; display: grid; place-items: center; }
 .pick .nm { font-size: 11.5px; font-weight: 700; color: var(--slate); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pick .tm { font-size: 15px; }
-.pick button.on { background: var(--blood-50); border-color: var(--blood-500); box-shadow: 0 8px 18px rgba(179, 23, 30, 0.18); }
-.pick button.on .n { background: var(--blood-500); }
-.detail { padding: 18px 20px; border-radius: 26px; background: #fff; border: 1.5px solid #ecd5d1; display: flex; flex-direction: column; gap: 8px; }
+.pick button.on { background: var(--primary-50); border-color: var(--primary-500); box-shadow: 0 8px 18px rgba(10, 107, 98, 0.18); }
+.pick button.on .n { background: var(--primary-500); }
+.detail { padding: 18px 20px; border-radius: 26px; background: #fff; border: 1.5px solid #d8e4e2; display: flex; flex-direction: column; gap: 8px; }
 .kind { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--slate); }
 .fast { margin-left: auto; padding: 3px 10px; border-radius: 99px; background: var(--teal-50); color: var(--teal-600); font-size: 11.5px; font-weight: 800; }
 .detail h3 { margin: 0; font-size: 19px; }
-.big { margin: 0; display: flex; align-items: baseline; gap: 10px; font-size: 40px; font-weight: 800; color: var(--blood-600); line-height: 1; }
+.big { margin: 0; display: flex; align-items: baseline; gap: 10px; font-size: 40px; font-weight: 800; color: var(--primary-600); line-height: 1; }
 .big small { font-size: 13px; font-weight: 700; color: var(--slate); }
-.range { margin: 0; font-size: 14px; font-weight: 500; color: #5a3c3f; }
+.range { margin: 0; font-size: 14px; font-weight: 500; color: #44545f; }
 .spare { margin: 4px 0 0; display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; }
-.spare svg { color: var(--blood-500); }
+.spare svg { color: var(--primary-500); }
 .verdict { margin: 0; display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; border-radius: 16px; font-size: 13.5px; font-weight: 700; line-height: 1.4; }
 .verdict.ok { background: var(--teal-50); color: var(--teal-600); }
 .verdict.warn { background: var(--amber-50); color: var(--amber-900); }
@@ -193,11 +193,11 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
 .swap-enter-from { opacity: 0; transform: translateY(12px); }
 .swap-leave-to { opacity: 0; }
 
-.road { position: relative; margin: 0; overflow: hidden; height: 190px; background: #f3c9c4; }
-.road img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; filter: sepia(0.25) saturate(1.3) hue-rotate(-8deg); }
-.road::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(126, 16, 21, 0.78) 0%, rgba(126, 16, 21, 0.2) 70%); }
-.road figcaption { position: absolute; z-index: 1; left: 20px; right: 20px; bottom: 18px; color: #fff; font-weight: 700; font-size: 16px; line-height: 1.4; max-width: 460px; text-shadow: 0 2px 10px rgba(40, 3, 6, 0.5); }
-.road figcaption b { display: inline-block; margin-right: 8px; padding: 3px 10px; border-radius: 99px; background: #fff; color: var(--blood-700); font-size: 13px; text-shadow: none; }
+.road { position: relative; margin: 0; overflow: hidden; height: 190px; background: #cfe4e1; }
+.road img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; filter: saturate(1.05) contrast(1.02); }
+.road::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(6, 74, 68, 0.78) 0%, rgba(6, 74, 68, 0.2) 70%); }
+.road figcaption { position: absolute; z-index: 1; left: 20px; right: 20px; bottom: 18px; color: #fff; font-weight: 700; font-size: 16px; line-height: 1.4; max-width: 460px; text-shadow: 0 2px 10px rgba(3, 30, 28, 0.5); }
+.road figcaption b { display: inline-block; margin-right: 8px; padding: 3px 10px; border-radius: 99px; background: #fff; color: var(--primary-700); font-size: 13px; text-shadow: none; }
 @media (min-width: 900px) {
   .body { grid-template-columns: 1.2fr 0.8fr; gap: 28px; }
   .map { min-height: 440px; }

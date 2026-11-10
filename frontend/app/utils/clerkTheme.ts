@@ -1,7 +1,7 @@
 /** Clerk component styling to match the Blood Dispatch look. */
 export const clerkAppearance = {
   variables: {
-    colorPrimary: '#b3171e',
+    colorPrimary: '#0a6b62',
     colorText: '#12202b',
     colorTextSecondary: '#4a5b68',
     colorBackground: '#ffffff',

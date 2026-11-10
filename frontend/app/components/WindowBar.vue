@@ -22,5 +22,5 @@ const limitPos = computed(() => (props.limit !== undefined ? (props.limit / prop
 .range.warn { background: var(--amber-500); }
 .limit { position: absolute; top: -4px; width: 2px; height: 16px; background: var(--ink); opacity: 0.5; }
 .dot { position: absolute; top: -3px; width: 14px; height: 14px; margin-left: -7px; border-radius: 99px; background: var(--ink); border: 3px solid #fff; animation: pop 0.4s ease 0.6s both; }
-.track { background: #f0e4e1; }
+.track { background: #e2ece9; }
 </style>

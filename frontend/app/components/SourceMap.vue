@@ -204,7 +204,7 @@ const zoomPct = computed(() => Math.round(z.value * 100))
 
       <path
         v-for="o in options" :key="'r' + o.id" :d="routePath(o)" fill="none" stroke-linecap="round" class="route"
-        :class="{ flow: o.id === selectedId }" :stroke="o.id === selectedId ? '#b3171e' : '#7c909f'" :stroke-width="(o.id === selectedId ? 4 : 3) * view.k" :stroke-dasharray="`${view.k} ${9 * view.k}`"
+        :class="{ flow: o.id === selectedId }" :stroke="o.id === selectedId ? '#0a6b62' : '#7c909f'" :stroke-width="(o.id === selectedId ? 4 : 3) * view.k" :stroke-dasharray="`${view.k} ${9 * view.k}`"
       />
 
       <!-- blood on its way: a drop travels the selected route -->
@@ -233,13 +233,13 @@ const zoomPct = computed(() => Math.round(z.value * 100))
       >
         <g class="drop" :style="{ animationDelay: i * 120 + 'ms' }">
           <g class="body" :transform="o.id === selectedId ? 'scale(1.25)' : 'scale(1)'">
-            <path v-if="o.kind === 'hospital'" :d="CIRCLE_PIN" :fill="o.id === selectedId ? '#b3171e' : '#4a5b68'" stroke="#fff" stroke-width="3" />
-            <path v-else :d="SQUARE_PIN" :fill="o.id === selectedId ? '#b3171e' : '#4a5b68'" stroke="#fff" stroke-width="3" />
+            <path v-if="o.kind === 'hospital'" :d="CIRCLE_PIN" :fill="o.id === selectedId ? '#0a6b62' : '#4a5b68'" stroke="#fff" stroke-width="3" />
+            <path v-else :d="SQUARE_PIN" :fill="o.id === selectedId ? '#0a6b62' : '#4a5b68'" stroke="#fff" stroke-width="3" />
             <path v-if="o.kind === 'hospital'" d="M0-30v13M-6.5-23.5h13" stroke="#fff" stroke-width="3" stroke-linecap="round" />
             <path v-else :d="DROP_SMALL" fill="#fff" />
           </g>
           <g :transform="`translate(0 ${o.id === selectedId ? -54 : -46})`">
-            <rect :x="-chipW(o) / 2" y="-12" :width="chipW(o)" height="22" rx="11" :fill="o.id === selectedId ? '#b3171e' : '#fff'" :stroke="o.id === selectedId ? '#b3171e' : '#d5dde3'" />
+            <rect :x="-chipW(o) / 2" y="-12" :width="chipW(o)" height="22" rx="11" :fill="o.id === selectedId ? '#0a6b62' : '#fff'" :stroke="o.id === selectedId ? '#0a6b62' : '#d5dde3'" />
             <text x="0" y="3.5" text-anchor="middle" font-size="12" font-weight="800" :fill="o.id === selectedId ? '#fff' : '#12202b'" font-family="Manrope, sans-serif">{{ fmtHours(o.p50) }}</text>
           </g>
         </g>
@@ -293,21 +293,21 @@ const zoomPct = computed(() => Math.round(z.value * 100))
 @keyframes pulse { 0% { transform: scale(0.6); opacity: 0.9; } 100% { transform: scale(1.5); opacity: 0; } }
 .pin:focus-visible path:first-of-type { stroke: #1d6fd8; stroke-width: 4; }
 
-.tip { position: absolute; z-index: 5; transform: translate(-50%, calc(-100% - 70px)); width: 230px; padding: 10px 14px; border-radius: 18px; background: rgba(255, 255, 255, 0.97); border: 1.5px solid #ecd5d1; box-shadow: 0 14px 30px rgba(60, 5, 10, 0.22); display: flex; flex-direction: column; gap: 2px; pointer-events: none; }
+.tip { position: absolute; z-index: 5; transform: translate(-50%, calc(-100% - 70px)); width: 230px; padding: 10px 14px; border-radius: 18px; background: rgba(255, 255, 255, 0.97); border: 1.5px solid #d8e4e2; box-shadow: 0 14px 30px rgba(4, 40, 38, 0.22); display: flex; flex-direction: column; gap: 2px; pointer-events: none; }
 .tip b { font-size: 14px; color: var(--ink); }
 .tip span { font-size: 12.5px; font-weight: 600; color: var(--slate); }
-.tip em { font-style: normal; font-size: 13px; font-weight: 800; color: var(--blood-600); }
+.tip em { font-style: normal; font-size: 13px; font-weight: 800; color: var(--primary-600); }
 .tip i { font-style: normal; font-size: 11.5px; font-weight: 700; color: var(--teal-600); margin-top: 2px; }
 .tip-enter-active, .tip-leave-active { transition: opacity 0.15s ease, translate 0.2s ease; }
 .tip-enter-from, .tip-leave-to { opacity: 0; translate: 0 6px; }
 
 .ctrls { position: absolute; z-index: 4; display: flex; flex-direction: column; gap: 8px; right: 12px; top: 64px; }
-.ctrls button { width: 46px; height: 46px; border-radius: 99px; border: 1.5px solid #ecd5d1; background: rgba(255, 255, 255, 0.96); color: var(--blood-700); display: grid; place-items: center; box-shadow: 0 8px 18px rgba(60, 5, 10, 0.14); transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease; }
-.ctrls button:hover:not(:disabled) { transform: translateY(-2px); background: var(--blood-50); }
+.ctrls button { width: 46px; height: 46px; border-radius: 99px; border: 1.5px solid #d8e4e2; background: rgba(255, 255, 255, 0.96); color: var(--primary-700); display: grid; place-items: center; box-shadow: 0 8px 18px rgba(4, 40, 38, 0.14); transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease; }
+.ctrls button:hover:not(:disabled) { transform: translateY(-2px); background: var(--primary-50); }
 .ctrls button:active:not(:disabled) { transform: scale(0.94); }
 .ctrls button:disabled { opacity: 0.4; }
 .minus { width: 16px; height: 2.5px; border-radius: 99px; background: currentColor; }
-.legend { position: absolute; z-index: 3; left: 12px; top: 64px; margin: 0; display: none; gap: 14px; padding: 8px 14px; border-radius: 99px; background: rgba(255, 255, 255, 0.94); font-size: 12.5px; font-weight: 700; color: var(--ink); box-shadow: 0 8px 18px rgba(60, 5, 10, 0.12); }
+.legend { position: absolute; z-index: 3; left: 12px; top: 64px; margin: 0; display: none; gap: 14px; padding: 8px 14px; border-radius: 99px; background: rgba(255, 255, 255, 0.94); font-size: 12.5px; font-weight: 700; color: var(--ink); box-shadow: 0 8px 18px rgba(4, 40, 38, 0.12); }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend i { width: 12px; height: 12px; display: inline-block; }
 .legend .you { border-radius: 99px; background: #1d6fd8; }

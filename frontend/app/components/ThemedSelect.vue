@@ -78,23 +78,23 @@ onBeforeUnmount(() => { document.removeEventListener('mousedown', away); window.
 </template>
 
 <style scoped>
-.trig { min-height: 44px; padding: 0 16px 0 18px; border-radius: 99px; border: 1.5px solid #e6c4c0; background: #fff; color: var(--blood-700); font-weight: 800; font-size: 14px; display: inline-flex; align-items: center; gap: 10px; transition: box-shadow 0.2s ease, border-color 0.2s ease; }
+.trig { min-height: 44px; padding: 0 16px 0 18px; border-radius: 99px; border: 1.5px solid #c9dbd8; background: #fff; color: var(--primary-700); font-weight: 800; font-size: 14px; display: inline-flex; align-items: center; gap: 10px; transition: box-shadow 0.2s ease, border-color 0.2s ease; }
 .trig svg { transition: transform 0.25s ease; }
-.trig.open { border-color: var(--blood-500); box-shadow: 0 0 0 4px rgba(179, 23, 30, 0.14); }
+.trig.open { border-color: var(--primary-500); box-shadow: 0 0 0 4px rgba(10, 107, 98, 0.14); }
 .trig.open svg { transform: rotate(180deg); }
-.pop { position: fixed; z-index: 130; padding: 8px; border-radius: 24px; background: rgba(255, 255, 255, 0.98); border: 1.5px solid var(--blood-500); box-shadow: 0 24px 50px rgba(60, 5, 10, 0.28); outline: none; transform-origin: top right; }
+.pop { position: fixed; z-index: 130; padding: 8px; border-radius: 24px; background: rgba(255, 255, 255, 0.98); border: 1.5px solid var(--primary-500); box-shadow: 0 24px 50px rgba(4, 40, 38, 0.28); outline: none; transform-origin: top right; }
 .pop.up { transform: translateY(-100%); transform-origin: bottom right; }
 .opt, .sopt { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 6px 14px; border-radius: 16px; cursor: pointer; color: var(--ink); width: 100%; text-align: left; background: transparent; border: 0; font: inherit; }
 .opt + .opt { margin-top: 2px; }
 .t { flex: 1; display: flex; flex-direction: column; }
 .t b { font-size: 14.5px; font-weight: 800; }
-.t small { font-size: 12.5px; font-weight: 600; color: #7a5a5d; }
-.opt.act { background: var(--blood-50); }
-.opt.on, .sopt.on { color: var(--blood-700); }
-.opt svg, .sopt svg { color: var(--blood-500); }
+.t small { font-size: 12.5px; font-weight: 600; color: #5d6d78; }
+.opt.act { background: var(--primary-50); }
+.opt.on, .sopt.on { color: var(--primary-700); }
+.opt svg, .sopt svg { color: var(--primary-500); }
 .sheetlist { display: grid; gap: 8px; }
-.sopt { min-height: 56px; padding: 8px 18px; border-radius: 99px; border: 1.5px solid #ecd5d1; background: #fff; }
-.sopt.on { background: var(--blood-50); border-color: var(--blood-500); }
+.sopt { min-height: 56px; padding: 8px 18px; border-radius: 99px; border: 1.5px solid #d8e4e2; background: #fff; }
+.sopt.on { background: var(--primary-50); border-color: var(--primary-500); }
 .pp-enter-active { transition: opacity 0.18s ease, transform 0.28s cubic-bezier(0.2, 1.1, 0.3, 1); }
 .pp-leave-active { transition: opacity 0.12s ease; }
 .pp-enter-from, .pp-leave-to { opacity: 0; }
