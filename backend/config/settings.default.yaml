@@ -1,0 +1,17 @@
+# Per-country settings. A new country = a new copy of this file, no code changes.
+country: KE
+timezone: Africa/Nairobi
+demo_clock: null            # ISO timestamp to freeze "now" during the demo
+lending:
+  enabled: true
+  safety_stock_units: {}    # per blood group; spare = on_hand - safety_stock
+  protect_o_negative: true
+arrival:
+  dispatch_wait_hours: 2.0
+  road_time_multiplier: 1.2
+  confirmation_timeout_minutes: 10
+  window_percentiles: [10, 50, 90]
+  too_long_hours: 6
+unknown_group_policy: group_o_only
+sms:
+  gateway: null

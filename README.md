@@ -29,19 +29,30 @@ It's 1 a.m. A patient needs blood urgently and the hospital fridge doesn't have 
 
 **Limitations:** hospital lending is assumed (none observed in data); yesterday's stock may be gone by request time (confirmation timeout moves to next site); remote hospitals gain little; all figures are synthetic and exploratory.
 
-## Architecture (planned)
+## Architecture
 
 ```
-SMS / Frontend ──► API + workflow ──► Ranking engine ──► Arrival-window model
-                     │                    ▲
-                     ├─ audit log         └─ stock (yesterday + today's releases)
-                     └─ fallback mode          config (country settings)
+CSVs ──► SQLite ──► Ranking engine (Python) ──► API ──► Web screens ──► Results tab
+                    stock + safety stock         workflow steps   + SMS parser   (precomputed
+                    + arrival range + reasons    audit log                       replay JSON)
+                                                 fallback
+                         Settings file per country (config, not code) ───────────┘
 ```
+
+1. **Ingest:** CSVs are loaded into SQLite (`backend/db/`).
+2. **Ranking engine (Python):** per candidate site computes available stock, safety stock to keep, arrival range, and plain-language reasons.
+3. **API:** workflow steps (request → pick → confirm → dispatch), audit log, fallback mode.
+4. **Clients:** web screens and an SMS parser both call the API.
+5. **Results tab:** reads precomputed replay JSON from `results/`.
+6. **Settings file per country:** thresholds, lending rules, compatibility and demo clock live in config.
+
+## Repo structure
 
 ```
 .
 ├── frontend/   screens, components, results tab
 ├── backend/
+│   ├── db/         CSV ingest, SQLite schema
 │   ├── api/        HTTP API
 │   ├── workflow/   request flow, audit log, fallback
 │   ├── engine/     ranking, arrival, replay, prealert

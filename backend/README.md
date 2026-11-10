@@ -2,6 +2,7 @@
 
 | Path | Owner | Purpose |
 |---|---|---|
+| `db/` | Full-stack 2 | CSV → SQLite ingest and schema |
 | `api/` | Full-stack 1 | HTTP API, deployment entrypoint |
 | `workflow/` | Full-stack 1 | Request → pick → confirm → dispatch logic, audit log, fallback mode |
 | `engine/ranking/` | Data scientist 1 | Ranking engine (+ stretch: today's centre stock estimate) |
