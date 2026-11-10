@@ -1,27 +1,29 @@
 <script setup lang="ts">
 useHead({ title: 'Blood Dispatch · Find spare blood nearby' })
 
-const demo = mockRank({ id: '#demo', group: 'B+', units: 2, product: 'Red cells', limitH: 3, openedAt: '01:04' }).options
-const selected = demo[0]!.id
+// The illustration runs on the fictional demo network (utils/mock.ts), in the engine's shape.
+const demo = toOptions(mockRankResult({ group: 'B+', units: 2, limitH: 3, requestedAt: '2026-10-31T01:04:00', requesterName: 'Hillside Hospital' }))
+const EXAMPLE_LINK = '/results?group=B%2B&units=2&limit=3&facility=HSP-004&at=2026-10-31T00:58&demo=1'
 const img = useImg()
 
 const stats = [
   { c: { to: 28, suffix: '%' }, text: 'of emergencies hit a hospital fridge that fell short.' },
   { c: { to: 617 }, text: 'red cell emergencies got no blood at all.' },
-  { c: { to: 2, prefix: '~', suffix: 'h' }, text: 'sooner on average when last year\'s requests are replayed with the tool.' }
+  // results/summary.json: arrival_test_metrics.p10_p90_coverage = 0.81 on months the model never saw.
+  { c: { to: 8, suffix: ' in 10' }, text: 'deliveries arrived inside the predicted range, tested on months the model never saw.' }
 ]
 const steps = [
   { icon: 'pen', title: 'Type what the patient needs', body: 'Blood group, units and the longest the patient can wait. On a computer, or by text message from a basic phone.' },
   { icon: 'bag', title: 'See who can spare it', body: 'Every nearby centre and hospital with compatible blood. A hospital only shares what it can spare, so it never leaves itself short.' },
-  { icon: 'window', title: 'Read an honest arrival time', body: 'Not one number, a range: most likely 2½ h, almost certainly between 2 and 3½ h.' },
-  { icon: 'confirm', title: 'Pick one, the shelf is checked', body: 'The supplier confirms the bags are really on the shelf, then sends them. No answer in 10 minutes, we move to the next source.' }
-]
+  { icon: 'window', title: 'Read an honest arrival time', body: 'Not one number but a range: most likely 2½ h, and 8 in 10 arrive within 1½ to 4 h.' },
+  { icon: 'confirm', title: 'Pick one, the shelf is checked', body: 'Stock is yesterday\'s count, so the supplier confirms the bags are on the shelf, then sends them. No answer in 10 minutes: try the next source.' }
+] as const
 const roles = [
   { icon: 'pen', who: 'Lab worker', at: 'Requesting hospital', body: 'Types the need, reads the ranked sources and their windows, and picks one.' },
   { icon: 'confirm', who: 'Supplying site', at: 'Centre or hospital', body: 'Confirms the units are really on the shelf, then dispatches.' },
   { icon: 'ambulance', who: 'Clinician', at: 'At the bedside', body: 'Is told plainly if the wait is too long, and chooses emergency group O or a transfer.' },
   { icon: 'bell', who: 'Regional centre staff', at: 'Every evening', body: 'Gets the list of hospitals out of the most common blood type, to top up first.' }
-]
+] as const
 const safety = [
   'A person makes every decision. The tool suggests, people approve.',
   'The tool never decides blood group. Unknown group means group O only.',
@@ -36,10 +38,10 @@ const safety = [
       <div class="bgimg" aria-hidden="true"><img class="bgblur" :src="img('transfusion.jpg')" alt=""><img class="main" :src="img('transfusion.jpg')" alt=""></div>
       <div class="copy">
         <h1 class="rise" style="--d: 80ms">Spare blood<br>is already<br><span>nearby.</span></h1>
-        <p class="lead rise" style="--d: 160ms">At 1 a.m. the hospital fridge does not have the right type. See every centre and hospital that can spare it, and when it will really arrive.</p>
+        <p class="lead rise" style="--d: 160ms">At 1 a.m. the hospital fridge does not have the right type. See every centre and hospital that can spare it, with an honest range for when it will arrive.</p>
         <div class="chips chips-d rise" style="--d: 240ms">
           <NuxtLink to="/request" class="chip"><span class="chip-ico"><ServiceIcon name="find" :size="30" /></span>Find blood</NuxtLink>
-          <NuxtLink to="/results?group=B%2B&units=2&limit=3&demo=1" class="chip"><span class="chip-ico"><ServiceIcon name="window" :size="30" /></span>See an example</NuxtLink>
+          <NuxtLink :to="EXAMPLE_LINK" class="chip"><span class="chip-ico"><ServiceIcon name="window" :size="30" /></span>See an example</NuxtLink>
           <a href="#phone" class="chip"><span class="chip-ico"><ServiceIcon name="sms" :size="30" /></span>Text a request</a>
         </div>
         <div class="cta-m rise" style="--d: 240ms">
@@ -114,7 +116,7 @@ const safety = [
           <h3>Works on any phone</h3>
           <p>Requests and confirmations also work by text message. No smartphone and no data needed at the bench.</p>
         </div>
-        <div class="bubbles" aria-hidden="true"><span class="out">B+ 2 RBC 3H</span><span class="in">3 sources. Fastest Lakeview 1.5h (1-2.25h). Reply 1 to request.</span></div>
+        <div class="bubbles" aria-hidden="true"><span class="out">B+ 2 RBC 3H</span><span class="in">3 sources. Fastest Lakeview, likely 1.5h, 8 in 10 within 1-2.2h. Reply 1 to request.</span></div>
       </div>
     </section>
 

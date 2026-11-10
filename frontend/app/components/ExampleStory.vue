@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // "One request, in a minute": a little map with the requesting hospital in the middle and each
 // source placed by distance. Tap a source (or let it cycle) to see its arrival window.
-import type { Option } from '~/utils/mock'
+import type { Option } from '~/utils/engine'
 import { GLOBE } from '~/utils/globe'
 
 const props = defineProps<{ options: Option[]; limit: number; group: string; units: number; product: string; hospital: string }>()
@@ -18,6 +18,9 @@ const pins = computed(() => props.options.slice(0, 3).map((o, i) => {
   return { o, i, x, y, path: `M${x} ${y} Q${mx} ${my} ${C.x} ${C.y}`, tag: TAGS[i]! }
 }))
 
+// In live mode the same link runs the real engine for one of the synthetic dataset's hospitals.
+const EXAMPLE_LINK = '/results?group=B%2B&units=2&limit=3&facility=HSP-004&at=2026-10-31T00:58&demo=1'
+
 const sel = ref(0)
 const pinned = ref(false)
 const current = computed(() => pins.value[sel.value]!)
@@ -31,10 +34,13 @@ function pick(i: number) { sel.value = i; pinned.value = true }
 
 const verdict = computed(() => {
   const o = current.value.o
-  if (o.p90 > props.limit) return { tone: 'warn', text: `Could run past your ${props.limit} h limit at the slow end. Worth a call.` }
-  return { tone: 'ok', text: `Inside your ${props.limit} h limit, even at the slow end.` }
+  if (o.p90 > props.limit) return { tone: 'warn', text: `The slow end of the range passes your ${props.limit} h limit. Worth a call.` }
+  return { tone: 'ok', text: `Inside your ${props.limit} h limit, even at the slow end of the range.` }
 })
-const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 0-10z'
+// One axis for every source, so the bars compare.
+const axis = computed(() => barMax(props.limit, ...pins.value.map(p => p.o.p90)))
+// Named apart from the auto-imported DROP icon: a clashing name breaks template type checks.
+const TRAVEL_DROP = 'M0-10C4-4 7.5 0 7.5 3.5a7.5 7.5 0 0 1-15 0C-7.5 0-4-4 0-10z'
 </script>
 
 <template>
@@ -73,7 +79,7 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
             <path :d="p.path" class="route" :class="{ on: p.i === sel }" />
           </g>
           <g v-if="current" :key="'d' + sel" class="drop">
-            <path :d="DROP" fill="#b3171e" stroke="#fff" stroke-width="2.5" />
+            <path :d="TRAVEL_DROP" fill="#b3171e" stroke="#fff" stroke-width="2.5" />
             <animateMotion :path="current.path" dur="2.4s" repeatCount="indefinite" />
           </g>
 
@@ -112,17 +118,17 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
 
         <Transition name="swap" mode="out-in">
           <article :key="current.o.id" class="detail">
-            <p class="kind"><IconBadge size="sm" tone="solid" :square="current.o.kind === 'centre'"><AppIcon :name="current.o.kind" :size="18" /></IconBadge>{{ current.o.kind === 'hospital' ? 'Hospital' : 'Blood centre' }} · {{ current.o.km }} km<span v-if="current.i === 0" class="fast">Fastest</span></p>
+            <p class="kind"><IconBadge size="sm" tone="solid" :square="current.o.kind === 'centre'"><AppIcon :name="current.o.kind" :size="18" /></IconBadge>{{ current.o.kind === 'hospital' ? 'Hospital' : 'Blood centre' }}<template v-if="current.o.roadKm != null"> · {{ fmtKm(current.o.roadKm) }}</template><span v-if="current.i === 0" class="fast">Fastest</span></p>
             <h3>{{ current.o.name }}</h3>
             <p class="big"><Dur :h="current.o.p50" /><small>most likely</small></p>
-            <p class="range">Almost certainly between <b>{{ fmtRange(current.o.p10, current.o.p90).replace(' to ', ' and ') }}</b></p>
-            <WindowBar :p10="current.o.p10" :p50="current.o.p50" :p90="current.o.p90" :limit="limit" :max="4" />
-            <p class="spare"><AppIcon name="drop" :size="16" /> {{ current.o.spare }} · {{ current.o.avail }} units can be spared</p>
+            <p class="range">8 in 10 arrive between <b>{{ fmtRange(current.o.p10, current.o.p90).replace(' to ', ' and ') }}</b></p>
+            <WindowBar :p10="current.o.p10" :p50="current.o.p50" :p90="current.o.p90" :limit="limit" :max="axis" />
+            <p class="spare"><AppIcon name="drop" :size="16" /> {{ current.o.spare }} spare in yesterday's count ({{ spareGroupsText(current.o.spareByGroup) }}), unconfirmed</p>
             <p class="verdict" :class="verdict.tone"><AppIcon :name="verdict.tone === 'ok' ? 'check' : 'warning'" :size="16" /> {{ verdict.text }}</p>
           </article>
         </Transition>
 
-        <NuxtLink to="/results?group=B%2B&units=2&limit=3&demo=1" class="btn btn-primary go">Open this example on the map</NuxtLink>
+        <NuxtLink :to="EXAMPLE_LINK" class="btn btn-primary go">Open this example on the map</NuxtLink>
       </div>
     </div>
 
