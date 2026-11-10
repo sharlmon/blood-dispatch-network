@@ -1,0 +1,52 @@
+/* Triage palette: red is reserved for blood and the single next action. */
+:root {
+  --blood-500: #c4122f;
+  --blood-700: #8f0c22;
+  --blood-50: #fdecef;
+  --ink: #12202b;
+  --slate: #4a5b68;
+  --line: #d5dde3;
+  --fog: #e9eef1;
+  --paper: #f6f8f9;
+  --white: #fff;
+  --water: #cfe3ee;
+  --park: #dceadf;
+  --alt-route: #7c909f;
+  --azure-600: #1d6fd8;
+  --azure-50: #e5f0fd;
+  --teal-600: #0b7f73;
+  --teal-50: #e2f3f0;
+  --amber-500: #c77700;
+  --amber-700: #8a4b00;
+  --amber-900: #5a3000;
+  --amber-50: #fff1d6;
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --shadow-float: 0 4px 14px rgba(18, 32, 43, 0.14);
+  --header-h: 56px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: Manrope, system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--azure-600); outline-offset: 2px; }
+.tnum { font-variant-numeric: tabular-nums; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 0 20px; border-radius: 16px; border: 1px solid var(--line);
+  background: var(--white); font-weight: 800; font-size: 15px; text-decoration: none; color: var(--ink);
+}
+.btn-primary { background: var(--blood-500); border-color: var(--blood-500); color: #fff; }
+.btn-primary:hover { background: var(--blood-700); border-color: var(--blood-700); }
+.btn-dark { background: var(--ink); border-color: var(--ink); color: #fff; }
+.btn-outline-blood { border: 2px solid var(--blood-500); color: var(--blood-500); }
+.card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.muted { color: var(--slate); }
