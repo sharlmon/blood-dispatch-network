@@ -1,0 +1,31 @@
+# Render Blueprint for the backend API.
+# Create it with: Render dashboard > New > Blueprint > pick this repo (branch dev).
+# The free plan has no persistent disk, so the SQLite file lives in /tmp and is rebuilt empty
+# on every restart. Fine for trying the API; use a paid plan with a disk for real data.
+services:
+  - type: web
+    name: blood-dispatch-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    branch: dev
+    autoDeploy: true
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 2 --timeout 60
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DB_PATH
+        value: /tmp/blood.sqlite
+      - key: CORS_ORIGINS
+        value: https://sharlmon.github.io,http://localhost:3000
+      # Public by design (also in the frontend), but set per environment, so Render asks for it.
+      - key: CLERK_PUBLISHABLE_KEY
+        sync: false
+      # JSON, e.g. {"org_abc123":"HSP-004","org_def456":"RBTC-ELD"}
+      - key: ORG_FACILITY_MAP
+        value: "{}"
+      # Shared secret for the SMS webhook signature. Leave unset until an SMS gateway is wired.
+      - key: SMS_WEBHOOK_SECRET
+        sync: false
