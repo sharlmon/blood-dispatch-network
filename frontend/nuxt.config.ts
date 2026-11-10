@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url'
+
 // Two build modes:
 //  - normal (dev / server): Clerk on (keyless in dev), SSR.
 //  - GH_PAGES=1: static SPA for GitHub Pages under a base path. Clerk is only included when a
@@ -17,7 +19,12 @@ export default defineNuxtConfig({
     signInFallbackRedirectUrl: `${base}onboarding`,
     signUpFallbackRedirectUrl: `${base}onboarding`
   },
-  nitro: pages ? { preset: 'github-pages' } : {},
+  nitro: {
+    ...(pages ? { preset: 'github-pages' } : {}),
+    // The committed DS2 results (aggregate, synthetic) at <baseURL>results-data/, in every build:
+    // the evidence page reads them there when there is no API (static demo).
+    publicAssets: [{ dir: fileURLToPath(new URL('../results', import.meta.url)), baseURL: '/results-data', maxAge: 0 }]
+  },
   devtools: { enabled: false },
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
