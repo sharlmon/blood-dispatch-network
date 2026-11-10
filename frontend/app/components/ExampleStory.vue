@@ -18,7 +18,9 @@ const pins = computed(() => props.options.slice(0, 3).map((o, i) => {
   return { o, i, x, y, path: `M${x} ${y} Q${mx} ${my} ${C.x} ${C.y}`, tag: TAGS[i]! }
 }))
 
-// In live mode the same link runs the real engine for one of the synthetic dataset's hospitals.
+// The same fictional example on the results map: a ?demo=1 link without ?id= runs on the demo data
+// in every build (useDispatch `local`). It never calls the API and stores nothing, so a signed-out
+// visitor can open it. `facility` is ignored there.
 const EXAMPLE_LINK = '/results?group=B%2B&units=2&limit=3&facility=HSP-004&at=2026-10-31T00:58&demo=1'
 
 const sel = ref(0)

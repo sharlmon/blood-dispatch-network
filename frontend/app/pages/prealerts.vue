@@ -2,6 +2,7 @@
 // The evening pre-alert list for regional centre staff (DS2): hospitals whose closing count of the
 // day before showed zero for a common group. It suggests a review; a person decides on any top-up.
 import type { PrealertMissing } from '~/composables/useResults'
+import { eatIso, eatTime } from '~/utils/format'
 
 useHead({ title: 'Pre-alerts · Blood Dispatch' })
 
@@ -10,6 +11,10 @@ const pl = usePrealertList()
 onMounted(pl.load)
 
 const list = computed(() => pl.list.value)
+
+// The list is made offline, not yet every evening: say so when it is not from today (EAT).
+const eatDay = (iso: string) => { const t = eatTime(iso.replace(/(\.\d{3})\d+/, '$1')); return t === null ? null : eatIso(t).slice(0, 10) }
+const stale = computed(() => { const d = list.value ? eatDay(list.value.generated_at) : null; return !!d && d !== eatIso().slice(0, 10) })
 
 const ORDER = ['RBC', 'WB', 'PLT', 'FFP', 'CRYO']
 const productRank = (c: string) => (ORDER.includes(c) ? ORDER.indexOf(c) : ORDER.length)
@@ -75,7 +80,7 @@ const failure = computed(() => {
 <template>
   <div class="page">
     <header class="hero organic-card">
-      <p class="kick">For regional centre staff · every evening</p>
+      <p class="kick">For regional centre staff · evening review</p>
       <h1>Evening pre-alerts</h1>
       <p class="lead">
         Hospitals whose last closing count showed zero {{ zeroOf }}. Check each one and decide whether to send a top-up
@@ -86,11 +91,15 @@ const failure = computed(() => {
         <li><AppIcon name="units" :size="16" /> Stock count of {{ dayText(list.stock_as_of) }}</li>
         <li v-if="list.synthetic_data"><AppIcon name="warning" :size="16" /> Synthetic starter data</li>
       </ul>
+      <p v-if="list && stale" class="stale" role="note">
+        <AppIcon name="warning" :size="18" />
+        <span>This is the latest list ({{ stampText(list.generated_at) }}), not tonight's: lists are not yet made every evening.</span>
+      </p>
     </header>
 
     <div v-if="pl.state.value === 'loading'" class="card box" role="status">
       <span class="spin" aria-hidden="true" />
-      <b>Loading this evening's list…</b>
+      <b>Loading the latest evening list…</b>
     </div>
 
     <div v-else-if="pl.state.value === 'error' || !list" class="card box" role="alert">
@@ -119,7 +128,7 @@ const failure = computed(() => {
       <div class="bar">
         <p class="count">
           <b>{{ plural(list.alerts.length, 'alert') }}</b> at <b>{{ plural(hospitalCount, 'hospital') }}</b>
-          <template v-if="list.missing_snapshot.length"> · <b>{{ list.missing_snapshot.length }}</b> with no count</template>
+          <template v-if="unknown.length"> · <b>{{ plural(unknown.length, 'hospital') }}</b> with no count</template>
         </p>
         <div v-if="products.length > 1" class="filters" role="group" aria-label="Show alerts for">
           <button type="button" :class="{ on: active === 'all' }" :aria-pressed="active === 'all'" @click="product = 'all'">All {{ list.alerts.length }}</button>
@@ -136,7 +145,7 @@ const failure = computed(() => {
       </ul>
       <div v-else class="card empty">
         <IconBadge size="lg" tone="teal"><AppIcon name="check" :size="26" /></IconBadge>
-        <b>No alerts this evening</b>
+        <b>No alerts in the list of {{ dayText(list.generated_at) }}</b>
         <p>
           No hospital had a known zero {{ zeroOf }} in the closing count of {{ dayText(list.stock_as_of) }}.
           <template v-if="list.missing_snapshot.length">The hospitals with no count are listed below.</template>
@@ -181,6 +190,8 @@ h1 { margin: 6px 0 0; font-size: clamp(30px, 6vw, 46px); line-height: 1; letter-
 .meta { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .meta li { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: 99px; background: #fff; border: 1.5px solid #b9d9d4; font-size: 13px; font-weight: 800; color: var(--primary-700); }
 .meta li svg { flex-shrink: 0; color: var(--primary-500); }
+.stale { margin: 12px 0 0; max-width: 640px; display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border-radius: var(--r-md); background: var(--amber-50); border: 1.5px solid var(--amber-500); color: var(--amber-900); font-size: 13.5px; font-weight: 700; line-height: 1.45; }
+.stale svg { flex-shrink: 0; margin-top: 1px; color: var(--amber-700); }
 
 .review { display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px; border-radius: var(--r-lg); background: var(--amber-50); border: 2px solid var(--amber-500); color: var(--amber-900); }
 .review > div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }

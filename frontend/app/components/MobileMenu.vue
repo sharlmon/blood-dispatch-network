@@ -16,7 +16,7 @@ onMounted(() => window.addEventListener('keydown', onKey))
 onBeforeUnmount(() => { window.removeEventListener('keydown', onKey); document.documentElement.style.overflow = '' })
 
 const tools = [
-  { to: '/prealerts', icon: 'bell', label: 'Pre-alerts', sub: 'Hospitals to top up this evening' },
+  { to: '/prealerts', icon: 'bell', label: 'Pre-alerts', sub: 'Hospitals to review for a top-up' },
   { to: '/evidence', icon: 'evidence', label: 'Evidence', sub: 'How well the estimates held up' }
 ]
 const links = [

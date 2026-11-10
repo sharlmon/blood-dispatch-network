@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Option } from '~/utils/engine'
+import type { Option, PassReason } from '~/utils/engine'
 
 const props = defineProps<{
   option: Option
@@ -13,8 +13,8 @@ const props = defineProps<{
   /** ranked first (FASTEST only when nothing is quicker) */
   first?: boolean
   fastest?: boolean
-  /** this site said the units are not on the shelf, or did not answer */
-  passed?: boolean
+  /** what was recorded when this site was passed over: it said not on the shelf, or it did not answer in time */
+  passed?: PassReason | null
 }>()
 defineEmits<{ select: [] }>()
 
@@ -22,11 +22,21 @@ const o = computed(() => props.option)
 const where = computed(() => (o.value.roadKm != null ? fmtKm(o.value.roadKm) : o.value.travelHoursMap != null ? `${fmtHours(o.value.travelHoursMap)} drive` : ''))
 const spare = computed(() => (o.value.partial ? `covers ${o.value.spare} of ${props.need}` : `${o.value.spare} spare`))
 const chips = computed(() => o.value.flags.filter(f => f !== 'partial').map(f => ({ f, label: flagShort(f) })))
-const label = computed(() => `${props.rank}. ${o.value.name}, most likely ${fmtHours(o.value.p50)}, 8 in 10 within ${fmtRange(o.value.p10, o.value.p90)}, ${spare.value}`)
+const passedChip = computed(() => (props.passed === 'confirm_timeout' ? 'No answer' : props.passed ? 'Not on shelf' : ''))
+// The aria-label replaces the button's content for screen readers, so it carries everything shown.
+const label = computed(() => [
+  `${props.rank}. ${o.value.name}`,
+  props.first && !props.passed ? (props.fastest ? 'fastest' : 'ranked first') : null,
+  props.passed === 'confirm_timeout' ? 'did not answer in time' : props.passed ? 'said not on the shelf' : null,
+  `most likely ${fmtHours(o.value.p50)}`,
+  `8 in 10 within ${fmtRange(o.value.p10, o.value.p90)}`,
+  spare.value,
+  ...chips.value.map(c => flagLabel(c.f))
+].filter(Boolean).join(', '))
 </script>
 
 <template>
-  <button type="button" class="source" :class="{ selected, passed }" :aria-pressed="selected" :aria-label="label" @click="$emit('select')">
+  <button type="button" class="source" :class="{ selected, passed: !!passed }" :aria-pressed="selected" :aria-label="label" @click="$emit('select')">
     <span v-if="first && !passed" class="ribbon">{{ fastest ? 'FASTEST' : 'RANKED FIRST' }}</span>
     <span class="row">
       <span class="badge" :class="[option.kind, { on: selected }]">{{ rank }}</span>
@@ -34,7 +44,7 @@ const label = computed(() => `${props.rank}. ${o.value.name}, most likely ${fmtH
         <strong>{{ option.name }}</strong>
         <small>{{ option.kind === 'hospital' ? 'Hospital' : 'Centre' }} · <b :class="{ part: option.partial }">{{ spare }}</b><template v-if="where"> · {{ where }}</template></small>
         <span v-if="chips.length || passed" class="flags">
-          <i v-if="passed" class="f-passed">Not on shelf</i>
+          <i v-if="passedChip" class="f-passed">{{ passedChip }}</i>
           <i v-for="c in chips" :key="c.f">{{ c.label }}</i>
         </span>
       </span>

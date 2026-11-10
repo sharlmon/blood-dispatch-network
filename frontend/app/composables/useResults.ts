@@ -1,6 +1,7 @@
 // DS2's committed evidence (results/*.json, written by scripts/evaluate_ds2.py) and the evening
-// pre-alert list. Live: GET /api/results, /api/results/<name>?scenario=<s> and /api/prealerts.
-// Static demo (no API): the same files, served by this site at <baseURL>results-data/.
+// pre-alert list. Live: GET /api/results, /api/results/<name>?scenario=<s> (public) and
+// /api/prealerts (signed in). Static demo (no API): the same files, which only a build with no API
+// serves, at <baseURL>results-data/.
 // Everything is fetched in the browser; the server renders the loading state.
 import type { ShallowRef } from 'vue'
 import { eatClock, eatIso, eatTime, fmtDay } from '~/utils/format'
@@ -166,7 +167,10 @@ export interface ResultPayloads {
 /** GET /api/results */
 export interface ResultsIndex { files: ResultName[]; scenarios: string[] }
 
-/** A known zero in yesterday's closing count. Needs a person; it is not a forecast or an order. */
+/**
+ * A known zero in the closing count of `stock_as_of` (the day before the list was made). Needs a
+ * person; it is not a forecast or an order.
+ */
 export interface PrealertAlert {
   facility_id: string
   facility_name: string | null
@@ -253,10 +257,23 @@ export function scenarioLabel(scenario: string | null): string {
 /** Low-level loaders. Both modes return the same shapes. */
 export function useResults() {
   const config = useRuntimeConfig()
-  const live = !!config.public.apiBase
+  const apiBase = config.public.apiBase
+  const live = !!apiBase
   const { api, fail } = useApi()
+  // Shared with useApi and the layout's phone-process banner.
+  const unreachable = useState<boolean>('api.unreachable', () => false)
   const base = config.app.baseURL || '/'
   const root = `${base}${base.endsWith('/') ? '' : '/'}results-data/`
+
+  /**
+   * GET /api/results*: public, so sent without a session token. The evidence never waits for the
+   * sign-in script (forever, when it cannot load), and a call that hangs ends as "not reachable".
+   */
+  async function getPublic<T>(path: string): Promise<T> {
+    const body = await $fetch<T>(`${apiBase}${path}`, { timeout: 15_000 })
+    unreachable.value = false
+    return body
+  }
 
   function toFailure(e: unknown): ApiFailure {
     if (isFailure(e)) return e
@@ -281,7 +298,7 @@ export function useResults() {
   function loadIndex(): Promise<ResultsIndex> {
     if (!live) return Promise.resolve({ files: [...FILES], scenarios: [...STATIC_SCENARIOS] })
     return cached('index', async () => {
-      const r = await api<Partial<ResultsIndex>>('/api/results')
+      const r = await getPublic<Partial<ResultsIndex>>('/api/results')
       return { files: Array.isArray(r.files) ? r.files : [], scenarios: Array.isArray(r.scenarios) ? r.scenarios : [] }
     })
   }
@@ -291,7 +308,7 @@ export function useResults() {
     const what = fileTitle(name, scenario)
     return cached(`${live ? 'api' : 'static'}:${what}`, async () => {
       const body = live
-        ? await api<unknown>(`/api/results/${name}${scenario ? `?scenario=${encodeURIComponent(scenario)}` : ''}`)
+        ? await getPublic<unknown>(`/api/results/${name}${scenario ? `?scenario=${encodeURIComponent(scenario)}` : ''}`)
         : await $fetch<unknown>(`${root}${scenario ? `${encodeURIComponent(scenario)}/` : ''}${name}.json`, { responseType: 'json' })
       return envelopeOf<ResultEnvelope<ResultPayloads[N]>>(body, what)
     })
@@ -299,6 +316,7 @@ export function useResults() {
 
   /** The evening list. In the static demo facility names are not known, so they are null. */
   async function loadPrealerts(): Promise<PrealertList> {
+    // Behind sign-in: this one carries the session token.
     if (live) return await api<PrealertList>('/api/prealerts')
     const env = envelopeOf<ResultEnvelope<Partial<Omit<PrealertList, 'alerts' | 'missing_snapshot'>> & { alerts?: Omit<PrealertAlert, 'facility_name'>[]; missing_snapshot?: Omit<PrealertMissing, 'facility_name'>[] }>>(
       await $fetch<unknown>(`${root}prealerts.json`, { responseType: 'json' }), 'prealerts.json'

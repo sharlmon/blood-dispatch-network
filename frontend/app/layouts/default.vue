@@ -44,7 +44,7 @@ const d = useDispatch()
           <NuxtLink to="/request" class="newreq"><AppIcon name="plus" :size="18" /> New request</NuxtLink>
           <NuxtLink v-if="d.request.value" :to="d.resultsLink.value" :class="{ here: $route.path === '/results' }"><AppIcon name="results" :size="18" /> Results</NuxtLink>
           <NuxtLink v-if="d.canTrack.value" :to="d.trackLink.value" :class="{ here: $route.path === '/track' }"><AppIcon name="clock" :size="18" /> Track</NuxtLink>
-          <NuxtLink to="/prealerts" class="tool" aria-label="Pre-alerts" title="Pre-alerts: hospitals to top up this evening"><AppIcon name="bell" :size="18" /> <span>Pre-alerts</span></NuxtLink>
+          <NuxtLink to="/prealerts" class="tool" aria-label="Pre-alerts" title="Pre-alerts: hospitals to review for a top-up"><AppIcon name="bell" :size="18" /> <span>Pre-alerts</span></NuxtLink>
           <NuxtLink to="/evidence" class="tool" aria-label="Evidence" title="Evidence: how well the estimates held up"><AppIcon name="evidence" :size="18" /> <span>Evidence</span></NuxtLink>
         </nav>
         <span class="grow" />

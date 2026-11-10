@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { clockOn, requestClock, requestNeedsDate } from '~/utils/format'
+
 useHead({ title: 'Track · Blood Dispatch' })
 
 const route = useRoute()
@@ -19,21 +21,54 @@ watch(() => route.query, (q) => { if (!d.matches(q)) load() })
 
 const req = computed(() => d.request.value)
 const status = computed(() => d.status.value)
-// The source being tracked is the pick on record, never just the highlighted card.
-const picked = computed(() => d.options.value.find(o => o.id === d.pickedId.value) ?? null)
+const final = computed(() => isFinalStatus(status.value))
+const demo = computed(() => !d.live || d.local.value)
+// The source being tracked is the pick on record, never just the highlighted card: a ranked
+// option with its arrival range, or today's way (the baseline site), which has one quote only.
+const site = computed(() => d.pickedSite.value)
+const picked = computed(() => site.value?.option ?? null)
+const quote = computed(() => {
+  const b = d.baseline.value
+  return site.value && !picked.value && b?.facility_id === site.value.id ? b.quote_hours : null
+})
 const limit = computed(() => d.limitH.value)
 const axis = computed(() => barMax(limit.value, picked.value?.p90 ?? 0))
 const busy = computed(() => d.busy.value !== null)
 const short = (name: string) => name.split(' ').slice(0, 2).join(' ')
+// A partial pick: only part of the request is on its way.
+const shortBy = computed(() => (picked.value && req.value ? Math.max(0, req.value.units - picked.value.spare) : 0))
+
+// The supplying site has CONFIRM_TIMEOUT_MIN minutes to confirm the shelf; then a person moves on.
+const now = ref(Date.now())
+let tick: ReturnType<typeof setInterval> | undefined
+onMounted(() => { tick = setInterval(() => { now.value = Date.now() }, 15_000) })
+onBeforeUnmount(() => clearInterval(tick))
+
+// Times count from the request time. With the API's demo clock (or a back-dated link) that is not
+// when the request was logged, so the clocks carry their day; so do clocks from another day.
+const dated = computed(() => !!req.value && requestNeedsDate(req.value.requestedAt, req.value.createdAt, now.value))
+const clockAt = (h: number) => (req.value ? clockAfter(req.value.requestedAt, h, dated.value) : '')
+const requestAt = computed(() => (req.value ? requestClock(req.value.requestedAt, req.value.createdAt, now.value) : ''))
+const rankedApart = computed(() => {
+  const r = req.value
+  const asked = r ? eatTime(r.requestedAt) : null
+  const logged = r?.createdAt ? eatTime(r.createdAt) : null
+  return asked !== null && logged !== null && Math.abs(asked - logged) > 15 * 60_000
+})
 
 const steps = computed(() => {
-  const who = picked.value ? short(picked.value.name) : 'The site'
+  const who = site.value ? short(site.value.name) : 'The site'
+  const r = req.value
+  const sent = r ? clockOn(r.createdAt ?? r.requestedAt, false, now.value) : ''
+  const part = shortBy.value && picked.value && r
+    ? `${picked.value.spare} of ${r.units} units ${status.value === 'arrived' ? 'arrived' : 'come with this pick'}. `
+    : ''
   return [
-    { title: 'Request sent', sub: `${eatClock(req.value?.createdAt ?? req.value?.requestedAt ?? '')} · logged` },
-    { title: 'Waiting for shelf check', sub: `${who} confirms the units are on the shelf. No answer in ${CONFIRM_TIMEOUT_MIN} min: try the next source.` },
+    { title: 'Request sent', sub: `${sent} · logged${rankedApart.value ? ` · ranked as of ${requestAt.value}` : ''}` },
+    { title: 'Waiting for shelf check', sub: `${who} confirms the units are on the shelf. No answer in ${CONFIRM_TIMEOUT_MIN} min: ask the next source.` },
     { title: 'Shelf confirmed', sub: 'The site has checked the units are there.' },
     { title: 'Dispatched', sub: 'On the road. Times still count from the request.' },
-    { title: 'Arrived', sub: 'The lab checks and crossmatches every bag.' }
+    { title: 'Arrived', sub: `${part}The lab checks and crossmatches every bag.` }
   ]
 })
 function stepState(i: number) {
@@ -45,19 +80,24 @@ function stepState(i: number) {
 const decisionText = computed(() => (d.decision.value === 'groupO' ? 'the clinician chose emergency group O.' : d.decision.value === 'transfer' ? 'the clinician chose to transfer the patient.' : ''))
 const canCancel = computed(() => (['open', 'escalated', 'awaiting_shelf', 'confirmed'] as string[]).includes(status.value))
 const nextStep = computed(() => siteStep(status.value))
+// There is no supplying-site screen yet: the requesting hospital records what the site reports by phone.
+const stepLabel = computed(() => {
+  const s = nextStep.value
+  if (!s) return ''
+  if (demo.value) return 'Demo: record next step (the supplying site does this)'
+  const who = site.value ? short(site.value.name) : 'The site'
+  return s === 'shelf_confirmed' ? `Record: ${who} confirmed the shelf` : s === 'dispatched' ? `Record: ${who} dispatched the units` : 'Record: units arrived'
+})
+// The organisation that created the request (the requesting hospital), for the audit sentences.
+const creatorOrg = computed(() => d.audit.value.find(a => a.action === 'request_created')?.actor?.org_id ?? null)
 
-// The supplying site has CONFIRM_TIMEOUT_MIN minutes to confirm the shelf; then a person moves on.
-const now = ref(Date.now())
-let tick: ReturnType<typeof setInterval> | undefined
-onMounted(() => { tick = setInterval(() => { now.value = Date.now() }, 15_000) })
-onBeforeUnmount(() => clearInterval(tick))
 const minutesLeft = computed(() => {
   const at = d.pickedAt.value ? eatTime(d.pickedAt.value) : null
   return at === null ? null : Math.max(0, CONFIRM_TIMEOUT_MIN - Math.floor((now.value - at) / 60_000))
 })
 
 function callSite() {
-  toast({ title: `Call ${picked.value?.name ?? 'the site'}`, body: 'Phone process: ask them to confirm the units are on the shelf, then record the answer here.' })
+  toast({ title: `Call ${site.value?.name ?? 'the site'}`, body: 'Phone process: ask them to confirm the units are on the shelf, then record the answer here.' })
 }
 const showAudit = ref(false)
 const askCancel = ref(false)
@@ -78,10 +118,13 @@ const errorText = computed(() => {
 <template>
   <div v-if="view === 'ready' && req" class="wrap">
     <h1 class="sr-only">Tracking your blood request</h1>
-    <div class="map"><SourceMap :options="picked ? [picked] : []" :selected-id="picked?.id ?? null" :pad-top="80" /></div>
+    <div class="map"><SourceMap :options="picked ? [picked] : []" :selected-id="picked?.id ?? null" :you-label="d.requesterName.value ?? undefined" :pad-top="80" /></div>
 
     <section class="panel">
       <NuxtLink :to="d.resultsLink.value" class="back"><AppIcon name="back" /> Back to results</NuxtLink>
+      <p v-if="d.requesterName.value" class="for">
+        For {{ d.requesterName.value }}<template v-if="req.id"> · {{ req.id }}</template><template v-else-if="demo"> · demo data, fictional sites</template>
+      </p>
 
       <p v-if="status === 'escalated'" class="flag warn" role="status"><AppIcon name="warning" :size="18" /> <span><b>Escalated:</b> {{ decisionText || 'a clinician decision was recorded.' }} Saved in the audit log.</span></p>
       <p v-else-if="status === 'cancelled'" class="flag" role="status"><AppIcon name="close" :size="18" /> <span><b>Cancelled.</b> Saved in the audit log.</span></p>
@@ -90,9 +133,34 @@ const errorText = computed(() => {
       <div v-if="picked" class="window card">
         <small>ARRIVAL WINDOW · {{ picked.name }}</small>
         <div class="big"><strong><Dur :h="picked.p50" /></strong><span>most likely · 8 in 10 arrive within {{ fmtRange(picked.p10, picked.p90) }}</span></div>
-        <p class="eta"><AppIcon name="clock" :size="18" /> Expected around <b class="tnum">{{ clockAfter(req.requestedAt, picked.p50) }}</b><span>(8 in 10 between {{ clockAfter(req.requestedAt, picked.p10) }} and {{ clockAfter(req.requestedAt, picked.p90) }})</span></p>
+        <p class="eta"><AppIcon name="clock" :size="18" /> Expected around <b class="tnum">{{ clockAt(picked.p50) }}</b><span>(8 in 10 between {{ clockAt(picked.p10) }} and {{ clockAt(picked.p90) }})</span></p>
         <WindowBar :p10="picked.p10" :p50="picked.p50" :p90="picked.p90" :limit="limit" :max="axis" />
-        <div class="scale"><span>Request at {{ eatClock(req.requestedAt) }}</span><span>Line = your {{ fmtHours(limit) }} limit</span><span>{{ fmtHours(axis) }} later</span></div>
+        <div class="scale"><span>Request at {{ requestAt }}</span><span>Line = your {{ fmtHours(limit) }} limit</span><span>{{ fmtHours(axis) }} later</span></div>
+        <p v-if="d.ranking.value && !d.ranking.value.model_used" class="rough">Rough estimate: the arrival model is not loaded.</p>
+        <div v-if="shortBy && status !== 'cancelled'" class="part" role="status">
+          <p>
+            <AppIcon name="units" :size="18" />
+            <span>
+              <b>Covers {{ picked.spare }} of {{ req.units }} units.</b> The other {{ shortBy }} {{ shortBy === 1 ? 'is' : 'are' }} not on their way:
+              start another request for them, or decide on emergency group O or a transfer. A person makes this call.
+            </span>
+          </p>
+          <div class="dec">
+            <NuxtLink to="/request" class="btn">New request for {{ shortBy }} {{ shortBy === 1 ? 'unit' : 'units' }}</NuxtLink>
+            <template v-if="!final">
+              <button type="button" class="btn btn-dark" :disabled="busy" @click="d.decide('groupO')"><AppIcon name="groupO" /> Use emergency group O</button>
+              <button type="button" class="btn" :disabled="busy" @click="d.decide('transfer')"><AppIcon name="transfer" /> Transfer the patient</button>
+            </template>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="site" class="window card">
+        <small>TODAY'S WAY · {{ site.name }}</small>
+        <p class="quote">
+          <AppIcon name="clock" :size="18" />
+          <span>Today's quote<template v-if="quote != null"> about <b>{{ fmtHours(quote) }}</b></template>: one number with no range (the arrival model did not rank this site).</span>
+        </p>
+        <div class="scale"><span>Request at {{ requestAt }}</span><span>Your limit: {{ fmtHours(limit) }}</span></div>
       </div>
       <div v-else class="card nopick">
         <b>No source picked{{ status === 'open' && d.passed.value.length ? ' now' : '' }}</b>
@@ -110,17 +178,17 @@ const errorText = computed(() => {
       </ol>
 
       <div v-if="status === 'awaiting_shelf' && minutesLeft === 0" class="timeout" role="alert">
-        <span><AppIcon name="warning" :size="18" /> No answer from {{ picked ? short(picked.name) : 'the site' }} in {{ CONFIRM_TIMEOUT_MIN }} minutes.</span>
+        <span><AppIcon name="warning" :size="18" /> No answer from {{ site ? short(site.name) : 'the site' }} in {{ CONFIRM_TIMEOUT_MIN }} minutes.</span>
         <button type="button" class="btn btn-dark" :disabled="busy" @click="d.nextSource('confirm_timeout')">Ask the next source</button>
       </div>
-      <p v-else-if="status === 'awaiting_shelf' && minutesLeft !== null" class="countdown"><AppIcon name="clock" :size="16" /> Shelf check: {{ minutesLeft }} min left before you try the next source.</p>
+      <p v-else-if="status === 'awaiting_shelf' && minutesLeft !== null" class="countdown"><AppIcon name="clock" :size="16" /> Shelf check: {{ minutesLeft }} min left before you ask the next source.</p>
 
-      <div v-if="picked && !['arrived', 'cancelled'].includes(status)" class="actions">
-        <button v-if="status === 'awaiting_shelf'" type="button" class="btn" :disabled="busy" @click="d.nextSource()">Try next source</button>
+      <div v-if="site && !final" class="actions">
+        <button v-if="status === 'awaiting_shelf'" type="button" class="btn" :disabled="busy" @click="d.nextSource('not_on_shelf')">{{ short(site.name) }} said not on the shelf: try next</button>
         <NuxtLink v-else :to="d.resultsLink.value" class="btn">Back to results</NuxtLink>
         <button type="button" class="btn btn-dark" @click="callSite"><AppIcon name="call" :size="20" /> Call site</button>
       </div>
-      <button v-if="nextStep" type="button" class="demo" :disabled="busy" @click="d.advance()">Demo: record next step (the supplying site does this)</button>
+      <button v-if="nextStep" type="button" class="demo" :disabled="busy" @click="d.advance()">{{ stepLabel }}</button>
       <SafetyNote />
 
       <div class="foot">
@@ -130,7 +198,7 @@ const errorText = computed(() => {
     </section>
 
     <AppModal v-model="showAudit" title="Audit log" :sub="`${req.id ?? 'Demo request'} · times in East Africa Time. Every action is recorded; a person approves every step.`">
-      <ul class="alog"><li v-for="a in d.audit.value" :key="a.id"><time>{{ eatClock(a.at) }}</time><span>{{ auditSentence(a, d.names.value) }}</span></li></ul>
+      <ul class="alog"><li v-for="a in d.audit.value" :key="a.id"><time>{{ clockOn(a.at, false, now) }}</time><span>{{ auditSentence(a, d.names.value, creatorOrg) }}</span></li></ul>
     </AppModal>
 
     <AppModal v-model="askCancel" title="Cancel this request?" sub="The cancellation is saved in the audit log.">
@@ -179,6 +247,17 @@ const errorText = computed(() => {
 .eta b { font-size: 18px; color: var(--ink); }
 .eta span { font-size: 12.5px; color: var(--slate); }
 .scale { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; font-weight: 700; color: var(--slate); }
+.for { margin: -6px 0 0; font-size: 13px; font-weight: 700; color: var(--ink-deep); }
+.rough { margin: 0; font-size: 12px; font-weight: 700; color: var(--amber-700); }
+.quote { margin: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 14px; font-weight: 600; line-height: 1.45; color: #44545f; }
+.quote svg { color: var(--teal-600); flex-shrink: 0; margin-top: 1px; }
+.quote b { color: var(--ink); }
+.part { display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: var(--r-md); background: var(--amber-50); border: 2px solid var(--amber-500); color: var(--amber-900); }
+.part p { margin: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; font-weight: 600; line-height: 1.45; }
+.part p svg { color: var(--amber-700); flex-shrink: 0; margin-top: 1px; }
+.part .dec { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.part .dec .btn { min-height: 46px; font-size: 13px; padding: 0 10px; }
+.part .dec .btn:first-child { grid-column: 1 / -1; }
 .nopick { padding: 16px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
 .nopick b { font-size: 16px; color: var(--ink-deep); }
 .nopick p { margin: 0; font-size: 13.5px; font-weight: 600; color: #44545f; line-height: 1.45; }

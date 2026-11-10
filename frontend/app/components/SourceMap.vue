@@ -1,8 +1,18 @@
 <script setup lang="ts">
 import type { Option } from '~/utils/engine'
 
-const props = withDefaults(defineProps<{ options: Option[]; selectedId: string | null; padTop?: number; padBottom?: number; padX?: number; maxZoom?: number; panels?: boolean }>(), {
-  padTop: 96, padBottom: 36, padX: 56, maxZoom: 2, panels: false
+const props = withDefaults(defineProps<{
+  options: Option[]
+  selectedId: string | null
+  /** the requesting hospital's name, under the centre marker */
+  youLabel?: string
+  padTop?: number
+  padBottom?: number
+  padX?: number
+  maxZoom?: number
+  panels?: boolean
+}>(), {
+  youLabel: 'Your hospital', padTop: 96, padBottom: 36, padX: 56, maxZoom: 2, panels: false
 })
 const emit = defineEmits<{ select: [id: string] }>()
 
@@ -192,7 +202,7 @@ const zoomPct = computed(() => Math.round(z.value * 100))
   <div ref="root" class="map-root" :class="{ grabbing: dragging }">
     <svg
       ref="svg" class="source-map" :viewBox="viewBox" preserveAspectRatio="xMidYMid slice" role="application" tabindex="0"
-      aria-label="Map of your hospital and nearby sources. Drag to move, scroll or pinch to zoom, plus and minus keys zoom, zero resets."
+      :aria-label="`Map of ${youLabel} and nearby sources. Drag to move, scroll or pinch to zoom, plus and minus keys zoom, zero resets.`"
       @pointerdown="down" @pointermove="move" @pointerup="up" @pointercancel="up" @dblclick="dbl" @keydown="key"
     >
       <rect x="-1500" y="-1500" width="3400" height="3300" fill="#e9eef1" />
@@ -226,7 +236,7 @@ const zoomPct = computed(() => Math.round(z.value * 100))
       <g :transform="`translate(${YOU.x} ${YOU.y}) scale(${view.k})`" pointer-events="none">
         <circle class="halo" r="24" fill="#1d6fd8" fill-opacity="0.16" />
         <circle r="9" fill="#1d6fd8" stroke="#fff" stroke-width="3" />
-        <text y="28" text-anchor="middle" font-size="12" font-weight="800" fill="#12202b" stroke="#fff" stroke-width="4" paint-order="stroke" font-family="Manrope, sans-serif">Your hospital</text>
+        <text y="28" text-anchor="middle" font-size="12" font-weight="800" fill="#12202b" stroke="#fff" stroke-width="4" paint-order="stroke" font-family="Manrope, sans-serif">{{ youLabel }}</text>
       </g>
 
       <g

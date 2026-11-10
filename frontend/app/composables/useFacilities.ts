@@ -23,6 +23,10 @@ export function useFacilities() {
   const error = useState<ApiFailure | null>('facilities.error', () => null)
   // A hospital's Clerk organisation slug may be its facility id (for example "hsp-004").
   const org = authEnabled ? useOrganization().organization : null
+  // Or its name may be the hospital's name (Clerk organisation or demo account). "Your hospital" is
+  // useSite's stand-in when there is none, so it never matches.
+  const { hospital } = useSite()
+  const accountHospital = () => (hospital.value && hospital.value !== 'Your hospital' ? hospital.value : null)
 
   const hospitals = computed(() => (list.value ?? []).filter(f => f.is_hospital))
 
@@ -40,10 +44,13 @@ export function useFacilities() {
     return inflight
   }
 
-  /** Saved choice, else the facility matching the organisation slug, else the first hospital. */
+  /**
+   * Saved choice, else the hospital whose id is the organisation slug or whose name is the account's
+   * hospital, else null: never a guess, the lab worker then chooses.
+   */
   async function defaultId(): Promise<string | null> {
     await load()
-    return defaultFacilityId(hospitals.value, readSavedFacility(), org?.value?.slug ?? null)
+    return defaultFacilityId(hospitals.value, readSavedFacility(), org?.value?.slug ?? null, accountHospital())
   }
 
   const name = (id: string | null | undefined) => (id ? list.value?.find(f => f.facility_id === id)?.name ?? null : null)

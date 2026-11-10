@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ApiFailure } from '~/composables/useApi'
 import type { Option, RankResult, RequestRecord } from '~/utils/engine'
+import { stockCountText } from '~/utils/engine'
 import { RECENT, mockRankResult } from '~/utils/mock'
 
 useHead({ title: 'New request · Blood Dispatch' })
@@ -13,8 +14,18 @@ const { firstName, hospital } = useSite()
 const fac = useFacilities()
 const img = useImg()
 
-const group = ref(route.query.sos ? 'Unknown' : 'B+')
-const units = ref(2)
+// A link may carry the group and units (for example the units a partial pick did not cover).
+const one = (v: unknown) => (Array.isArray(v) ? v[0] : v)
+function linkGroup(): string {
+  const raw = one(route.query.group)
+  const g = typeof raw === 'string' && raw.trim() ? toDisplayGroup(toApiGroup(raw)) : ''
+  return GROUPS.includes(g) || g === 'Unknown' ? g : ''
+}
+const linkUnits = Math.round(Number(one(route.query.units)))
+
+// No group until someone picks one: a preset group would be sent as if it were known.
+const group = ref(route.query.sos ? 'Unknown' : linkGroup())
+const units = ref(linkUnits >= 1 && linkUnits <= 10 ? linkUnits : 2)
 const limitH = ref(6) // the engine's default clinician limit
 const facilityId = ref('')
 
@@ -27,17 +38,29 @@ onMounted(() => {
 const unknown = computed(() => group.value === 'Unknown')
 const effective = computed(() => (unknown.value ? 'O' : group.value))
 
-// Requesting facility (live): saved on this device, else the organisation's, else the first hospital.
+// Requesting facility (live): saved on this device, else the one matching your account (organisation
+// slug or hospital name). Never a guess: with no match the lab worker chooses it.
 const hospitalOptions = computed(() => fac.hospitals.value.map(f => ({ value: f.facility_id, label: f.name, hint: f.county ?? undefined })))
 const facilityName = computed(() => fac.name(facilityId.value))
-const where = computed(() => (live ? facilityName.value ?? hospital.value : hospital.value))
+const facilityFrom = ref<'device' | 'account' | null>(null)
+const askFacility = computed(() => live && !facilityId.value && fac.state.value === 'ready')
+const where = computed(() => (!live ? hospital.value : facilityName.value ?? (askFacility.value ? 'Requesting hospital not chosen yet' : hospital.value)))
+const facilityCaption = computed(() => {
+  if (!live || facilityFrom.value === 'account') return 'From your account'
+  if (facilityFrom.value === 'device') return 'Saved on this device'
+  return askFacility.value ? 'Not chosen yet. Your pick is saved on this device.' : 'Your pick is saved on this device'
+})
 function chooseFacility(id: string) {
   facilityId.value = id
+  facilityFrom.value = 'device'
   saveFacility(id)
 }
 async function loadFacilities() {
   const id = await fac.defaultId()
-  if (id && !facilityId.value) facilityId.value = id
+  if (id && !facilityId.value) {
+    facilityId.value = id
+    facilityFrom.value = id === readSavedFacility() ? 'device' : 'account'
+  }
 }
 
 // Recent requests of this organisation (live) or a fictional sample (static demo).
@@ -53,11 +76,15 @@ async function loadRecent() {
 }
 const recordLink = (r: RequestRecord) => ({ path: r.status === 'open' || r.status === 'escalated' ? '/results' : '/track', query: { id: r.id } })
 const PLAIN: Record<string, string> = { open: 'No source picked yet', escalated: 'Escalated to the clinician', cancelled: 'Cancelled' }
-const recordLine = (r: RequestRecord) => r.selected_name ?? PLAIN[r.status] ?? statusLabel(r.status)
+// The list is the organisation's, so each card names the hospital the request was for.
+const recordFor = (r: RequestRecord) => `For ${r.facility_name ?? r.facility_id}`
+const recordLine = (r: RequestRecord) => (r.selected_name ? `From ${r.selected_name}` : PLAIN[r.status] ?? statusLabel(r.status))
 const recordTone = (s: string) => ({ awaiting_shelf: 'st-red', confirmed: 'st-red', dispatched: 'st-red', arrived: 'st-teal', escalated: 'st-amber' } as Record<string, string>)[s] ?? 'st-grey'
 const groupOf = (g: string) => (g.toLowerCase() === 'unknown' ? 'O?' : toDisplayGroup(g))
 
 onMounted(() => {
+  if (route.query.sos) takeSos()
+  else if (group.value) toast({ tone: 'info', title: `Loaded ${group.value}, ${units.value} ${units.value === 1 ? 'unit' : 'units'}`, body: 'From the link. Check the details, then find sources.' })
   if (!live) return
   loadFacilities()
   loadRecent()
@@ -88,7 +115,7 @@ async function runPreview() {
   }
 }
 watch([facilityId, group, units, limitH], () => {
-  if (!live || !import.meta.client || !facilityId.value) return
+  if (!live || !import.meta.client || !facilityId.value || !group.value) return
   clearTimeout(timer)
   timer = setTimeout(runPreview, 400)
 })
@@ -96,15 +123,24 @@ onBeforeUnmount(() => clearTimeout(timer))
 
 const nearbyResult = computed<RankResult | null>(() => (live
   ? preview.value
-  : mockRankResult({ group: group.value, units: units.value, limitH: limitH.value, requesterName: hospital.value })))
+  : group.value ? mockRankResult({ group: group.value, units: units.value, limitH: limitH.value, requesterName: hospital.value }) : null))
 const nearby = computed(() => (nearbyResult.value ? toOptions(nearbyResult.value) : []))
-const stockDay = computed(() => (nearbyResult.value ? fmtDay(nearbyResult.value.ranking.request.as_of_stock_date) : ''))
+const roughTimes = computed(() => !!nearbyResult.value && !nearbyResult.value.ranking.model_used)
+// Stock is a dated count, unconfirmed: "Count of 30 Oct 2026", and how old it is when the data has ended.
+const stockCount = computed(() => {
+  const r = nearbyResult.value?.ranking.request
+  return r ? stockCountText(r.requested_at, r.as_of_stock_date) : ''
+})
+const stockLine = computed(() => (stockCount.value ? `${stockCount.value}, unconfirmed until the site confirms` : ''))
 const nearbyNote = computed(() => {
-  if (!live) return ''
-  if (!facilityId.value) return fac.state.value === 'error' ? quiet(fac.error.value) : 'Choose your hospital to see who could spare blood.'
-  if (previewError.value) return quiet(previewError.value)
-  if (!preview.value) return 'Checking yesterday\'s stock…'
-  return nearby.value.length ? '' : 'No site has spare compatible units in yesterday\'s count. Use the phone process.'
+  if (!group.value) return 'Choose the patient\'s group, or Unknown for group O only.'
+  if (live) {
+    if (!facilityId.value) return fac.state.value === 'error' ? quiet(fac.error.value) : 'Choose your hospital to see who could spare blood.'
+    if (previewError.value) return quiet(previewError.value)
+    if (!preview.value) return 'Checking the latest stock count…'
+  }
+  if (nearby.value.length) return ''
+  return `No site has spare compatible units in the ${stockCount.value.charAt(0).toLowerCase()}${stockCount.value.slice(1)}. Use the phone process.`
 })
 function quiet(f: ApiFailure | null): string {
   if (!f) return 'Could not load this.'
@@ -121,6 +157,16 @@ function sos() {
   toast({ tone: 'warn', title: 'Group O will be requested', body: 'Unknown group: only group O, per hospital protocol.' })
   form.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
+// The dock's SOS button links to /request?sos=1, also from this page (same page, only the query
+// changes). Apply it, then drop it from the address so the next tap changes the route again.
+function takeSos() {
+  if (!route.query.sos) return
+  sos()
+  const query = { ...route.query }
+  delete query.sos
+  navigateTo({ path: route.path, query, hash: route.hash }, { replace: true })
+}
+watch(() => route.query.sos, takeSos)
 const stepUnits = (n: number) => {
   const next = Math.min(10, Math.max(1, units.value + n))
   if (next === units.value) toast({ tone: 'info', title: n > 0 ? 'Maximum is 10 units' : 'At least 1 unit', ms: 2200 })
@@ -140,7 +186,7 @@ const recentOpen = computed({ get: () => !!pickedRecent.value, set: (v) => { if 
 const contact = ref<Option | null>(null)
 const contactOpen = computed({ get: () => !!contact.value, set: (v) => { if (!v) contact.value = null } })
 const contacted = ref<string[]>([])
-const smsText = computed(() => `${effective.value} ${units.value} RBC ${limitH.value}H`)
+const smsText = computed(() => `${effective.value || '[GROUP]'} ${units.value} RBC ${limitH.value}H`)
 async function copy(text: string) {
   try { await navigator.clipboard.writeText(text); toast({ tone: 'ok', title: 'Copied', body: text, ms: 2600 }) }
   catch { toast({ tone: 'warn', title: 'Could not copy', body: 'Select the text and copy it by hand.' }) }
@@ -158,6 +204,11 @@ function rerun(r: (typeof RECENT)[number]) {
   form.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 async function submit() {
+  if (!group.value) {
+    toast({ tone: 'warn', title: 'Choose the patient\'s group', body: 'Or press Unknown: group O only.' })
+    form.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    return
+  }
   if (live && !facilityId.value) {
     toast({ tone: 'warn', title: 'Choose the requesting hospital', body: 'Pick it under "Requesting hospital", then find sources.' })
     return
@@ -217,13 +268,14 @@ const searching = computed(() => d.busy.value === 'search')
           <span class="rl"><b>Longest wait</b><small>Flags a wait that is too long</small></span>
           <span class="step"><button type="button" aria-label="Shorter limit" @click="stepLimit(-1)">−</button><output :key="limitH" class="tnum flip" aria-live="polite">{{ limitH }}h</output><button type="button" aria-label="Longer limit" @click="stepLimit(1)">+</button></span>
         </div>
-        <div class="row">
+        <div class="row" :class="{ ask: askFacility }">
           <IconBadge><AppIcon name="hospital" :size="22" /></IconBadge>
-          <span class="rl"><b>Requesting hospital</b><small>{{ live ? 'Saved on this device' : 'From your account' }}</small></span>
+          <span class="rl"><b>Requesting hospital</b><small>{{ facilityCaption }}</small></span>
           <span v-if="live" class="pickfac">
             <ThemedSelect
               :model-value="facilityId" label="Requesting hospital" :options="hospitalOptions" :disabled="!hospitalOptions.length"
-              :placeholder="fac.state.value === 'error' ? 'Not loaded' : 'Loading…'" @update:model-value="chooseFacility"
+              :placeholder="fac.state.value === 'error' ? 'Not loaded' : fac.state.value === 'ready' ? 'Choose your hospital' : 'Loading…'"
+              @update:model-value="chooseFacility"
             />
             <button v-if="fac.state.value === 'error'" type="button" class="retry" @click="loadFacilities">Retry</button>
           </span>
@@ -233,7 +285,7 @@ const searching = computed(() => d.busy.value === 'search')
       <p class="pnote"><AppIcon name="drop" :size="16" /> Red cells and whole blood stock both count. Platelets and plasma are not ranked yet.</p>
 
       <button type="submit" class="btn btn-primary go" :disabled="searching"><AppIcon name="search" /> {{ searching ? 'Finding sources…' : 'Find sources' }}</button>
-      <p class="sms"><AppIcon name="sms" :size="22" /><span>No data? Text <b>{{ effective }} {{ units }} RBC {{ limitH }}H</b> to [SHORTCODE].</span></p>
+      <p class="sms"><AppIcon name="sms" :size="22" /><span>No data? Text <b>{{ smsText }}</b> to [SHORTCODE].</span></p>
       <SafetyNote />
     </form>
 
@@ -246,13 +298,14 @@ const searching = computed(() => d.busy.value === 'search')
         <template v-if="live">
           <p v-if="recentError" class="quiet">{{ quiet(recentError) }}</p>
           <p v-else-if="recent === null" class="quiet">Loading recent requests…</p>
-          <p v-else-if="!recent.length" class="quiet">No requests from your hospital yet.</p>
+          <p v-else-if="!recent.length" class="quiet">No requests from your organisation yet.</p>
           <ul v-else class="recent">
             <li v-for="(r, i) in recent.slice(0, 2)" :key="r.id" class="rise" :style="{ '--d': i * 80 + 'ms' }">
               <NuxtLink :to="recordLink(r)" class="rcard">
                 <IconBadge size="lg" class="rg"><b>{{ groupOf(r.patient_group) }}</b></IconBadge>
                 <span class="rb">
                   <b>{{ r.units_needed }} {{ r.units_needed === 1 ? 'unit' : 'units' }} needed</b>
+                  <small>{{ recordFor(r) }}</small>
                   <small>{{ recordLine(r) }}</small>
                   <small class="when">{{ fmtWhen(r.created_at) }}</small>
                 </span>
@@ -281,7 +334,10 @@ const searching = computed(() => d.busy.value === 'search')
           <h2>Nearby sources</h2>
           <button v-if="nearby.length > 2" type="button" class="more" @click="showSources = true"><AppIcon name="list" :size="16" /> View all {{ nearby.length }}</button>
         </div>
-        <p v-if="stockDay && !nearbyNote" class="stockday">Count of {{ stockDay }}, unconfirmed<span v-if="previewBusy"> · updating…</span></p>
+        <template v-if="stockLine && !nearbyNote">
+          <p class="stockday">{{ stockLine }}<span v-if="previewBusy"> · updating…</span></p>
+          <p v-if="roughTimes" class="stockday rough">Rough estimate: the arrival model is not loaded.</p>
+        </template>
         <p v-if="nearbyNote" class="quiet">{{ nearbyNote }}</p>
         <ul v-else class="near">
           <li v-for="(o, i) in nearby.slice(0, 2)" :key="o.id" class="ncard rise" :style="{ '--d': i * 80 + 'ms' }">
@@ -289,7 +345,7 @@ const searching = computed(() => d.busy.value === 'search')
               <IconBadge size="lg" tone="solid" :square="o.kind === 'centre'"><AppIcon :name="o.kind" :size="26" /></IconBadge>
               <span class="nb">
                 <b>{{ o.name }}</b>
-                <small><AppIcon name="drop" :size="13" /> {{ effective }} <i>·</i> <AppIcon name="clock" :size="13" /> most likely {{ fmtHours(o.p50) }}</small>
+                <small><AppIcon name="drop" :size="13" /> {{ effective }} <i>·</i> <AppIcon name="clock" :size="13" /> most likely {{ fmtHours(o.p50) }} <i>·</i> 8 in 10 within {{ fmtRange(o.p10, o.p90) }}</small>
               </span>
               <span class="avail" :class="{ part: o.partial }">{{ spareText(o) }}</span>
             </div>
@@ -299,12 +355,12 @@ const searching = computed(() => d.busy.value === 'search')
       </section>
     </aside>
 
-    <AppModal v-model="showRecent" title="Recent requests" :sub="live ? `The last ${recent?.length ?? 0} from your hospital` : `${RECENT.length} in the last week (demo data)`">
+    <AppModal v-model="showRecent" title="Recent requests" :sub="live ? `The last ${recent?.length ?? 0} from your organisation` : `${RECENT.length} in the last week (demo data)`">
       <ul v-if="live" class="mlist">
         <li v-for="r in recent ?? []" :key="r.id">
           <NuxtLink :to="recordLink(r)" class="rcard" @click="showRecent = false">
             <IconBadge size="lg" class="rg"><b>{{ groupOf(r.patient_group) }}</b></IconBadge>
-            <span class="rb"><b>{{ r.units_needed }} {{ r.units_needed === 1 ? 'unit' : 'units' }} needed</b><small>{{ recordLine(r) }}</small><small class="when">{{ r.id }} · {{ fmtWhen(r.created_at) }}</small></span>
+            <span class="rb"><b>{{ r.units_needed }} {{ r.units_needed === 1 ? 'unit' : 'units' }} needed</b><small>{{ recordFor(r) }}</small><small>{{ recordLine(r) }}</small><small class="when">{{ r.id }} · {{ fmtWhen(r.created_at) }}</small></span>
             <span class="chipst" :class="recordTone(r.status)">{{ statusLabel(r.status) }}</span>
           </NuxtLink>
         </li>
@@ -335,12 +391,12 @@ const searching = computed(() => d.busy.value === 'search')
       </template>
     </AppModal>
 
-    <AppModal v-model="showSources" title="Nearby sources" :sub="`Count of ${stockDay}, unconfirmed. Confirm the shelf before you rely on it.`">
+    <AppModal v-model="showSources" title="Nearby sources" :sub="`${stockLine}.${roughTimes ? ' Rough estimate: the arrival model is not loaded.' : ''}`">
       <ul class="mlist">
         <li v-for="o in nearby" :key="o.id" class="ncard">
           <div class="nt">
             <IconBadge size="lg" tone="solid" :square="o.kind === 'centre'"><AppIcon :name="o.kind" :size="26" /></IconBadge>
-            <span class="nb"><b>{{ o.name }}</b><small><AppIcon name="drop" :size="13" /> {{ effective }} <i>·</i> <AppIcon name="clock" :size="13" /> most likely {{ fmtHours(o.p50) }}</small></span>
+            <span class="nb"><b>{{ o.name }}</b><small><AppIcon name="drop" :size="13" /> {{ effective }} <i>·</i> <AppIcon name="clock" :size="13" /> most likely {{ fmtHours(o.p50) }} <i>·</i> 8 in 10 within {{ fmtRange(o.p10, o.p90) }}</small></span>
             <span class="avail" :class="{ part: o.partial }">{{ spareText(o) }}</span>
           </div>
           <button type="button" class="contact" :class="{ done: contacted.includes(o.id) }" @click="showSources = false; contact = o"><AppIcon :name="contacted.includes(o.id) ? 'check' : 'call'" :size="18" /> {{ contacted.includes(o.id) ? 'Contacted' : 'Contact site' }}</button>
@@ -391,6 +447,9 @@ const searching = computed(() => d.busy.value === 'search')
 .rows { border: 1.5px solid #d8e4e2; border-radius: var(--r-lg); background: #fff; overflow: hidden; }
 .row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
 .row + .row { border-top: 1px solid #e2ece9; }
+.row.ask { background: var(--amber-50); }
+.row.ask .rl small { color: var(--amber-900); }
+.row.ask :deep(.trig) { border-color: var(--amber-500); }
 .rl { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .rl b { font-size: 14.5px; color: var(--ink); }
 .rl small { font-size: var(--fs-caption); font-weight: 600; color: #5d6d78; margin-top: 1px; }
@@ -410,6 +469,7 @@ const searching = computed(() => d.busy.value === 'search')
 .side { display: grid; gap: 18px; align-content: start; }
 .sh { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
 .stockday { margin: -4px 0 10px; font-size: var(--fs-caption); font-weight: 700; color: #5d6d78; }
+.stockday.rough { color: var(--amber-700); }
 .quiet { margin: 0; padding: 14px 16px; border-radius: var(--r-lg); background: #fff; border: 1.5px dashed #d8e4e2; font-size: 13.5px; font-weight: 600; color: #44545f; line-height: 1.45; }
 .recent, .near { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .rcard { width: 100%; text-align: left; font: inherit; cursor: pointer; display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-radius: var(--r-lg); background: #fff; border: 1.5px solid #d8e4e2; text-decoration: none; color: inherit; transition: transform 0.2s ease, box-shadow 0.2s ease; }

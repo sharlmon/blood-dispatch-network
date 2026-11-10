@@ -1,7 +1,8 @@
 // The Flask API contract (the engine's JSON from docs/RANKING_ENGINE_SPEC.md section 9, wrapped by
 // the API), the adapter from an engine option to what the screens show, and small helpers.
 // Framework-free on purpose: it runs in plain Node (type stripping) as well as in the app.
-import { fmtDay, fmtHours } from './format.ts'
+// Tested in plain Node: frontend/tests/engine.test.ts (npm test).
+import { eatTime, fmtDay, fmtHours } from './format.ts'
 
 // ---------- API contract (field names are exact) ----------
 
@@ -10,7 +11,7 @@ export type EngineAdvice = 'consider_emergency_O_or_transfer' | 'no_full_source'
 /** Hours from the request to delivery. p10-p90 is an estimated 80% interval: 8 in 10 arrive inside it. */
 export interface EngineEta { p10: number; p50: number; p90: number; wait_p50: number; road_p50: number }
 
-/** One ranked source, exactly as rank_sources() returns it. Stock is yesterday's count, unconfirmed. */
+/** One ranked source, exactly as rank_sources() returns it. Stock is the count of as_of_stock_date, unconfirmed. */
 export interface EngineOption {
   rank: number
   facility_id: string
@@ -306,6 +307,36 @@ export function spareGroupsText(byGroup: Record<string, number>): string {
   return Object.entries(byGroup).filter(([, n]) => n > 0).map(([g, n]) => `${toDisplayGroup(g)} ${n}`).join(' · ')
 }
 
+// ---------- Stock date ----------
+
+const DAY_MS = 86_400_000
+const EAT_MS = 3 * 3600_000
+const eatDay = (iso: string) => { const t = eatTime(iso); return t === null ? null : Math.floor((t + EAT_MS) / DAY_MS) }
+
+/**
+ * Whole days from the stock count (the ranking's as_of_stock_date) to the request's day (EAT).
+ * 1 is yesterday's count, the usual case. More after the data ends (the engine then uses the last
+ * count), 0 on the data's first day (its own closing count). NaN when a date cannot be read.
+ */
+export function stockAgeDays(requestedAt: string, asOfStockDate: string): number {
+  const asked = eatDay(requestedAt)
+  const counted = eatDay(asOfStockDate)
+  return asked === null || counted === null ? Number.NaN : asked - counted
+}
+
+/**
+ * "Count of 30 Oct 2026", plus how old the count is when it is not the day before the request:
+ * "Count of 31 Oct 2026, 10 days before this request (the data ends there)".
+ */
+export function stockCountText(requestedAt: string, asOfStockDate: string): string {
+  const day = `Count of ${fmtDay(asOfStockDate)}`
+  const age = stockAgeDays(requestedAt, asOfStockDate)
+  if (age > 1) return `${day}, ${age} days before this request (the data ends there)`
+  if (age === 0) return `${day}, the day of this request (there is no earlier count)`
+  if (age < 0) return `${day}, after this request (there is no earlier count)`
+  return day
+}
+
 // ---------- Flags ----------
 
 const plain = (s: string) => s.replace(/_/g, ' ')
@@ -385,29 +416,47 @@ export function statusAfter(status: RequestStatus, action: RequestAction): Reque
   return move.to ?? (status === 'open' ? 'escalated' : status)
 }
 
-/** The supplying site's next step (the demo button stands in for the site). */
+/** The supplying site's next step. The requesting hospital records it as the site reports it (there is no site screen yet). */
 export function siteStep(status: RequestStatus): RequestAction | null {
   return status === 'awaiting_shelf' ? 'shelf_confirmed' : status === 'confirmed' ? 'dispatched' : status === 'dispatched' ? 'arrived' : null
-}
-
-/** Facility ids the audit trail says were not on the shelf or did not answer in time. */
-export function passedOver(audit: AuditEntry[]): string[] {
-  const ids: string[] = []
-  for (const a of audit) {
-    if (a.action !== 'not_on_shelf' && a.action !== 'confirm_timeout') continue
-    const d = a.detail ?? {}
-    const id = [d.previous_facility_id, d.facility_id, d.selected_facility_id].find(v => typeof v === 'string' && v)
-    if (typeof id === 'string') ids.push(id)
-  }
-  return ids
 }
 
 const text = (v: unknown) => (typeof v === 'string' && v ? v : null)
 const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : null)
 const unitsWord = (n: number) => `${n} ${n === 1 ? 'unit' : 'units'}`
 
-/** One plain sentence per audit entry. `names` maps facility ids to names. */
-export function auditSentence(entry: AuditEntry, names: Record<string, string> = {}): string {
+/** What a person recorded when moving on from a site: it said the units are not there, or it did not answer. */
+export type PassReason = 'not_on_shelf' | 'confirm_timeout'
+export interface PassedSite { id: string; action: PassReason }
+
+/**
+ * Sites the audit trail says were not on the shelf (not_on_shelf) or did not answer in time
+ * (confirm_timeout), oldest first. A later pick of the same site takes it off the list.
+ */
+export function passedOver(audit: AuditEntry[]): PassedSite[] {
+  const out = new Map<string, PassReason>()
+  for (const a of audit) {
+    const d = a.detail ?? {}
+    if (a.action === 'pick') {
+      const id = text(d.facility_id)
+      if (id) out.delete(id)
+    } else if (a.action === 'not_on_shelf' || a.action === 'confirm_timeout') {
+      const id = [d.previous_facility_id, d.facility_id, d.selected_facility_id].map(text).find(v => v !== null)
+      if (id) {
+        out.delete(id) // keep the order of the latest entry
+        out.set(id, a.action)
+      }
+    }
+  }
+  return [...out].map(([id, action]) => ({ id, action }))
+}
+
+/**
+ * One plain sentence per audit entry. `names` maps facility ids to names. `creatorOrg` is the
+ * organisation that created the request (the first entry's actor): the requesting hospital, which
+ * records the supplying site's steps by phone, as there is no supplying-site screen yet.
+ */
+export function auditSentence(entry: AuditEntry, names: Record<string, string> = {}, creatorOrg: string | null = null): string {
   const d = entry.detail ?? {}
   const site = (idKeys: string[], nameKeys: string[]) => {
     for (const k of nameKeys) { const v = text(d[k]); if (v) return v }
@@ -415,6 +464,7 @@ export function auditSentence(entry: AuditEntry, names: Record<string, string> =
     return 'the site'
   }
   const previous = () => site(['previous_facility_id', 'facility_id', 'selected_facility_id'], ['previous_name', 'facility_name', 'selected_name'])
+  const byRequester = !!creatorOrg && entry.actor?.org_id === creatorOrg
   switch (entry.action) {
     case 'request_created': {
       const g = text(d.patient_group)
@@ -429,15 +479,21 @@ export function auditSentence(entry: AuditEntry, names: Record<string, string> =
       if (Array.isArray(d.option_facility_ids)) {
         const n = d.option_facility_ids.length
         const asOf = text(d.as_of_stock_date)
-        s += ` The engine suggested ${n} ${n === 1 ? 'source' : 'sources'}${asOf ? ` from the stock count of ${fmtDay(asOf)}` : ''}.`
+        const asked = text(d.requested_at)
+        const count = asOf ? (asked ? stockCountText(asked, asOf) : `Count of ${fmtDay(asOf)}`) : null
+        s += ` The engine suggested ${n} ${n === 1 ? 'source' : 'sources'}${count ? ` from the stock ${count.charAt(0).toLowerCase()}${count.slice(1)}` : ''}.`
       }
       if (d.advice === 'consider_emergency_O_or_transfer') s += ' It warned the wait may be too long.'
       else if (d.advice === 'no_full_source') s += ' No single site had all the units.'
       return s
     }
     case 'pick': return `Lab worker picked ${site(['facility_id', 'selected_facility_id'], ['facility_name', 'selected_name', 'name'])}.`
-    case 'shelf_confirmed': return 'Supplying site confirmed the units are on the shelf.'
-    case 'dispatched': return 'Supplying site dispatched the units.'
+    case 'shelf_confirmed': return byRequester
+      ? 'Recorded by the requesting hospital: the supplying site confirmed the units are on the shelf.'
+      : 'Supplying site confirmed the units are on the shelf.'
+    case 'dispatched': return byRequester
+      ? 'Recorded by the requesting hospital: the supplying site dispatched the units.'
+      : 'Supplying site dispatched the units.'
     case 'arrived': return 'Units arrived. The lab checks every bag before use.'
     case 'not_on_shelf': return `${cap(previous())} said the units are not on the shelf. Back to the list of sources.`
     case 'confirm_timeout': {
@@ -451,10 +507,18 @@ export function auditSentence(entry: AuditEntry, names: Record<string, string> =
   }
 }
 
-/** Requesting facility to preselect: saved on this device, else the one whose id matches the Clerk organisation slug, else the first. */
-export function defaultFacilityId(hospitals: Facility[], stored: string | null, orgSlug: string | null): string | null {
+/**
+ * Requesting facility to preselect: the one saved on this device, else the one whose id matches
+ * the organisation slug (for example "hsp-004"), else the one whose name is the organisation's
+ * name (trimmed, any case), else null. Never a guess such as the first hospital: a ranking made
+ * for the wrong place points people at the wrong sources, so the lab worker chooses.
+ */
+export function defaultFacilityId(hospitals: Facility[], stored: string | null, orgSlug: string | null, orgName: string | null = null): string | null {
   if (stored && hospitals.some(h => h.facility_id === stored)) return stored
   const slug = orgSlug?.trim().toLowerCase()
-  const match = slug ? hospitals.find(h => h.facility_id.toLowerCase() === slug) : undefined
-  return match?.facility_id ?? hospitals[0]?.facility_id ?? null
+  const bySlug = slug ? hospitals.find(h => h.facility_id.toLowerCase() === slug) : undefined
+  if (bySlug) return bySlug.facility_id
+  const name = orgName?.trim().toLowerCase()
+  const byName = name ? hospitals.find(h => (h.name ?? '').trim().toLowerCase() === name) : undefined
+  return byName?.facility_id ?? null
 }

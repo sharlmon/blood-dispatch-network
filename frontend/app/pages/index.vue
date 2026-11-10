@@ -3,6 +3,9 @@ useHead({ title: 'Blood Dispatch · Find spare blood nearby' })
 
 // The illustration runs on the fictional demo network (utils/mock.ts), in the engine's shape.
 const demo = toOptions(mockRankResult({ group: 'B+', units: 2, limitH: 3, requestedAt: '2026-10-31T01:04:00', requesterName: 'Hillside Hospital' }))
+// "See an example" opens the same fictional example on the results map. A ?demo=1 link without ?id=
+// runs on the demo data in every build (useDispatch `local`): it never calls the API and stores
+// nothing, so a signed-out visitor can open it. Keep it equal to ExampleStory's link.
 const EXAMPLE_LINK = '/results?group=B%2B&units=2&limit=3&facility=HSP-004&at=2026-10-31T00:58&demo=1'
 const img = useImg()
 

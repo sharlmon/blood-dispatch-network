@@ -38,7 +38,7 @@ const petals = [
 
       <p class="word"><strong>Blood Dispatch</strong><small>Network</small></p>
       <h2>Ready when the next request comes in.</h2>
-      <p class="sub">Spare blood is already nearby. Find it, and know when it will really arrive.</p>
+      <p class="sub">Spare blood is already nearby. Find it, with an honest range for when it will arrive.</p>
       <NuxtLink to="/request" class="cta"><AppIcon name="drop" :size="22" /> Find blood now</NuxtLink>
     </div>
 

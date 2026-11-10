@@ -24,11 +24,21 @@ async function load() {
 }
 onMounted(load)
 
+// Back/Forward only change the query, and Nuxt keeps this page mounted: follow the address.
+watch(() => route.query.scenario, () => {
+  if (ev.state.value !== 'ready') return
+  const s = asked()
+  const want = s && ev.scenarios.value.includes(s) ? s : null
+  if (want !== ev.scenario.value) ev.showScenario(want)
+})
+
 const options = computed(() => [null, ...ev.scenarios.value])
 function choose(s: string | null) {
   if (s === ev.scenario.value && ev.replayState.value === 'ready') return
   ev.showScenario(s)
-  router.replace({ query: { ...route.query, scenario: s ?? undefined } })
+  // Dropping an anchor from the address scrolls to the top, so keep one: the replay section, where
+  // this switch is. With no anchor the page stays where it is.
+  router.replace({ query: { ...route.query, scenario: s ?? undefined }, hash: route.hash ? '#replay' : undefined })
 }
 
 const TOC = [
@@ -176,7 +186,7 @@ const errorText = computed(() => {
       <EvidenceSection id="prealerts" :n="3" icon="bell" kicker="Evening pre-alerts" title="Did the evening alert come before a shortage?" source="prealert_evaluation.json">
         <EvidencePrealert v-if="ev.prealert.value" :data="ev.prealert.value.result" />
         <p v-else class="gone">{{ why('prealert_evaluation') }}</p>
-        <NuxtLink to="/prealerts" class="more">See this evening's list <AppIcon name="back" class="fwd" :size="16" /></NuxtLink>
+        <NuxtLink to="/prealerts" class="more">See the latest evening list <AppIcon name="back" class="fwd" :size="16" /></NuxtLink>
       </EvidenceSection>
 
       <EvidenceSection id="limits" :n="4" icon="warning" kicker="Assumptions and limitations" title="What these results assume, and cannot show">

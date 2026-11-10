@@ -7,7 +7,12 @@ import { fileURLToPath } from 'node:url'
 const pages = !!process.env.GH_PAGES
 const base = process.env.NUXT_APP_BASE_URL || '/'
 const clerkOn = process.env.DEMO_AUTH ? false : pages ? !!process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY : true
+// scripts/deploy-pages.sh always sets NUXT_PUBLIC_API_BASE (empty unless the shell gives one), so
+// the localhost API in a developer's frontend/.env never reaches the Pages build.
 const apiBase = process.env.NUXT_PUBLIC_API_BASE ?? (pages ? '' : 'http://localhost:5001')
+// No API: the static demo. Decided at build time, so a server built with an API and started with
+// NUXT_PUBLIC_API_BASE='' has no results files to show; build it without the API instead.
+const staticDemo = apiBase === ''
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-11-10',
@@ -21,9 +26,16 @@ export default defineNuxtConfig({
   },
   nitro: {
     ...(pages ? { preset: 'github-pages' } : {}),
-    // The committed DS2 results (aggregate, synthetic) at <baseURL>results-data/, in every build:
-    // the evidence page reads them there when there is no API (static demo).
-    publicAssets: [{ dir: fileURLToPath(new URL('../results', import.meta.url)), baseURL: '/results-data', maxAge: 0 }]
+    // Only the static demo serves the committed DS2 results (aggregate, synthetic) at
+    // <baseURL>results-data/, for its evidence and pre-alert pages. With an API they come from
+    // the API, and the pre-alert list (prealerts.json) stays behind its sign-in. Nothing reads
+    // arrival_model.json, which the API does not serve either.
+    ...(staticDemo
+      ? {
+          publicAssets: [{ dir: fileURLToPath(new URL('../results', import.meta.url)), baseURL: '/results-data', maxAge: 0 }],
+          ignore: ['**/arrival_model.json']
+        }
+      : {})
   },
   devtools: { enabled: false },
   css: ['~/assets/css/main.css'],

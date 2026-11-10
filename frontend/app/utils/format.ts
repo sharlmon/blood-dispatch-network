@@ -59,6 +59,7 @@ function eatWall(iso: string): Date | null {
 
 const hhmm = (d: Date) => `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`
 const dayStart = (d: Date) => Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())
+const dayClock = (d: Date) => `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}, ${hhmm(d)}`
 
 /** "00:58" (EAT) */
 export function eatClock(iso: string): string {
@@ -72,13 +73,45 @@ export function fmtDay(iso: string): string {
   return d ? `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}` : iso
 }
 
-/** Clock time `hours` after the ISO time `from` (EAT), to 5 minutes; says so when it is a later day. */
-export function clockAfter(from: string, hours: number): string {
+/**
+ * Clock time `hours` after the ISO time `from` (EAT), to 5 minutes; says so when it is a later day.
+ * `dated` gives the day as well ("31 Oct, 03:35"), for a request that is not from today.
+ */
+export function clockAfter(from: string, hours: number, dated = false): string {
   const d = eatWall(from)
   if (!d) return ''
   const t = new Date(d.getTime() + toMinutes(hours) * 60_000)
+  if (dated) return dayClock(t)
   const days = Math.round((dayStart(t) - dayStart(d)) / DAY_MS)
   return days === 0 ? hhmm(t) : days === 1 ? `${hhmm(t)} next day` : `${hhmm(t)} (+${days} days)`
+}
+
+const isToday = (d: Date, now: number) => dayStart(d) === dayStart(new Date(now + EAT_MS))
+
+/** "22:41" when the ISO time is today (EAT), else "31 Oct, 00:58"; always dated when `dated`. */
+export function clockOn(iso: string, dated = false, now: number = Date.now()): string {
+  const d = eatWall(iso)
+  if (!d) return ''
+  return dated || !isToday(d, now) ? dayClock(d) : hhmm(d)
+}
+
+const LOGGED_SLACK_MS = 15 * 60_000
+
+/**
+ * True when clocks counted from a request need their day: the request time is more than 15
+ * minutes from when the request was logged (`logged`, else now for a preview), as with the API's
+ * demo clock or a back-dated link, or it is not today (EAT).
+ */
+export function requestNeedsDate(requestedAt: string, logged: string | null = null, now: number = Date.now()): boolean {
+  const d = eatWall(requestedAt)
+  if (!d) return false
+  const ref = (logged ? eatTime(logged) : null) ?? now
+  return Math.abs(d.getTime() - EAT_MS - ref) > LOGGED_SLACK_MS || !isToday(d, now)
+}
+
+/** The request's clock: "00:58", or "31 Oct, 00:58" when it needs its day (see requestNeedsDate). */
+export function requestClock(requestedAt: string, logged: string | null = null, now: number = Date.now()): string {
+  return clockOn(requestedAt, requestNeedsDate(requestedAt, logged, now), now)
 }
 
 /** "Just now", "18 min ago", "Today, 22:40", "Yesterday, 22:40", "Mon, 03:10", "3 Nov, 08:05" (EAT). */
