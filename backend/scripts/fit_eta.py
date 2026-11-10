@@ -54,6 +54,11 @@ def main(argv: list[str] | None = None) -> int:
     for key, label in LABELS.items():
         print(f"  {label:<24}{metrics[key]:>8.2f}{EXPECTED[key]:>8.2f}")
     print(f"  {'Mean p10-p90 width (h)':<24}{metrics['mean_width_p10_p90_h']:>8.2f}")
+    print("\nBy group (are remote or 2G sites served worse?):")
+    print(f"  {'group':<16}{'n':>6}{'map+2h':>8}{'model':>8}{'inside':>8}{'width':>7}")
+    for g in metrics["by_group"]:
+        print(f"  {g['group']:<16}{g['n_test']:>6}{g['mae_map_plus_2h_h']:>8.2f}"
+              f"{g['mae_model_p50_h']:>8.2f}{g['coverage_p10_p90']:>8.2f}{g['mean_width_p10_p90_h']:>7.2f}")
     print(f"\nWrote {config.eta_model_path()} and {config.eta_metrics_path()}")
     return 0
 

@@ -81,8 +81,10 @@ def fit(frames: Frames, train_before: str) -> tuple[dict, dict]:
         "wait_h": [round(float(x), 4) for x in np.sort(wait)],
         "ratio": [round(float(x), 4) for x in np.sort(ratio)],
     }
-    metrics = holdout_metrics(EtaModel.from_dict(model), test)
+    fitted = EtaModel.from_dict(model)
+    metrics = holdout_metrics(fitted, test)
     metrics["train_before"] = train_before
+    metrics["by_group"] = holdout_by_group(fitted, test, frames)
     return model, metrics
 
 
@@ -102,6 +104,19 @@ def holdout_metrics(model: EtaModel, test: pd.DataFrame, extra_h: float = 0.0) -
         "coverage_p10_p90": round(float(np.mean(inside)), 3),
         "mean_width_p10_p90_h": round(float(np.mean(q["p90"] - q["p10"])), 3),
     }
+
+
+DISTANCE_BANDS = ((0.0, 2.0, "map < 2 h"), (2.0, 5.0, "map 2-5 h"), (5.0, float("inf"), "map 5 h+"))
+
+
+def holdout_by_group(model: EtaModel, test: pd.DataFrame, frames: Frames) -> list[dict]:
+    """Fairness check: holdout metrics split by distance and by the receiving hospital's
+    connectivity, so remote or poorly connected sites are not served worse unnoticed."""
+    conn = test["to_facility_id"].map(lambda f: frames.facility_info[f]["connectivity"])
+    groups = [(label, test[(test["travel_hours"] >= lo) & (test["travel_hours"] < hi)])
+              for lo, hi, label in DISTANCE_BANDS]
+    groups += [(f"receiver {c}", test[conn == c]) for c in sorted(conn.dropna().unique())]
+    return [{"group": label, **holdout_metrics(model, g)} for label, g in groups if len(g)]
 
 
 def save_json(obj: dict, path: Path) -> None:

@@ -107,6 +107,19 @@ Reasons are about 250 characters, too long for one SMS; the SMS reply should be 
 | +2 h | National Referral | 4.6 h | 3.4-5.8 h | 8.9 h |
 | +3 h | National Referral | 5.6 h | 4.4-6.8 h (advice fires: p90 over 6 h) | 8.9 h |
 
+- **Remote and 2G sites are not served worse.** Holdout from `python scripts/fit_eta.py`
+  (typical error in hours; "inside" = share of arrivals within the 8-in-10 range):
+
+| Group | Deliveries | Today's rule | Model | Inside range | Range width |
+|---|---|---|---|---|---|
+| Map time under 2 h | 900 | 0.74 | 0.72 | 82% | 2.4 h |
+| Map time 2-5 h | 546 | 1.05 | 0.89 | 77% | 2.8 h |
+| Map time 5 h+ | 288 | 2.75 | 1.76 | 79% | 5.8 h |
+| Receiving hospital on 2G | 113 | 2.76 | 1.83 | 79% | 6.1 h |
+
+  Error grows with distance, but the range widens to match, and the gain over today's
+  rule is largest for the most remote hospitals.
+
 - **Arrival is not ready-to-transfuse.** Crossmatch, cold-chain checks and approval of
   the transfer come on top.
 - **No reservation.** The engine doesn't remember suggestions, so two requests at the same time

@@ -151,6 +151,23 @@ def test_holdout_metrics_match_spec(fitted):
     assert m["mae_model_p50_h"] < m["mae_map_plus_2h_h"] < m["mae_map_only_h"]
 
 
+def test_remote_and_2g_sites_are_not_served_worse(fitted):
+    """Fairness check: the range stays honest in every distance band and connectivity
+    group, and the model beats today's rule in each of them."""
+    _, m = fitted
+    groups = {g["group"]: g for g in m["by_group"]}
+    assert {"map < 2 h", "map 2-5 h", "map 5 h+", "receiver 2G"} <= set(groups)
+    assert sum(groups[k]["n_test"] for k in ("map < 2 h", "map 2-5 h", "map 5 h+")) == m["n_test"]
+    for g in groups.values():
+        assert 0.72 <= g["coverage_p10_p90"] <= 0.88, g["group"]
+        assert g["mae_model_p50_h"] <= g["mae_map_plus_2h_h"], g["group"]
+    # Error grows with distance, but so does the range, and the gain over today's rule.
+    far, near = groups["map 5 h+"], groups["map < 2 h"]
+    assert far["mean_width_p10_p90_h"] > near["mean_width_p10_p90_h"]
+    assert (far["mae_map_plus_2h_h"] - far["mae_model_p50_h"]
+            > near["mae_map_plus_2h_h"] - near["mae_model_p50_h"])
+
+
 def test_golden_case_1_p50_is_about_2_6_hours(frames, fitted):
     model = eta.EtaModel.from_dict(fitted[0])
     travel = frames.travel_hours[("HSP-001", "HSP-004")]
