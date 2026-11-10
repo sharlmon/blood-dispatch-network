@@ -17,6 +17,7 @@ When the API is unreachable the header shows **Offline** and a banner tells the 
 | Route | What it is |
 |---|---|
 | `/` | Landing page: the 1 a.m. problem, key numbers, how it works, safety principles |
+| `/sign-in`, `/sign-up`, `/onboarding` | Clerk login in the splash style, then hospital setup |
 | `/request` | New request: blood group, product, units, longest wait, SMS format hint |
 | `/results` | Map plus ranked sources with arrival-window bars, "why this source", and the **wait too long** state with emergency group O / transfer actions |
 | `/track` | Arrival window, shelf-confirmation timeline, audit log. "Demo: simulate next step" advances the stages |
@@ -34,6 +35,12 @@ When the API is unreachable the header shows **Offline** and a banner tells the 
 | `app/utils/mock.ts` | **Mock** ranking data. Replace with `POST /api/requests` when the engine is ready |
 | `app/utils/icons.ts` | The icon set (24px grid, 1.75 stroke) |
 | `app/layouts/default.vue` | Header, live status, phone-process fallback banner |
+
+## Authentication (Clerk)
+
+`@clerk/nuxt`. Public routes: `/`, `/sign-in`, `/sign-up` and demo links (`?demo=1`). Everything else needs a signed-in user who belongs to a **hospital**, which is a Clerk Organization: `/onboarding` lets them join or create one. The header shows the hospital switcher and user menu.
+
+In development Clerk runs *keyless* on temporary keys (you will see a "Configure your application" panel). For a real setup create an app at dashboard.clerk.com, enable Organizations, and set `NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `NUXT_CLERK_SECRET_KEY` (see `.env.example`). Set the same two variables on Vercel. The Flask API does not verify sessions yet.
 
 ## Brand
 

@@ -1,5 +1,12 @@
 export default defineNuxtConfig({
   compatibilityDate: '2026-11-10',
+  modules: ['@clerk/nuxt'],
+  clerk: {
+    signInUrl: '/sign-in',
+    signUpUrl: '/sign-up',
+    signInFallbackRedirectUrl: '/onboarding',
+    signUpFallbackRedirectUrl: '/onboarding'
+  },
   devtools: { enabled: false },
   css: ['~/assets/css/main.css'],
   runtimeConfig: {

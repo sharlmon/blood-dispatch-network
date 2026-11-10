@@ -23,10 +23,10 @@ const impact = [
   { label: 'Still not reachable in 6 h', n: '~330', w: 53.3, tone: 'grey' }
 ]
 const steps = [
-  { icon: 'edit', title: 'Type what the patient needs', body: 'Blood group, units and the longest the patient can wait. On a computer, or by text message from a basic phone.' },
-  { icon: 'units', title: 'See who can spare it', body: 'Every nearby centre and hospital with compatible blood. A hospital only shares what it can spare, so it never leaves itself short.' },
+  { icon: 'pen', title: 'Type what the patient needs', body: 'Blood group, units and the longest the patient can wait. On a computer, or by text message from a basic phone.' },
+  { icon: 'bag', title: 'See who can spare it', body: 'Every nearby centre and hospital with compatible blood. A hospital only shares what it can spare, so it never leaves itself short.' },
   { icon: 'window', title: 'Read an honest arrival time', body: 'Not one number, a range: most likely 2½ h, almost certainly between 2 and 3½ h.' },
-  { icon: 'confirmed', title: 'Pick one, the shelf is checked', body: 'The supplier confirms the bags are really on the shelf, then sends them. No answer in 10 minutes, we move to the next source.' }
+  { icon: 'confirm', title: 'Pick one, the shelf is checked', body: 'The supplier confirms the bags are really on the shelf, then sends them. No answer in 10 minutes, we move to the next source.' }
 ]
 const honest = [
   { icon: 'warning', title: 'Lending is assumed, not observed', body: 'No hospital lent in the data. A lender 1 hour slower cuts rescues within 4 hours from 176 to 119.' },
@@ -35,9 +35,9 @@ const honest = [
   { icon: 'drop', title: 'O negative is short everywhere', body: '57% of O negative shortfall emergencies went unmet. Lending protects stock held for girls and women of childbearing age.' }
 ]
 const roles = [
-  { icon: 'edit', who: 'Lab worker', at: 'Requesting hospital', body: 'Types the need, reads the ranked sources and their windows, and picks one.' },
-  { icon: 'confirmed', who: 'Supplying site', at: 'Centre or hospital', body: 'Confirms the units are really on the shelf, then dispatches.' },
-  { icon: 'warning', who: 'Clinician', at: 'At the bedside', body: 'Is told plainly if the wait is too long, and chooses emergency group O or a transfer.' },
+  { icon: 'pen', who: 'Lab worker', at: 'Requesting hospital', body: 'Types the need, reads the ranked sources and their windows, and picks one.' },
+  { icon: 'confirm', who: 'Supplying site', at: 'Centre or hospital', body: 'Confirms the units are really on the shelf, then dispatches.' },
+  { icon: 'ambulance', who: 'Clinician', at: 'At the bedside', body: 'Is told plainly if the wait is too long, and chooses emergency group O or a transfer.' },
   { icon: 'bell', who: 'Regional centre staff', at: 'Every evening', body: 'Gets the list of hospitals out of the most common blood type, to top up first.' }
 ]
 const pipeline = ['CSV data', 'SQLite', 'Ranking engine', 'Flask API', 'Web and SMS', 'Results tab']
@@ -70,9 +70,9 @@ const safety = [
           At 1 a.m. the hospital fridge does not have the right type. Type what the patient needs and see every centre and hospital that can spare it, with an honest arrival time.
         </p>
         <div class="chips rise" style="--d: 240ms">
-          <NuxtLink to="/request" class="chip"><span class="chip-ico"><AppIcon name="search" :size="20" /></span>Find blood</NuxtLink>
-          <NuxtLink to="/results?group=B%2B&units=2&limit=3" class="chip"><span class="chip-ico"><AppIcon name="window" :size="20" /></span>See an example</NuxtLink>
-          <a href="#phone" class="chip"><span class="chip-ico"><AppIcon name="sms" :size="20" /></span>Text a request</a>
+          <NuxtLink to="/request" class="chip"><span class="chip-ico"><ServiceIcon name="find" :size="30" /></span>Find blood</NuxtLink>
+          <NuxtLink to="/results?group=B%2B&units=2&limit=3&demo=1" class="chip"><span class="chip-ico"><ServiceIcon name="window" :size="30" /></span>See an example</NuxtLink>
+          <a href="#phone" class="chip"><span class="chip-ico"><ServiceIcon name="sms" :size="30" /></span>Text a request</a>
         </div>
         <NuxtLink to="/request" class="btn btn-primary big rise" style="--d: 320ms"><AppIcon name="drop" :size="22" /> Find blood now</NuxtLink>
         <ul class="trust rise" style="--d: 400ms">
@@ -108,6 +108,21 @@ const safety = [
       </div>
     </section>
 
+    <section class="section" aria-labelledby="share">
+      <div class="share">
+        <div class="hands-card organic"><HandsPass /></div>
+        <div class="share-copy">
+          <h2 id="share">Hospitals have never shared. Now they can.</h2>
+          <p>In the data, not one of 5,330 emergency transfers came from another hospital. Yet a hospital 30 minutes down the road often has spare bags of exactly that type. Nobody knows, because nobody can see.</p>
+          <ul>
+            <li><ServiceIcon name="bag" :size="26" /> Hospitals share only what they can spare.</li>
+            <li><ServiceIcon name="confirm" :size="26" /> The supplier confirms the shelf before anything moves.</li>
+            <li><ServiceIcon name="ambulance" :size="26" /> If the wait is too long, the doctor is told plainly.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <section class="section" aria-labelledby="funnel">
       <h2 id="funnel">Where the blood goes missing</h2>
       <div class="charts">
@@ -137,7 +152,7 @@ const safety = [
       <h2 id="how">How it works</h2>
       <ol class="steps">
         <li v-for="(st, i) in steps" :key="st.title" class="organic rise" :style="{ '--d': i * 90 + 'ms' }">
-          <span class="chip-ico big-ico"><AppIcon :name="st.icon" :size="26" /></span>
+          <span class="chip-ico big-ico"><ServiceIcon :name="st.icon" :size="38" /></span>
           <span class="num">{{ i + 1 }}</span>
           <h3>{{ st.title }}</h3>
           <p>{{ st.body }}</p>
@@ -165,7 +180,7 @@ const safety = [
               <WindowBar :p10="o.p10" :p50="o.p50" :p90="o.p90" :limit="3" :max="4" />
             </li>
           </ul>
-          <NuxtLink to="/results?group=B%2B&units=2&limit=3" class="btn btn-primary">Open this example on the map</NuxtLink>
+          <NuxtLink to="/results?group=B%2B&units=2&limit=3&demo=1" class="btn btn-primary">Open this example on the map</NuxtLink>
         </div>
         <ol class="timeline">
           <li><b>01:04</b><span>Lab worker enters B+, 2 units, limit 3 h.</span></li>
@@ -182,14 +197,14 @@ const safety = [
       <h2 id="roles">Who uses it</h2>
       <ul class="roles">
         <li v-for="(r, i) in roles" :key="r.who" class="organic rise" :style="{ '--d': i * 80 + 'ms' }">
-          <span class="chip-ico"><AppIcon :name="r.icon" :size="22" /></span>
+          <span class="chip-ico big-ico"><ServiceIcon :name="r.icon" :size="36" /></span>
           <h3>{{ r.who }}</h3>
           <small>{{ r.at }}</small>
           <p>{{ r.body }}</p>
         </li>
       </ul>
       <div class="sms-card organic">
-        <span class="chip-ico big-ico"><AppIcon name="sms" :size="26" /></span>
+        <span class="chip-ico big-ico"><ServiceIcon name="sms" :size="36" /></span>
         <div>
           <h3>Works on any phone</h3>
           <p>Requests and confirmations also work by text message. No smartphone and no data needed at the bench.</p>
@@ -288,6 +303,12 @@ h1 span { color: var(--wine); }
 .section h2 { margin: 0 0 22px; font-size: 30px; letter-spacing: -0.02em; font-weight: 800; text-transform: uppercase; color: var(--blood-600); }
 h3 { margin: 0; font-size: 17px; font-weight: 800; }
 
+.share { display: grid; gap: 24px; align-items: center; }
+.hands-card { padding: 28px 20px 20px; background: linear-gradient(180deg, #fff, #fbe6e3); overflow: hidden; }
+.share-copy h2 { margin-bottom: 14px; }
+.share-copy p { margin: 0 0 16px; font-size: 16px; line-height: 1.6; font-weight: 500; color: #5a3c3f; }
+.share-copy ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.share-copy li { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 700; }
 .charts { display: grid; gap: 16px; }
 .chart { padding: 24px; }
 .chart h3 { margin-bottom: 18px; }
@@ -378,6 +399,7 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
 @media (min-width: 900px) {
   .hero { grid-template-columns: 1.1fr 0.9fr; gap: 64px; padding: 64px 24px 80px; }
   .stats { grid-template-columns: repeat(3, 1fr); gap: 36px 48px; }
+  .share { grid-template-columns: 1fr 1fr; gap: 56px; }
   .charts { grid-template-columns: 1fr 1fr; }
   .steps { grid-template-columns: repeat(4, 1fr); }
   .example { grid-template-columns: 1.1fr 0.9fr; gap: 40px; }
