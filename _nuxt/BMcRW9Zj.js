@@ -1,0 +1,1 @@
+import{t as e}from"./Vmz7Xnyc.js";import{B as t,W as n,m as r,t as i,y as a}from"./BnLjjuQE.js";var o={},s={class:`auth`};function c(i,o){let c=e;return t(),r(`div`,s,[a(c),n(i.$slots,`default`,{},void 0,!0)])}var l=i(o,[[`render`,c],[`__scopeId`,`data-v-8f764dbf`]]);export{l as default};
