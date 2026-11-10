@@ -12,9 +12,13 @@ from engine import config
 from engine.load import (
     BLOOD_GROUPS,
     CSV_TABLES,
+    DataError,
     StockLookup,
+    build_db,
+    read_csvs,
     red_stock_frame,
     usual_level_frame,
+    validate,
 )
 
 # --------------------------------------------------------------------------- unit tests (no data)
@@ -129,6 +133,38 @@ def test_usual_level_matches_median_of_365_days(frames):
     sel = rs[(rs.facility_id == "HSP-001") & (rs.blood_group == "O+")]
     assert len(sel) == 365
     assert frames.usual_level[("HSP-001", "O+")] == int(sel.units.median())
+
+
+def test_starter_kit_passes_validation(data_dir):
+    assert validate(read_csvs(data_dir)) == []
+
+
+def test_validation_catches_broken_data(data_dir):
+    raw = read_csvs(data_dir)
+    broken = dict(raw)
+    broken["daily_stock"] = raw["daily_stock"].copy()
+    broken["daily_stock"].loc[0, "units_in_stock_end_of_day"] = -1
+    broken["routes"] = raw["routes"][raw["routes"].from_facility_id != "RBTC-NBO"]
+    broken["units"] = raw["units"].copy()
+    broken["units"].loc[raw["units"].status == "transfused", "status_date"] = None
+    problems = " | ".join(validate(broken))
+    assert "negative stock" in problems
+    assert "routes:" in problems
+    assert "blank status_date" in problems
+
+
+def test_build_refuses_invalid_data(tmp_path, data_dir):
+    bad_dir = tmp_path / "bad"
+    bad_dir.mkdir()
+    for name in CSV_TABLES.values():
+        (bad_dir / name).symlink_to(data_dir / name)
+    (bad_dir / "daily_stock.csv").unlink()
+    ds = pd.read_csv(data_dir / "daily_stock.csv")
+    ds = ds[~((ds.facility_id == "HSP-001") & (ds.date == "2026-01-01"))]  # drop a day
+    ds.to_csv(bad_dir / "daily_stock.csv", index=False)
+    with pytest.raises(DataError, match="miss days"):
+        build_db(bad_dir, tmp_path / "blood.db")
+    assert not (tmp_path / "blood.db").exists()
 
 
 def test_full_stock_scan_is_fast(frames):

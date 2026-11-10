@@ -80,6 +80,82 @@ def usual_level_frame(red_stock: pd.DataFrame) -> pd.DataFrame:
     return med[["facility_id", "blood_group", "usual_level"]]
 
 
+# --------------------------------------------------------------------------- validate
+
+
+class DataError(ValueError):
+    """The dataset breaks an assumption the engine relies on."""
+
+
+def validate(frames: dict[str, pd.DataFrame]) -> list[str]:
+    """Check the invariants the engine relies on. Returns a list of problems (empty = OK).
+
+    The starter kit passes all of these. They exist so a different or edited dataset
+    fails loudly at build time instead of producing quietly wrong rankings.
+    """
+    problems: list[str] = []
+    fac, ds, ro = frames["facilities"], frames["daily_stock"], frames["routes"]
+    units, tr, rq = frames["units"], frames["transfers"], frames["requests"]
+    fids = set(fac["facility_id"])
+
+    for name, key in [
+        ("facilities", ["facility_id"]),
+        ("units", ["unit_id"]),
+        ("transfers", ["transfer_id"]),
+        ("requests", ["request_id"]),
+        ("routes", ["from_facility_id", "to_facility_id"]),
+        ("daily_stock", ["date", "facility_id", "component", "blood_group"]),
+    ]:
+        n = int(frames[name].duplicated(key).sum())
+        if n:
+            problems.append(f"{name}: {n} duplicate rows for key {key}")
+
+    if (ds["units_in_stock_end_of_day"] < 0).any():
+        problems.append("daily_stock: negative stock counts")
+    unknown = set(ds["facility_id"]) - fids
+    if unknown:
+        problems.append(f"daily_stock: unknown facility ids {sorted(unknown)[:5]}")
+    if ds["facility_id"].str.startswith("SAT").any():
+        problems.append("daily_stock: satellites (SAT-*) hold stock; spec says they never do")
+    bad_groups = set(ds["blood_group"]) - set(BLOOD_GROUPS)
+    if bad_groups:
+        problems.append(f"daily_stock: unexpected blood groups {sorted(bad_groups)}")
+
+    # Missing (facility, group) rows are read as zero stock, which is only safe if
+    # every series that exists covers every day.
+    n_days = ds["date"].nunique()
+    red = ds[ds["component"].isin(RED_CELL_COMPONENTS)]
+    days = red.groupby(["facility_id", "component", "blood_group"])["date"].nunique()
+    short = days[days != n_days]
+    if len(short):
+        problems.append(f"daily_stock: {len(short)} red cell series miss days, e.g. {short.index[0]}")
+
+    pairs = set(zip(ro["from_facility_id"], ro["to_facility_id"]))
+    stocked = set(ds["facility_id"])
+    hospitals = [f for f in fids if f.startswith("HSP")]
+    missing = [(s, h) for s in stocked for h in hospitals if s != h and (s, h) not in pairs]
+    if missing:
+        problems.append(f"routes: {len(missing)} stocked-site -> hospital pairs missing, e.g. {missing[0]}")
+    if (ro["typical_travel_hours"] <= 0).any():
+        problems.append("routes: non-positive typical_travel_hours")
+
+    # stock.py treats a blank status_date as "still on the shelf".
+    blank_not_in_stock = units["status_date"].isna() & (units["status"] != "in_stock")
+    if blank_not_in_stock.any():
+        problems.append(
+            f"units: {int(blank_not_in_stock.sum())} units have a blank status_date but are not in_stock"
+        )
+
+    done = tr["received_at"].notna()
+    if (pd.to_datetime(tr.loc[done, "received_at"]) < pd.to_datetime(tr.loc[done, "dispatched_at"])).any():
+        problems.append("transfers: received_at before dispatched_at")
+
+    unknown = set(rq["facility_id"]) - fids
+    if unknown:
+        problems.append(f"requests: unknown facility ids {sorted(unknown)[:5]}")
+    return problems
+
+
 # --------------------------------------------------------------------------- build
 
 
@@ -96,6 +172,9 @@ def read_csvs(data_dir: Path) -> dict[str, pd.DataFrame]:
 def build_db(data_dir: Path, db_path: Path) -> dict[str, int]:
     """Write the raw tables and precomputed tables to ``db_path``. Returns row counts."""
     frames = read_csvs(data_dir)
+    problems = validate(frames)
+    if problems:
+        raise DataError("Dataset failed validation:\n  - " + "\n  - ".join(problems))
     frames["red_stock"] = red_stock_frame(frames["daily_stock"])
     frames["usual_level"] = usual_level_frame(frames["red_stock"])
 

@@ -72,6 +72,14 @@ Quirks to handle:
 - About 3% of transfers have no `received_at`. Drop them when fitting road time.
 - Red cells can be `RBC` or `WB` (whole blood). Treat both as red cell supply for v1.
 - Times are East Africa Time. Dataset period: 2025-11-01 to 2026-10-31.
+- Units still `in_stock` at the end of the dataset have a **blank `status_date`**. Treat
+  blank as "still on the shelf" in the near-expiry count (decided 2026-11-10). With the
+  literal `status_date > as_of` rule, late-2026 requests miss almost every shelved unit
+  (2026-10-30: 134 units found vs 1,329 in `daily_stock`). This moves golden case 1's
+  National Referral near-expiry count from 3 to about 14; the ranking direction holds.
+- `build_db` validates these assumptions (no satellite stock, complete 365-day stock
+  series, full route coverage, blank `status_date` only for `in_stock`) and refuses to
+  build if any fail.
 
 ## 5. Compatibility (fixed table, not AI)
 
