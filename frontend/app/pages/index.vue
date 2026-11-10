@@ -103,9 +103,10 @@ const safety = [
         </li>
       </ul>
       <div class="gallery">
-        <figure class="organic"><Pic name="blood-bags" sizes="(min-width: 900px) 380px, 31vw" alt="Three bags of donated blood, labelled A and B" /><figcaption>On the shelf</figcaption></figure>
-        <figure class="organic"><Pic name="paramedics" sizes="(min-width: 900px) 380px, 31vw" alt="Paramedics caring for a patient inside an ambulance" /><figcaption>In transit</figcaption></figure>
-        <figure class="organic"><Pic name="care-team" sizes="(min-width: 900px) 380px, 31vw" alt="Four nurses in blue uniforms and headscarves posing together" /><figcaption>At the bedside</figcaption></figure>
+        <figure class="organic"><Pic name="blood-bags" sizes="(min-width: 900px) 280px, 46vw" alt="Three bags of donated blood, labelled A and B" /><figcaption>On the shelf</figcaption></figure>
+        <figure class="organic"><Pic name="community" sizes="(min-width: 900px) 280px, 46vw" alt="A health worker checking an older woman's blood pressure at an outdoor clinic" /><figcaption>In the community</figcaption></figure>
+        <figure class="organic"><Pic name="nursery" sizes="(min-width: 900px) 280px, 46vw" alt="A nurse caring for a newborn in a hospital nursery" /><figcaption>At the bedside</figcaption></figure>
+        <figure class="organic"><Pic name="clinic" sizes="(min-width: 900px) 280px, 46vw" alt="A health worker taking a man's blood pressure in a clinic" /><figcaption>At the clinic</figcaption></figure>
       </div>
       <div class="sms-card organic">
         <IconBadge size="lg"><ServiceIcon name="sms" :size="36" /></IconBadge>
@@ -286,7 +287,8 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
 .ex-photo { margin: 0; position: relative; overflow: hidden; min-height: 280px; background: #cfe4e1; }
 .ex-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; filter: saturate(1.05) contrast(1.02); }
 .ex-photo figcaption, .gallery figcaption { position: absolute; left: 14px; bottom: 14px; right: 14px; padding: 9px 16px; border-radius: 99px; background: rgba(228, 242, 240, 0.96); color: var(--primary-700); font-weight: 800; font-size: 14px; box-shadow: 0 10px 22px rgba(4, 40, 38, 0.3); width: fit-content; max-width: calc(100% - 28px); }
-.gallery { margin-top: 16px; display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.gallery { margin-top: 16px; display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 900px) { .gallery { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; } }
 .gallery figure { margin: 0; position: relative; overflow: hidden; aspect-ratio: 3 / 4; background: #cfe4e1; }
 .gallery img { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.05) contrast(1.02); transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
 .gallery figure:hover img { transform: scale(1.06); }
