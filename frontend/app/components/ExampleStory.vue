@@ -2,22 +2,20 @@
 // "One request, in a minute": a little map with the requesting hospital in the middle and each
 // source placed by distance. Tap a source (or let it cycle) to see its arrival window.
 import type { Option } from '~/utils/mock'
+import { GLOBE } from '~/utils/globe'
 
 const props = defineProps<{ options: Option[]; limit: number; group: string; units: number; product: string; hospital: string }>()
 const img = useImg()
 
-const C = { x: 280, y: 205 }
-const ANGLES = [-35, 160, -122]
-const radius = (km: number) => 40 + km * 1.6
+const C = { x: GLOBE.me[0], y: GLOBE.me[1] }
+// where each source's ETA tag sits relative to its pin
+const TAGS: [number, number][] = [[0, -34], [0, 40], [0, -34]]
 const pins = computed(() => props.options.slice(0, 3).map((o, i) => {
-  const a = (ANGLES[i]! * Math.PI) / 180
-  const r = radius(o.km)
-  const x = C.x + r * Math.cos(a)
-  const y = C.y + r * Math.sin(a)
-  // bend each route a little so they read as roads, not spokes
-  const mx = (x + C.x) / 2 + Math.sin(a) * 26
-  const my = (y + C.y) / 2 - Math.cos(a) * 26
-  return { o, i, x, y, path: `M${x} ${y} Q${mx} ${my} ${C.x} ${C.y}`, tag: y < 90 ? [74, 0] : y < C.y ? [0, -42] : [0, 46] }
+  const [x, y] = GLOBE.pins[i]!
+  // lift each route into an arc so it reads as a flight over the globe
+  const mx = (x + C.x) / 2
+  const my = Math.min(y, C.y) - 46
+  return { o, i, x, y, path: `M${x} ${y} Q${mx} ${my} ${C.x} ${C.y}`, tag: TAGS[i]! }
 }))
 
 const sel = ref(0)
@@ -36,7 +34,6 @@ const verdict = computed(() => {
   if (o.p90 > props.limit) return { tone: 'warn', text: `Could run past your ${props.limit} h limit at the slow end. Worth a call.` }
   return { tone: 'ok', text: `Inside your ${props.limit} h limit, even at the slow end.` }
 })
-const rings = [30, 60, 90]
 const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 0-10z'
 </script>
 
@@ -50,18 +47,26 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
 
     <div class="body">
       <div class="map organic" aria-label="Sources placed by distance from the requesting hospital">
-        <svg viewBox="0 0 560 410" role="img" :aria-label="`${pins.length} sources around ${hospital}`">
+        <svg viewBox="0 0 560 410" role="img" :aria-label="`${pins.length} sources around ${hospital}, drawn on a globe`">
           <defs>
-            <radialGradient id="ex-bg" cx="50%" cy="50%" r="70%"><stop offset="0" stop-color="#fff" /><stop offset="1" stop-color="#f7dcd8" /></radialGradient>
+            <linearGradient id="gl-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" /><stop offset="1" stop-color="#fbe3df" /></linearGradient>
+            <radialGradient id="gl-ball" :cx="GLOBE.cx" :cy="GLOBE.cy - GLOBE.r * 0.55" :r="GLOBE.r * 1.15" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#fff3f1" /><stop offset="0.7" stop-color="#f5cdc8" /><stop offset="1" stop-color="#e9a79f" />
+            </radialGradient>
+            <radialGradient id="gl-halo" :cx="GLOBE.cx" :cy="GLOBE.cy" :r="GLOBE.r + 46" gradientUnits="userSpaceOnUse">
+              <stop :offset="GLOBE.r / (GLOBE.r + 46)" stop-color="#ff8a80" stop-opacity="0.55" /><stop offset="1" stop-color="#ff8a80" stop-opacity="0" />
+            </radialGradient>
+            <clipPath id="gl-clip"><circle :cx="GLOBE.cx" :cy="GLOBE.cy" :r="GLOBE.r" /></clipPath>
           </defs>
-          <rect width="560" height="410" fill="url(#ex-bg)" />
-          <!-- distance rings -->
-          <g fill="none" stroke="#e3b9b4" stroke-dasharray="3 7" stroke-width="1.5">
-            <circle v-for="k in rings" :key="k" :cx="C.x" :cy="C.y" :r="radius(k)" />
+          <rect width="560" height="410" fill="url(#gl-sky)" />
+          <!-- atmosphere, the globe, then land as dots -->
+          <circle :cx="GLOBE.cx" :cy="GLOBE.cy" :r="GLOBE.r + 46" fill="url(#gl-halo)" />
+          <circle :cx="GLOBE.cx" :cy="GLOBE.cy" :r="GLOBE.r" fill="url(#gl-ball)" />
+          <g clip-path="url(#gl-clip)">
+            <path :d="GLOBE.dots" class="land" />
+            <ellipse :cx="GLOBE.cx" :cy="GLOBE.cy - GLOBE.r" :rx="GLOBE.r * 0.9" ry="70" fill="#fff" opacity="0.28" />
           </g>
-          <g class="rl">
-            <text v-for="k in rings" :key="k" :x="C.x + radius(k) * 0.72 + 6" :y="C.y + radius(k) * 0.72 + 14">{{ k }} km</text>
-          </g>
+          <circle :cx="GLOBE.cx" :cy="GLOBE.cy" :r="GLOBE.r" fill="none" stroke="#fff" stroke-width="2.5" opacity="0.8" />
 
           <!-- routes -->
           <g v-for="p in pins" :key="p.o.id" fill="none" stroke-linecap="round">
@@ -74,17 +79,17 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
 
           <!-- your hospital -->
           <g :transform="`translate(${C.x} ${C.y})`">
-            <circle r="26" class="pulse" /><circle r="26" class="pulse p2" />
-            <circle r="26" fill="#1b1b1f" />
-            <path d="M0-12v24M-12 0h24" stroke="#fff" stroke-width="5" stroke-linecap="round" />
-            <text y="46" text-anchor="middle" class="me">Your hospital</text>
+            <circle r="20" class="pulse" /><circle r="20" class="pulse p2" />
+            <circle r="20" fill="#1b1b1f" stroke="#fff" stroke-width="3" />
+            <path d="M0-9v18M-9 0h18" stroke="#fff" stroke-width="4.5" stroke-linecap="round" />
+            <text y="38" text-anchor="middle" class="me">Your hospital</text>
           </g>
 
           <!-- sources -->
           <g v-for="p in pins" :key="'p' + p.o.id" class="pin" :class="{ on: p.i === sel }" :transform="`translate(${p.x} ${p.y})`" tabindex="0" role="button" :aria-label="`${p.o.name}, about ${fmtHours(p.o.p50)}`" @click="pick(p.i)" @keydown.enter="pick(p.i)" @keydown.space.prevent="pick(p.i)">
             <circle r="30" fill="transparent" />
-            <circle r="17" class="dot" />
-            <text y="5.500" text-anchor="middle" class="num">{{ p.i + 1 }}</text>
+            <circle r="15" class="dot" />
+            <text y="5" text-anchor="middle" class="num">{{ p.i + 1 }}</text>
             <g :transform="`translate(${p.tag[0]} ${p.tag[1]})`">
               <rect x="-46" y="-15" width="92" height="28" rx="14" class="tagbg" />
               <text y="4.500" text-anchor="middle" class="tagtx">{{ fmtHours(p.o.p50) }}</text>
@@ -140,7 +145,7 @@ const DROP = 'M0-10C4-4 7.500 0 7.500 3.500a7.500 7.500 0 0 1-15 0C-7.500 0-4-4 
 .map { position: relative; overflow: hidden; border: 1.5px solid var(--blood-500); min-height: 280px; background: #fff; }
 .map svg { display: block; width: 100%; height: 100%; }
 .hint { position: absolute; left: 14px; bottom: 12px; padding: 5px 12px; border-radius: 99px; background: rgba(255, 255, 255, 0.92); font-size: 12px; font-weight: 800; color: var(--blood-700); box-shadow: 0 6px 14px rgba(126, 16, 21, 0.14); }
-.rl text { font-family: Caveat, cursive; font-weight: 700; font-size: 20px; fill: #b0605a; }
+.land { stroke: #c24a47; stroke-width: 3.6; stroke-linecap: round; fill: none; opacity: 0.72; }
 .route { stroke: #d9aaa5; stroke-width: 3; stroke-dasharray: 2 9; transition: stroke 0.3s ease; }
 .route.on { stroke: #b3171e; stroke-width: 4; stroke-dasharray: 3 10; animation: flow 1s linear infinite; }
 @keyframes flow { to { stroke-dashoffset: -26; } }
