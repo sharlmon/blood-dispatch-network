@@ -1,0 +1,12 @@
+# Ranking engine settings for Kenya (spec section 10).
+# A second country = a second YAML file next to this one. No code changes.
+country: Kenya
+sharing_allowed: true          # hospital-to-hospital sharing; confirm with the blood-service expert
+min_keep: 2                    # units a hospital always keeps per group
+o_neg_reserve: 2
+near_expiry_days: 10
+hospital_extra_dispatch_h: 0   # sensitivity: try 1 and 2
+clinician_limit_h: 6
+baseline_quote_extra_h: 2.0
+eta_train_before: "2026-07-01"
+language: en
