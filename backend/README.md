@@ -71,3 +71,20 @@ backups/restoration, and safe retry-response retention. The backend-only CI temp
 Activation under `.github/workflows/` requires GitHub workflow permission.
 
 Starter-data results are recorded in [verification.md](docs/verification.md).
+
+
+## Deploying on Render
+
+`render.yaml` at the repo root describes the service (Python, gunicorn, health check at
+`/api/health`).
+
+1. Render dashboard, **New > Blueprint**, choose this repo and the `dev` branch.
+2. When asked, paste `CLERK_PUBLISHABLE_KEY` (the same `pk_test_...` the frontend uses).
+3. After the first deploy, open **Environment** and set `ORG_FACILITY_MAP`
+   (Clerk organization id to facility id). Redeploy.
+4. Swagger is at `https://<your-service>.onrender.com/api/docs`.
+
+On the free plan the SQLite file is in `/tmp` and starts empty after each restart or idle
+spin-down, and the starter CSVs are not in the repo, so `/api/ready` stays 503 and ranking has
+no data until a disk and the CSVs are added. The Clerk secret key is not needed by the API.
+Tokens from the frontend are accepted when their origin is listed in `CORS_ORIGINS`.
