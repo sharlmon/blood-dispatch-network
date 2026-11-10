@@ -1,0 +1,77 @@
+{
+  "request": {
+    "facility_id": "HSP-032",
+    "patient_group": "O+",
+    "units_needed": 4,
+    "requested_at": "2025-11-03T02:41:42",
+    "as_of_stock_date": "2025-11-02"
+  },
+  "mode": "model",
+  "model_used": true,
+  "sharing_allowed": true,
+  "compatibility_note": "From a fixed table. A qualified person crossmatches and releases every unit.",
+  "stock_note": "Yesterday's closing count. Unconfirmed until the supplying site confirms.",
+  "advice": "consider_emergency_O_or_transfer",
+  "options": [
+    {
+      "rank": 1,
+      "facility_id": "RBTC-NKR",
+      "name": "Nakuru Regional Blood Transfusion Centre",
+      "facility_type": "regional_blood_centre",
+      "is_hospital": false,
+      "spare": 15,
+      "stock_seen": 15,
+      "near_expiry": 0,
+      "has_backup_power": true,
+      "connectivity": "4G",
+      "travel_hours_map": 14.06,
+      "eta": {
+        "p10": 15.4,
+        "p50": 18.8,
+        "p90": 22.4,
+        "wait_p50": 2.0,
+        "road_p50": 16.78
+      },
+      "flags": [],
+      "reason": "Regional centre: yesterday's count shows 15 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 16.8 h on the road. Most likely 18.8 h; 8 in 10 arrive within 15.4-22.4 h.",
+      "spare_by_group": {
+        "O+": 15,
+        "O-": 0
+      }
+    },
+    {
+      "rank": 2,
+      "facility_id": "RBTC-MSA",
+      "name": "Mombasa Regional Blood Transfusion Centre",
+      "facility_type": "regional_blood_centre",
+      "is_hospital": false,
+      "spare": 53,
+      "stock_seen": 53,
+      "near_expiry": 0,
+      "has_backup_power": false,
+      "connectivity": "4G",
+      "travel_hours_map": 14.19,
+      "eta": {
+        "p10": 15.5,
+        "p50": 19.0,
+        "p90": 22.6,
+        "wait_p50": 2.0,
+        "road_p50": 16.93
+      },
+      "flags": [
+        "no_backup_power"
+      ],
+      "reason": "Regional centre: yesterday's count shows 53 compatible units (unconfirmed). About 2.0 h to pack and dispatch, 16.9 h on the road. Most likely 19.0 h; 8 in 10 arrive within 15.5-22.6 h. Its blood fridge has no backup power.",
+      "spare_by_group": {
+        "O+": 53,
+        "O-": 0
+      }
+    }
+  ],
+  "baseline": {
+    "facility_id": "RBTC-NKR",
+    "name": "Nakuru Regional Blood Transfusion Centre",
+    "quote_hours": 16.1,
+    "rule": "Supply centre first, then the nearest regional centres. Quote = map time + 2 h."
+  }
+}
