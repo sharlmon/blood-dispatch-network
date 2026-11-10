@@ -30,7 +30,8 @@ const keptSegments = computed(() => {
         <span class="meta">
           <b>{{ d.request.value.units }} units · {{ d.request.value.product.toLowerCase() }}</b>
           <small v-if="d.sooner.value > 0.2 && !d.tooLong.value" class="soon">{{ fmtHours(d.sooner.value) }} sooner than the current way</small>
-          <small v-else>{{ d.request.value.id }} · {{ d.request.value.openedAt }} · limit {{ d.request.value.limitH }} h</small>
+          <small v-else-if="d.request.value.unknownGroup">Group unknown · O only · limit {{ d.request.value.limitH }}h</small>
+          <small v-else>{{ d.request.value.id }} · {{ d.request.value.openedAt }} · limit {{ d.request.value.limitH }}h</small>
         </span>
         <span class="urgent">Urgent</span>
         <NuxtLink to="/request" class="edit" aria-label="Edit request"><AppIcon name="edit" :size="20" /></NuxtLink>
@@ -40,7 +41,7 @@ const keptSegments = computed(() => {
         <div class="wt"><AppIcon name="warning" :size="26" /><strong>The best source may not arrive in time</strong></div>
         <p>
           Fastest option is most likely {{ fmtHours(d.top.value!.p50) }} and almost certainly
-          {{ fmtRange(d.top.value!.p10, d.top.value!.p90) }}. Your limit is {{ d.request.value.limitH }} h. Decide now, a person makes this call.
+          {{ fmtRange(d.top.value!.p10, d.top.value!.p90) }}. Your limit is {{ d.request.value.limitH }}h. Decide now, a person makes this call.
         </p>
         <button type="button" class="btn btn-dark" @click="d.decide('groupO')"><AppIcon name="groupO" /> Use emergency group O</button>
         <button type="button" class="btn warn-outline" @click="d.decide('transfer')"><AppIcon name="transfer" /> Transfer the patient</button>
@@ -77,6 +78,7 @@ const keptSegments = computed(() => {
         <span class="di" :class="d.selected.value.kind"><AppIcon :name="d.selected.value.kind" :size="26" /></span>
         <span><strong>{{ d.selected.value.name }}</strong><small>{{ d.selected.value.kind === 'hospital' ? 'Hospital' : 'Centre' }} · {{ d.selected.value.km }} km by road</small></span>
       </div>
+      <p class="eta"><AppIcon name="clock" :size="20" /><span>Most likely arrives about <b class="tnum">{{ etaClock(d.request.value.openedAt, d.selected.value.p50) }}</b></span><small>between {{ etaClock(d.request.value.openedAt, d.selected.value.p10) }} and {{ etaClock(d.request.value.openedAt, d.selected.value.p90) }}</small></p>
       <h3>Why this source</h3>
       <ul class="why">
         <li v-for="r in d.selected.value.reasons" :key="r"><span class="tick"><AppIcon name="check" :size="14" /></span>{{ r }}</li>
@@ -141,6 +143,10 @@ const keptSegments = computed(() => {
 .dh small { font-size: 12.5px; font-weight: 600; color: #5a3c3f; }
 .di { width: 46px; height: 46px; border-radius: 99px; background: var(--blood-500); color: #fff; display: grid; place-items: center; }
 .di.centre { border-radius: 14px; }
+.eta { margin: 18px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; align-items: center; padding: 12px 14px; border-radius: 22px; background: var(--teal-50); color: #064e46; font-size: 13.5px; font-weight: 700; }
+.eta svg { color: var(--teal-600); grid-row: span 2; }
+.eta b { font-size: 19px; color: var(--ink); }
+.eta small { font-size: 12px; font-weight: 600; color: #3f6f69; }
 .detail h3 { margin: 22px 0 12px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #7a5a5d; }
 .why { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
 .why li { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; font-weight: 600; line-height: 1.45; color: var(--wine); }

@@ -6,22 +6,22 @@ const selected = demo[0]!.id
 const img = useImg()
 
 const stats = [
-  { big: '28%', text: 'of emergencies (2,456 of 8,768) hit a hospital fridge that fell short.' },
-  { big: '617', text: 'red cell emergencies got no blood at all. About 1 in 4 of those short.' },
-  { big: '0 of 5,330', text: 'emergency transfers came from another hospital. All came from regional centres.' },
-  { big: '2.0 h', text: 'median wait from request to dispatch, about a third of the delivery time.' },
-  { big: '~2 h', text: 'sooner on average when last year\'s requests are replayed with the tool.' },
-  { big: '~290', text: 'patients who got nothing could have had blood within 6 hours.' }
+  { c: { to: 28, suffix: '%' }, text: 'of emergencies (2,456 of 8,768) hit a hospital fridge that fell short.' },
+  { c: { to: 617 }, text: 'red cell emergencies got no blood at all. About 1 in 4 of those short.' },
+  { c: { to: 5330, prefix: '0 of ' }, text: 'emergency transfers came from another hospital. All came from regional centres.' },
+  { c: { to: 2, suffix: 'h', decimals: 1 }, text: 'median wait from request to dispatch, about a third of the delivery time.' },
+  { c: { to: 2, prefix: '~', suffix: 'h' }, text: 'sooner on average when last year\'s requests are replayed with the tool.' },
+  { c: { to: 290, prefix: '~' }, text: 'patients who got nothing could have had blood within 6 hours.' }
 ]
 const funnel = [
-  { label: 'Emergency requests', n: '8,768', w: 100, tone: 'ink' },
-  { label: 'Hospital fridge fell short', n: '2,456', w: 28, tone: 'blood' },
-  { label: 'Red cell emergencies with no blood at all', n: '617', w: 7, tone: 'wine' }
+  { label: 'Emergency requests', n: 8768, w: 100, tone: 'ink' },
+  { label: 'Hospital fridge fell short', n: 2456, w: 28, tone: 'blood' },
+  { label: 'Red cell emergencies with no blood at all', n: 617, w: 7, tone: 'wine' }
 ]
 const impact = [
-  { label: 'Regional centre stock check alone', n: '208', w: 33.7, tone: 'teal' },
-  { label: 'Plus hospital lending', n: '~80', w: 13, tone: 'blood' },
-  { label: 'Still not reachable in 6 h', n: '~330', w: 53.3, tone: 'grey' }
+  { label: 'Regional centre stock check alone', n: 208, w: 33.7, tone: 'teal' },
+  { label: 'Plus hospital lending', n: 80, w: 13, tone: 'blood', pre: '~' },
+  { label: 'Still not reachable in 6 h', n: 330, w: 53.3, tone: 'grey', pre: '~' }
 ]
 const steps = [
   { icon: 'pen', title: 'Type what the patient needs', body: 'Blood group, units and the longest the patient can wait. On a computer, or by text message from a basic phone.' },
@@ -87,7 +87,7 @@ const safety = [
         <div class="fcard" aria-hidden="true">
           <small>FASTEST OPTION · B+ · 2 UNITS</small>
           <strong>{{ demo[0]!.name }}</strong>
-          <div class="ft"><b class="tnum">{{ fmtHours(demo[0]!.p50) }}</b><span>{{ fmtRange(demo[0]!.p10, demo[0]!.p90) }}</span></div>
+          <div class="ft"><b><Dur :h="demo[0]!.p50" /></b><span>{{ fmtRange(demo[0]!.p10, demo[0]!.p90) }}</span></div>
           <WindowBar :p10="demo[0]!.p10" :p50="demo[0]!.p50" :p90="demo[0]!.p90" :limit="3" />
         </div>
         <span class="fchip" aria-hidden="true">B+ · 2 units · red cells</span>
@@ -97,7 +97,7 @@ const safety = [
         </div>
       </div>
 
-      <BlockWall class="wall" :mobile-gap="3" :desktop-gap="13" />
+      <NetworkHorizon class="wall" />
     </section>
 
     <section id="data" class="band" aria-labelledby="why">
@@ -105,7 +105,7 @@ const safety = [
         <h2 id="why">The gap, in the data</h2>
         <p class="sub">Last year's requests, from the synthetic hackathon dataset (November 2025 to October 2026).</p>
         <ul class="stats">
-          <li v-for="(st, i) in stats" :key="st.big" class="rise" :style="{ '--d': i * 70 + 'ms' }"><strong>{{ st.big }}</strong><span>{{ st.text }}</span></li>
+          <li v-for="(st, i) in stats" :key="st.text" class="rise" :style="{ '--d': i * 70 + 'ms' }"><strong><CountUp v-bind="st.c" /></strong><span>{{ st.text }}</span></li>
         </ul>
       </div>
     </section>
@@ -131,7 +131,7 @@ const safety = [
         <Reveal class="chart organic">
           <h3>From every emergency to the ones with no blood</h3>
           <div v-for="f in funnel" :key="f.label" class="bar-row">
-            <div class="bl"><span>{{ f.label }}</span><b class="tnum">{{ f.n }}</b></div>
+            <div class="bl"><span>{{ f.label }}</span><b><CountUp :to="f.n" /></b></div>
             <div class="bt"><i class="grow" :class="f.tone" :style="{ width: f.w + '%' }" /></div>
           </div>
           <p class="note">Bars are to scale. 617 of the 2,456 short emergencies, about 1 in 4, were red cell requests that got no blood.</p>
@@ -143,7 +143,7 @@ const safety = [
             <i v-for="p in impact" :key="p.label" class="grow" :class="p.tone" :style="{ width: p.w + '%' }" />
           </div>
           <ul class="legend">
-            <li v-for="p in impact" :key="p.label"><i :class="p.tone" /><span>{{ p.label }}</span><b class="tnum">{{ p.n }}</b></li>
+            <li v-for="p in impact" :key="p.label"><i :class="p.tone" /><span>{{ p.label }}</span><b><CountUp :to="p.n" :prefix="p.pre" /></b></li>
           </ul>
           <p class="note">Of the 617 who got nothing. Checking the six regional centres alone reaches 208; hospital lending adds about 80. Counts are approximate and exploratory.</p>
         </Reveal>
@@ -177,7 +177,7 @@ const safety = [
               <div class="ex-top">
                 <span class="ln" :class="[o.kind, { first: i === 0 }]">{{ i + 1 }}</span>
                 <span class="ex-name"><b>{{ o.name }}</b><small>{{ o.kind === 'hospital' ? 'Hospital' : 'Centre' }} · {{ o.spare }} · {{ o.km }} km</small></span>
-                <span class="ex-when"><b class="tnum">{{ fmtHours(o.p50) }}</b><small>{{ fmtRange(o.p10, o.p90) }}</small></span>
+                <span class="ex-when"><b><Dur :h="o.p50" /></b><small>{{ fmtRange(o.p10, o.p90) }}</small></span>
               </div>
               <WindowBar :p10="o.p10" :p50="o.p50" :p90="o.p90" :limit="3" :max="4" />
             </li>
@@ -225,8 +225,8 @@ const safety = [
       </ul>
       <Reveal class="chart organic sens">
         <h3>If lenders are slower, fewer rescues</h3>
-        <div class="bar-row"><div class="bl"><span>Hospitals lend at the assumed speed</span><b class="tnum">176</b></div><div class="bt"><i class="grow teal" style="width: 100%" /></div></div>
-        <div class="bar-row"><div class="bl"><span>Lender is 1 hour slower</span><b class="tnum">119</b></div><div class="bt"><i class="grow blood" style="width: 67.6%" /></div></div>
+        <div class="bar-row"><div class="bl"><span>Hospitals lend at the assumed speed</span><b><CountUp :to="176" /></b></div><div class="bt"><i class="grow teal" style="width: 100%" /></div></div>
+        <div class="bar-row"><div class="bl"><span>Lender is 1 hour slower</span><b><CountUp :to="119" /></b></div><div class="bt"><i class="grow blood" style="width: 67.6%" /></div></div>
         <p class="note">Patients with no blood who could be rescued within 4 hours.</p>
       </Reveal>
     </section>
@@ -270,7 +270,7 @@ const safety = [
 </template>
 
 <style scoped>
-.hero { position: relative; overflow: hidden; padding: 14px 20px calc(100vw / 3 - 24px); }
+.hero { position: relative; overflow: hidden; padding: 14px 20px 96px; }
 .copy { position: relative; z-index: 4; max-width: 720px; }
 .eyebrow { margin: 0; display: inline-block; padding: 7px 14px; border-radius: 99px; border: 1.5px solid var(--blood-500); background: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blood-700); }
 h1 { margin: 16px 0 0; font-size: clamp(46px, 6.1vw, 88px); line-height: 0.94; letter-spacing: -0.035em; font-weight: 800; text-transform: uppercase; color: var(--blood-600); }
@@ -289,10 +289,9 @@ h1 span { color: var(--wine); }
 .fcard strong { font-size: 13.5px; color: #12202b; }
 .ft { display: flex; align-items: baseline; gap: 6px; margin: 2px 0 8px; }
 .ft b { font-size: 30px; line-height: 1; color: var(--blood-500); white-space: nowrap; flex-shrink: 0; }
-.ft span { font-size: 11px; font-weight: 700; color: var(--slate); }
+.ft > span { font-size: 11px; font-weight: 700; color: var(--slate); }
 .fchip, .fmini { display: none; }
 .wall { position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; }
-@media (max-width: 899px) { .wall :deep(.block) { display: none; } }
 .ln { width: 30px; height: 30px; border-radius: 99px; background: var(--slate); color: #fff; font-size: 13px; font-weight: 800; display: grid; place-items: center; flex-shrink: 0; }
 .cap { margin: 0; text-align: center; font-weight: 800; font-size: 14px; color: var(--blood-700); }
 
@@ -407,13 +406,13 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
   .hero { padding: 40px 64px clamp(190px, 16vw, 240px); min-height: min(calc(100svh - var(--header-h)), 860px); }
   .chips-d { display: flex; }
   .cta-m { display: none; }
-  .stage { position: absolute; right: 8%; top: 24px; width: min(500px, 36vw); height: auto; aspect-ratio: 500 / 610; margin: 0; --iw: 172%; --il: -66%; --it: -77%; }
+  .stage { position: absolute; right: 8%; top: 112px; width: min(500px, 36vw); height: auto; aspect-ratio: 500 / 610; margin: 0; --iw: 172%; --il: -66%; --it: -77%; }
   .arch { border-radius: 50% 50% 40px 40px / 41% 41% 40px 40px; box-shadow: 0 30px 70px rgba(126, 16, 21, 0.22); }
   .fcard { right: auto; left: -60px; top: 60%; width: 310px; padding: 18px 20px; border-radius: 26px; gap: 4px; box-shadow: 0 22px 50px rgba(126, 16, 21, 0.2); }
   .fcard small { font-size: 11px; }
   .fcard strong { font-size: 18px; }
   .ft b { font-size: 44px; }
-  .ft span { font-size: 13px; }
+  .ft > span { font-size: 13px; }
   .fchip { display: block; position: absolute; z-index: 6; top: 46px; right: -16px; white-space: nowrap; padding: 12px 18px; border-radius: 99px; background: var(--blood-500); color: #fff; font-weight: 800; font-size: 15px; box-shadow: 0 14px 28px rgba(179, 23, 30, 0.38); }
   .fmini { display: flex; align-items: center; gap: 12px; position: absolute; z-index: 6; top: 30%; right: -70px; white-space: nowrap; padding: 12px 16px; border-radius: 20px; background: rgba(255, 255, 255, 0.95); border: 1px solid #ecd5d1; box-shadow: 0 16px 36px rgba(126, 16, 21, 0.18); }
   .fmini span:last-child { display: flex; flex-direction: column; }

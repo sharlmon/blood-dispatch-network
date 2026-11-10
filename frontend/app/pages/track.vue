@@ -23,9 +23,10 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
       <NuxtLink to="/results" class="back"><AppIcon name="back" /> Back to results</NuxtLink>
       <div class="window card">
         <small>ARRIVAL WINDOW</small>
-        <div class="big"><strong class="tnum">{{ fmtHours(d.selected.value.p50) }}</strong><span>most likely · almost certain {{ fmtRange(d.selected.value.p10, d.selected.value.p90) }}</span></div>
+        <div class="big"><strong><Dur :h="d.selected.value.p50" /></strong><span>most likely · almost certain {{ fmtRange(d.selected.value.p10, d.selected.value.p90) }}</span></div>
+        <p class="eta"><AppIcon name="clock" :size="18" /> Expected around <b class="tnum">{{ etaClock(d.request.value.openedAt, d.selected.value.p50) }}</b><span>(between {{ etaClock(d.request.value.openedAt, d.selected.value.p10) }} and {{ etaClock(d.request.value.openedAt, d.selected.value.p90) }})</span></p>
         <WindowBar :p10="d.selected.value.p10" :p50="d.selected.value.p50" :p90="d.selected.value.p90" :limit="d.request.value.limitH" :max="Math.max(4, d.request.value.limitH + 1)" />
-        <div class="scale"><span>Now</span><span>Your {{ d.request.value.limitH }} h limit</span></div>
+        <div class="scale"><span>Now</span><span>Your {{ d.request.value.limitH }}h limit</span></div>
       </div>
 
       <ol class="steps">
@@ -59,7 +60,11 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
 .window small { font-size: 12px; font-weight: 800; letter-spacing: 0.04em; color: var(--slate); }
 .big { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .big strong { font-size: 34px; line-height: 1; }
-.big span { font-size: 13px; font-weight: 700; color: var(--slate); }
+.big > span { font-size: 13px; font-weight: 700; color: var(--slate); }
+.eta { margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 14px; font-weight: 600; color: #5a3c3f; }
+.eta svg { color: var(--teal-600); }
+.eta b { font-size: 18px; color: var(--ink); }
+.eta span { font-size: 12.5px; color: var(--slate); }
 .scale { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--slate); }
 .steps { list-style: none; margin: 0; padding: 0 4px; display: flex; flex-direction: column; }
 .steps li { display: flex; gap: 14px; padding-bottom: 14px; position: relative; }

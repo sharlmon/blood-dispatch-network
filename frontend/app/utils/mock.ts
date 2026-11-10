@@ -1,5 +1,7 @@
 // MOCK data and ranking. Replace with the Flask API (POST /api/requests) when the
 // ranking engine lands. Shapes mirror what the engine is expected to return.
+import { fmtHours, fmtRange } from './format'
+
 export type SourceKind = 'hospital' | 'centre'
 
 export interface Option {
@@ -7,6 +9,8 @@ export interface Option {
   name: string
   kind: SourceKind
   spare: string
+  /** compatible units this site can spare */
+  avail: number
   km: number
   p10: number
   p50: number
@@ -28,33 +32,62 @@ export interface DispatchRequest {
   product: string
   limitH: number
   openedAt: string
+  /** the patient's group was unknown, so group O was requested per protocol */
+  unknownGroup?: boolean
 }
 
 export const GROUPS = ['A+', 'A−', 'B+', 'B−', 'AB+', 'AB−', 'O+', 'O−']
+export const BASELINE_HOURS = 4 // the current way takes about 4 h with no range
 
 const isRare = (g: string) => g.endsWith('−') || g.startsWith('AB')
 
-export const BASELINE_HOURS = 4 // the current way takes about 4 h with no range
+type Raw = Omit<Option, 'reasons' | 'kept' | 'spare'> & { spareLabel: string }
+
+function describe(o: Raw, i: number, req: DispatchRequest): Option {
+  const enough = o.avail >= req.units
+  const reasons = [
+    enough ? `Has ${o.avail} spare ${o.spareLabel}, enough for your ${req.units} units.` : `Has ${o.avail} spare ${o.spareLabel}, not enough alone for ${req.units} units.`,
+    `${i === 0 ? 'Fastest: most likely' : 'Most likely'} ${fmtHours(o.p50)}, almost certainly ${fmtRange(o.p10, o.p90)}.`,
+    o.p90 > req.limitH ? 'The slow end may pass your limit.' : `Inside your ${req.limitH}h limit even at the slow end.`,
+    o.kind === 'hospital' ? 'Shares only what it can spare, so it stays above its minimum.' : 'Supply centre, no safety stock to protect.'
+  ]
+  const { spareLabel, ...rest } = o
+  return {
+    ...rest,
+    spare: `${o.avail} spare ${spareLabel}`,
+    reasons,
+    kept: o.kind === 'hospital' ? `${o.spareN} of ${o.totalN} spare. O− reserve untouched.` : 'Centre: all compatible units available. O− reserve kept.'
+  }
+}
 
 export function mockRank(req: DispatchRequest): { options: Option[]; baseline: string } {
-  const sub = req.group.endsWith('−') ? 'O−' : 'O+'
-  let options: Option[]
-  if (!isRare(req.group)) {
-    options = [
-      { id: 'lakeview', name: 'Lakeview District Hospital', kind: 'hospital', spare: `3 spare ${req.group}`, km: 31, p10: 1, p50: 1.5, p90: 2.2, x: 300, y: 70, kept: '3 of 6 spare. O− reserve untouched.', spareN: 3, totalN: 6,
-        reasons: [`Has 3 spare ${req.group}, enough for your ${req.units} units.`, 'Fastest: most likely 1½ h, almost certainly 1 to 2¼ h.', 'Shares only what it can spare, so it stays above its minimum.'] },
-      { id: 'hillcrest', name: 'Hillcrest Hospital', kind: 'hospital', spare: `2 spare ${sub}`, km: 58, p10: 1.8, p50: 2.3, p90: 3, x: 90, y: 112, kept: '2 of 5 spare. O− reserve untouched.', spareN: 2, totalN: 5,
-        reasons: [`Has 2 spare ${sub}, which your patient can safely receive.`, 'Second fastest road time.', 'Shares only what it can spare.'] },
-      { id: 'central', name: 'Central Regional Blood Centre', kind: 'centre', spare: '12 spare compatible', km: 96, p10: 2, p50: 2.5, p90: 3.5, x: 290, y: 238, kept: 'Centre: all compatible units available.',
-        reasons: ['Largest stock, 12 compatible units.', 'Slowest of the three, but the range is tight.', 'Supply centre, no safety stock to protect.'] }
-    ]
-  } else {
-    options = [
-      { id: 'central', name: 'Central Regional Blood Centre', kind: 'centre', spare: `4 spare ${req.group}`, km: 188, p10: 3, p50: 3.5, p90: 5, x: 300, y: 70, kept: 'Centre: O− reserve kept.',
-        reasons: [`Has 4 spare ${req.group}, enough for your ${req.units} units.`, 'Most likely 3½ h, almost certainly 3 to 5 h.', 'Wait may pass your limit.'] },
-      { id: 'northgate', name: 'Northgate Hospital', kind: 'hospital', spare: `1 spare ${sub}`, km: 142, p10: 3.4, p50: 4.1, p90: 5, x: 90, y: 112, kept: '1 of 3 spare. O− reserve untouched.', spareN: 1, totalN: 3,
-        reasons: [`Has 1 spare ${sub}, not enough alone for ${req.units} units.`, 'Slow road time.', 'Shares only what it can spare.'] }
-    ]
-  }
-  return { options, baseline: 'Today\'s way: Central Blood Centre, about 4 h, no range.' }
+  const g = req.group
+  const sub = g.endsWith('−') ? 'O−' : 'O+'
+  const raw: Raw[] = !isRare(g)
+    ? [
+        { id: 'lakeview', name: 'Lakeview District Hospital', kind: 'hospital', spareLabel: g, avail: 3, km: 31, p10: 1, p50: 1.5, p90: 2.2, x: 300, y: 70, spareN: 3, totalN: 6 },
+        { id: 'hillcrest', name: 'Hillcrest Hospital', kind: 'hospital', spareLabel: sub, avail: 2, km: 58, p10: 1.8, p50: 2.3, p90: 3, x: 90, y: 112, spareN: 2, totalN: 5 },
+        { id: 'central', name: 'Central Regional Blood Centre', kind: 'centre', spareLabel: 'compatible', avail: 12, km: 96, p10: 2, p50: 2.5, p90: 3.5, x: 290, y: 238 }
+      ]
+    : [
+        { id: 'central', name: 'Central Regional Blood Centre', kind: 'centre', spareLabel: g, avail: 4, km: 188, p10: 3, p50: 3.5, p90: 5, x: 300, y: 70 },
+        { id: 'northgate', name: 'Northgate Hospital', kind: 'hospital', spareLabel: sub, avail: 1, km: 142, p10: 3.4, p50: 4.1, p90: 5, x: 90, y: 112, spareN: 1, totalN: 3 }
+      ]
+  return { options: raw.map((o, i) => describe(o, i, req)), baseline: 'Today\'s way: Central Blood Centre, about 4 h, no range.' }
 }
+
+export interface RecentRequest {
+  group: string
+  units: number
+  where: string
+  status: 'Dispatched' | 'Arrived' | 'Escalated'
+  when: string
+  urgent: boolean
+}
+
+/** Sample history for the request page (mock). */
+export const RECENT: RecentRequest[] = [
+  { group: 'B+', units: 2, where: 'Lakeview District Hospital', status: 'Dispatched', when: '18 min ago', urgent: true },
+  { group: 'O+', units: 1, where: 'Central Regional Blood Centre', status: 'Arrived', when: 'Yesterday, 22:40', urgent: false },
+  { group: 'A−', units: 2, where: 'Group O given, patient moved', status: 'Escalated', when: 'Mon, 03:10', urgent: true }
+]
