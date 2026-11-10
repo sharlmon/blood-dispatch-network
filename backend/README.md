@@ -1,4 +1,15 @@
-# backend/
+# backend/ (Flask)
+
+```bash
+cd backend
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp ../.env.example .env   # or export vars
+flask --app wsgi run --debug --port 5000
+pytest
+```
+
+`app/` is the Flask app factory and routes (`/api/health` works now). Other folders below are imported by it.
 
 | Path | Owner | Purpose |
 |---|---|---|

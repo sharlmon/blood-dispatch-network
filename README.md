@@ -31,38 +31,93 @@ It's 1 a.m. A patient needs blood urgently and the hospital fridge doesn't have 
 
 ## Architecture
 
+**Stack:** Nuxt 4 (frontend) · Flask (backend API) · Python decision engine · SQLite · SMS gateway · CSV in, JSON out.
+
 ```
-CSVs ──► SQLite ──► Ranking engine (Python) ──► API ──► Web screens ──► Results tab
-                    stock + safety stock         workflow steps   + SMS parser   (precomputed
-                    + arrival range + reasons    audit log                       replay JSON)
-                                                 fallback
-                         Settings file per country (config, not code) ───────────┘
+ Lab worker ──► Web screens (Nuxt) ──┐
+ Basic phone ─► SMS gateway ─► SMS parser ─┤
+                                           ▼
+ CSVs ─► Ingest ─► SQLite ─►  Flask API ── Workflow ── Audit log
+                     │            │          (request → pick → confirm → dispatch)
+                     │            │          Fallback mode (phone process)
+                     ▼            ▼
+              Decision engine (deterministic, no LLM-generated numbers)
+              ├─ Ranking: compatible spare units above safety stock
+              ├─ Arrival ranges: p10 / p50 / p90
+              ├─ Evening pre-alert: hospitals out of common groups
+              └─ Replay: reruns past requests ─► results/*.json ─► Results tab
+
+ Country settings file (lending rules, safety stock, arrival params, demo clock)
+ configures engine and workflow: a new country = a new file, not a code change.
 ```
 
-1. **Ingest:** CSVs are loaded into SQLite (`backend/db/`).
-2. **Ranking engine (Python):** per candidate site computes available stock, safety stock to keep, arrival range, and plain-language reasons.
-3. **API:** workflow steps (request → pick → confirm → dispatch), audit log, fallback mode.
-4. **Clients:** web screens and an SMS parser both call the API.
-5. **Results tab:** reads precomputed replay JSON from `results/`.
-6. **Settings file per country:** thresholds, lending rules, compatibility and demo clock live in config.
+### Components
+
+| Layer | Component | Owner | Role |
+|---|---|---|---|
+| Clients | Web screens | Frontend | Request entry, options list, confirmation, pre-alert list |
+| Clients | SMS parser | Full-stack 2 | Turns text messages into structured requests |
+| Clients | Results tab | Frontend | Shows replay outputs from `results/*.json` |
+| Backend | HTTP API | Full-stack 1 | Serves web clients, triggers the evening run |
+| Backend | Workflow | Full-stack 1 | Request, pick, confirm, dispatch; no confirmation in time moves to the next option |
+| Backend | Audit log | Full-stack 1 | Records every request, decision, confirmation, dispatch and timeout |
+| Backend | Fallback mode | Full-stack 1 | Switches to the phone process if the tool is down |
+| Engine | Ranking (`rank_sources()`) | Data scientist 1 | Compatible spare units above safety stock |
+| Engine | Arrival ranges | Data scientist 2 | p10 / p50 / p90 arrival estimates |
+| Engine | Evening pre-alert | Data scientist 2 | Hospitals out of common groups, from yesterday's closing stock |
+| Engine | Replay | Data scientist 2 | Reruns past requests, writes results JSON |
+| Data | Ingest | Full-stack 2 | Loads starter CSVs (git-ignored `DATA_DIR`) into SQLite |
+| Data | Country settings | Full-stack 2 | Per-country YAML config |
+
+### Emergency request sequence
+
+1. The lab worker submits a request by web or SMS; the API logs it.
+2. The API calls `rank_sources`, which returns ranked options with ranges and reasons, plus a baseline.
+3. If the top option's p90 exceeds the clinician's time limit, the tool advises considering emergency group O or patient transfer.
+4. The lab worker sees the options and the baseline side by side, then picks, changes or rejects.
+5. The supplying site confirms the units are on the shelf, then dispatches. No confirmation in time moves the request to the next option.
+6. The arrival window goes back to the lab worker. Every step is logged.
+
+### Ranking engine (`rank_sources()`)
+
+- **Compatibility** (`compat.py`): fixed lookup table, never a model. Unknown group falls back to O- and O+ only, with a flag.
+- **As-of date:** request date minus one day, so stock is yesterday's closing count.
+- **Candidates:** all facilities except the requester and `SAT-*` satellites; centres only if `sharing_allowed` is false.
+- **Spare stock** (`stock.py`): centres offer all compatible red cells and whole blood; hospitals offer stock minus the higher of usual level and minimum keep; O- never drops below the O- reserve; near-expiry units are capped at the spare count.
+- **Arrival time** (`eta.py`): fixed-seed Monte Carlo of wait + extra time + ratio x travel hours gives p10/p50/p90. Without a model file it uses a simpler estimate and sets `model_used` to false.
+- **Sorting** (`rank.py`): p50 in quarter-hour buckets, then near-expiry first, backup power first, most spare units.
+- **Full vs partial:** if no candidate covers the request, returns best partial options with a `no_full_source` advice.
+- **Baseline:** today's rule (also the fallback): supply centre if it has enough, otherwise the two nearest regional centres by road distance; quote is map time plus two hours, no range.
+- **Reasons** (`reasons.py`): string templates filled with computed numbers.
 
 ## Repo structure
 
 ```
 .
-├── frontend/   screens, components, results tab
-├── backend/
+├── frontend/   Nuxt 4: pages, components, results tab
+├── backend/    Flask
+│   ├── app/        Flask app factory and routes
 │   ├── db/         CSV ingest, SQLite schema
-│   ├── api/        HTTP API
+│   ├── api/        API modules
 │   ├── workflow/   request flow, audit log, fallback
 │   ├── engine/     ranking, arrival, replay, prealert
 │   ├── sms/        SMS parser
 │   ├── config/     country settings, demo clock
 │   └── tests/
 ├── docs/       architecture diagram, standards table, video script
-├── results/    results JSON for the expert review
+├── results/    replay results JSON for the expert review
 ├── data/       dataset (git-ignored)
 └── scripts/    tooling
+```
+
+## Quick start
+
+```bash
+# backend
+cd backend && python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt && flask --app wsgi run --debug --port 5000
+# frontend (Node 22+)
+cd frontend && npm install && npm run dev
 ```
 
 See [backend/README.md](backend/README.md) and [frontend/README.md](frontend/README.md) for per-folder ownership.
