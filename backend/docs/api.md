@@ -3,7 +3,7 @@
 Interactive Swagger UI: **http://localhost:5000/api/docs**. OpenAPI JSON:
 **http://localhost:5000/api/openapi.json**. Both use the current server when hosted
 elsewhere. Swagger assets are bundled locally. Use **Authorize** for a Clerk token;
-mutations also need a unique **Idempotency-Key**. SMS uses its gateway signature.
+mutations also need a unique **Idempotency-Key**. SMS adapters use separate gateway credentials.
 
 Base path: `/api`. All requests and responses use JSON. No patient names, ages,
 clinical notes or identifiers are accepted in request creation.
@@ -204,9 +204,9 @@ DISPATCH <request-id> <attempt>
 ```
 
 Response: `message_id`, `request`, and `reply`. The gateway adapter is responsible
-for sending the returned reply. There is no outbound gateway configured or assumed.
-Provider-specific authentication/callbacks must be implemented in that adapter;
-this endpoint does not claim compatibility with a particular vendor's webhook.
+for sending the returned reply. Africa's Talking uses separate callback endpoints
+and a persistent outbound queue, described in [sms.md](sms.md); its native
+callbacks must not be pointed at this HMAC endpoint.
 
 ## Local operations
 
@@ -259,3 +259,8 @@ this repository does not create them automatically.
 
 Production setup, scheduled maintenance, backup/restore and dataset acceptance tools
 are documented in [deployment.md](deployment.md).
+
+Africa's Talking adapters are documented in [sms.md](sms.md) and Swagger:
+`POST /api/sms/africastalking/inbound` and
+`POST /api/sms/africastalking/delivery`. Both use a separate callback token and
+accept provider form encoding. Outbound sending uses a persistent worker queue.

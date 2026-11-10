@@ -59,6 +59,16 @@ CREATE TABLE IF NOT EXISTS audit (
  id INTEGER PRIMARY KEY AUTOINCREMENT, request_id TEXT NOT NULL REFERENCES requests(id),
  action TEXT NOT NULL, details TEXT NOT NULL, created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS sms_outbox (
+ id TEXT PRIMARY KEY, event_key TEXT NOT NULL UNIQUE,
+ request_id TEXT REFERENCES requests(id), recipient TEXT NOT NULL, body TEXT NOT NULL,
+ environment TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'queued',
+ provider_id TEXT UNIQUE, provider_status TEXT, cost TEXT, error_code TEXT,
+ created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS sms_delivery_reports (
+ provider_id TEXT PRIMARY KEY, status TEXT NOT NULL, updated_at TEXT NOT NULL
+);
 """
 
 

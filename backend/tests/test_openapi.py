@@ -39,13 +39,13 @@ def test_spec_documents_every_concrete_api_operation(app):
                 expected.add((path, method.lower()))
     documented = {(path, method) for path, operations in spec['paths'].items() for method in operations}
     assert documented == expected
-    assert len(documented) == 28
+    assert len(documented) == 30
     ids = [operation['operationId'] for operations in spec['paths'].values() for operation in operations.values()]
     assert len(ids) == len(set(ids))
     for path, method in documented:
         operation = spec['paths'][path][method]
-        if method in {'post', 'put'} and path != '/api/sms':
+        if method in {'post', 'put'} and not path.startswith('/api/sms'):
             assert any(param['name'] == 'Idempotency-Key' and param['required'] for param in operation['parameters'])
         if '{id}' in path:
             assert any(param['name'] == 'id' and param['in'] == 'path' and param['required'] for param in operation['parameters'])
-        assert operation.get('security') == [] if path in {'/api/health', '/api/ready', '/api/sms'} else 'security' not in operation
+        assert operation.get('security') == [] if path in {'/api/health', '/api/ready'} or path.startswith('/api/sms') else 'security' not in operation

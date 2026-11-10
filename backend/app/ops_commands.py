@@ -13,6 +13,47 @@ from .operations import copy_database, maintenance_tick, prune_responses
 
 
 def register(app):
+    @app.cli.command('sms-worker')
+    @click.option('--once', is_flag=True)
+    @click.option('--interval', type=click.IntRange(1, 60), default=10)
+    def sms_worker(once, interval):
+        """Send committed queued SMS; never automatically retry failures or unknown sends."""
+        from .sms_provider import drain
+        stopped = threading.Event()
+        previous = {}
+        if not once:
+            for sig in (signal.SIGTERM, signal.SIGINT):
+                previous[sig] = signal.signal(sig, lambda *args: stopped.set())
+        try:
+            while not stopped.is_set():
+                click.echo(json.dumps(drain()))
+                if once:
+                    break
+                stopped.wait(interval)
+        finally:
+            for sig, handler in previous.items():
+                signal.signal(sig, handler)
+
+    @app.cli.command('sms-status')
+    def sms_status():
+        """Show queue health without phone numbers, message bodies or credentials."""
+        from .storage import get_db
+        rows = get_db().execute('SELECT environment,status,COUNT(*) AS count FROM sms_outbox GROUP BY environment,status')
+        click.echo(json.dumps([dict(row) for row in rows]))
+
+    @app.cli.command('sms-retry')
+    @click.argument('identifier')
+    def sms_retry(identifier):
+        """Requeue a definite send rejection after fixing its cause; refuses uncertain sends."""
+        from .storage import atomic
+        from .sms_provider import stamp
+        with atomic() as db:
+            changed = db.execute("UPDATE sms_outbox SET status='queued',error_code=NULL,updated_at=? WHERE id=? AND status='failed' AND environment=?",
+                                 (stamp(), identifier, current_app.config['SMS_ENVIRONMENT'])).rowcount
+            if not changed:
+                raise click.ClickException('Only definite send rejections in the selected environment can be requeued')
+        click.echo(json.dumps({'requeued': identifier}))
+
     @app.cli.command('maintenance')
     @click.option('--once', is_flag=True, help='Run a single scheduler pass and exit.')
     @click.option('--interval', type=click.IntRange(1, 60), default=30, show_default=True)
@@ -78,7 +119,11 @@ def register(app):
         data_ready = engine_ready()
         result = {'production_configuration_ok': not errors, 'errors': errors,
                   'engine_ready': data_ready, 'facility_mapping_count': len(current_app.config['ORG_FACILITY_MAP']),
-                  'sms_configured': bool(current_app.config['SMS_WEBHOOK_SECRET'] and current_app.config['SMS_SENDERS'])}
+                  'sms_configured': bool(current_app.config['SMS_WEBHOOK_SECRET'] and current_app.config['SMS_SENDERS']),
+                  'sms_outbound_enabled': current_app.config['SMS_ENABLED'],
+                  'sms_environment': current_app.config['SMS_ENVIRONMENT'],
+                  'sms_callbacks_configured': bool(current_app.config['AFRICASTALKING_CALLBACK_TOKEN']),
+                  'sms_sender_count': len(current_app.config['SMS_SENDERS'])}
         click.echo(json.dumps(result))
         if errors or not data_ready:
             raise click.ClickException('Deployment prerequisites are incomplete')

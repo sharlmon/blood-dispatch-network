@@ -83,7 +83,7 @@ def build_spec():
         parameters = list(parameters)
         if '{id}' in path:
             parameters.insert(0, param('id', 'path', description='Resource identifier returned by the API.'))
-        if method in {'post', 'put'} and path != '/api/sms':
+        if method in {'post', 'put'} and not path.startswith('/api/sms'):
             parameters.append(KEY)
         if parameters:
             entry['parameters'] = parameters
@@ -132,8 +132,17 @@ def build_spec():
     operation('/api/results/{id}', 'get', 'Read an allowlisted result artifact', 'Results', description='Network operator. IDs may contain an experiment prefix, e.g. hospital-reserve-5/replay_summary. Model internals and arbitrary files are not exposed.')
     operation('/api/sms', 'post', 'Signed inbound SMS commands', 'SMS', obj({'message_id': TEXT, 'request': ref('Request'), 'reply': TEXT}), ref('SMS'), public=True, status=201,
               parameters=[param('X-SMS-Timestamp', 'header', required=True, description='Unix seconds, within five minutes of real wall time.'), param('X-SMS-Signature', 'header', required=True, description='Hex HMAC-SHA256(secret, timestamp + "." + exact raw body).')],
-              description='Registered sender and signed gateway envelope required. REQUEST <group> <units>, STATUS <id>, PICK <id> <supplier>, CONFIRM <id> <attempt> <units>, REJECT <id> <attempt> <reason>, DISPATCH <id> <attempt>. REQUEST returns 201; other commands return 200. Gateway sends the returned reply; no outbound provider is configured.')
+              description='Registered sender and signed gateway envelope required. REQUEST <group> <units>, STATUS <id>, PICK <id> <supplier>, CONFIRM <id> <attempt> <units>, REJECT <id> <attempt> <reason>, DISPATCH <id> <attempt>. REQUEST returns 201; other commands return 200. This generic gateway sends the returned reply itself; Africa’s Talking uses its separate adapter.')
     paths['/api/sms']['post']['responses']['200'] = paths['/api/sms']['post']['responses']['201']
+    for suffix, summary, schema in [
+        ('inbound', 'Africa’s Talking inbound commands and queued replies', obj({'id': TEXT, 'from': TEXT, 'to': TEXT, 'text': TEXT}, ('id', 'from', 'to', 'text'))),
+        ('delivery', 'Africa’s Talking delivery reports', obj({'id': TEXT, 'status': {'type': 'string', 'enum': ['Success', 'Failed', 'Rejected', 'Submitted', 'Buffered']}}, ('id', 'status'))),
+    ]:
+        path = '/api/sms/africastalking/' + suffix
+        operation(path, 'post', summary, 'SMS', body=schema, public=True,
+                  parameters=[param('token', 'query', required=True, description='Separate callback bearer secret; use HTTPS and redact query strings in proxy logs.')],
+                  description='Provider callback, not a Clerk route. Accepts form encoding or JSON. Configure the exact callback URL with its token in the provider dashboard. Inbound requires an allowlisted service number and registered sender; duplicate message IDs do not repeat workflow actions or replies. Delivery reports never change a blood request.')
+        paths[path]['post']['requestBody']['content']['application/x-www-form-urlencoded'] = {'schema': schema}
     return {
         'openapi': '3.0.3',
         'info': {'title': 'Blood Dispatch Network API', 'version': '1.0.0', 'description': 'Backend API for synthetic-data evaluation. Use Authorize for your Clerk Bearer token and supply a unique Idempotency-Key on mutations. A trained person crossmatches and releases every unit. Authentication, dataset and SMS configuration remain environment requirements.'},
