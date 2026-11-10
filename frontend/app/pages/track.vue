@@ -29,7 +29,7 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
       </div>
 
       <ol class="steps">
-        <li v-for="(s, i) in steps" :key="s.title" :class="state(i)">
+        <li v-for="(s, i) in steps" :key="s.title" :class="[state(i), 'rise']" :style="{ '--d': i * 80 + 'ms' }">
           <span class="dot"><AppIcon v-if="state(i) === 'done'" name="check" :size="14" /></span>
           <span class="txt"><strong>{{ s.title }}</strong><small>{{ s.sub }}</small></span>
         </li>
@@ -51,7 +51,7 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
 </template>
 
 <style scoped>
-.wrap { position: relative; flex: 1; min-height: calc(100dvh - var(--header-h)); background: var(--fog); overflow: hidden; }
+.wrap { position: relative; flex: 1; min-height: calc(100dvh - var(--header-h) - 86px); background: var(--fog); overflow: hidden; }
 .map { position: absolute; inset: 0 0 auto 0; height: 32vh; }
 .panel { position: absolute; left: 0; right: 0; top: 30vh; bottom: 0; background: var(--white); border-radius: 26px 26px 0 0; box-shadow: 0 -8px 30px rgba(18, 32, 43, 0.16); padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
 .back { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; color: var(--slate); text-decoration: none; min-height: 32px; }
@@ -67,7 +67,7 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
 .steps li.done:not(:last-child)::before { background: var(--teal-600); }
 .dot { width: 24px; height: 24px; border-radius: 99px; flex-shrink: 0; display: grid; place-items: center; background: var(--white); border: 2px solid var(--line); color: #fff; }
 .done .dot { background: var(--teal-600); border-color: var(--teal-600); }
-.now .dot { border: 3px solid var(--blood-500); }
+.now .dot { border: 3px solid var(--blood-500); animation: ring 1.6s ease-out infinite; }
 .txt { display: flex; flex-direction: column; }
 .txt strong { font-size: 14.5px; }
 .txt small { font-size: 12.5px; font-weight: 600; color: var(--slate); line-height: 1.4; margin-top: 1px; }
@@ -82,6 +82,7 @@ const state = (i: number) => (i < d.stage.value ? 'done' : i === d.stage.value ?
 .audit time { font-weight: 800; color: var(--ink); margin-right: 6px; }
 
 @media (min-width: 900px) {
+  .wrap { min-height: calc(100dvh - var(--header-h)); }
   .map { inset: 0; height: auto; }
   .panel { top: 0; right: auto; bottom: 0; width: 440px; border-radius: 0; box-shadow: 6px 0 24px rgba(18, 32, 43, 0.12); padding: 20px; }
 }

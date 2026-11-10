@@ -57,11 +57,11 @@ const view = computed(() => {
 
     <path
       v-for="o in options" :key="'r' + o.id" :d="routePath(o)" fill="none" stroke-linecap="round"
-      :stroke="o.id === selectedId ? '#c4122f' : '#7c909f'" :stroke-width="(o.id === selectedId ? 4 : 3) * view.k" :stroke-dasharray="`${view.k} ${9 * view.k}`"
+      :class="{ flow: o.id === selectedId }" :stroke="o.id === selectedId ? '#b3171e' : '#7c909f'" :stroke-width="(o.id === selectedId ? 4 : 3) * view.k" :stroke-dasharray="`${view.k} ${9 * view.k}`"
     />
 
     <g :transform="`translate(${YOU.x} ${YOU.y}) scale(${view.k})`">
-      <circle r="24" fill="#1d6fd8" fill-opacity="0.16" />
+      <circle class="halo" r="24" fill="#1d6fd8" fill-opacity="0.16" />
       <circle r="9" fill="#1d6fd8" stroke="#fff" stroke-width="3" />
     </g>
 
@@ -70,9 +70,10 @@ const view = computed(() => {
       :aria-label="`${i + 1}. ${o.name}, ${fmtHours(o.p50)}`" :transform="`translate(${o.x} ${o.y}) scale(${view.k})`"
       @click="$emit('select', o.id)" @keydown.enter="$emit('select', o.id)"
     >
+     <g class="drop" :style="{ animationDelay: i * 120 + 'ms' }">
       <g :transform="o.id === selectedId ? 'scale(1.25)' : 'scale(1)'">
-        <path v-if="o.kind === 'hospital'" :d="CIRCLE_PIN" :fill="o.id === selectedId ? '#c4122f' : '#4a5b68'" stroke="#fff" stroke-width="3" />
-        <path v-else :d="SQUARE_PIN" :fill="o.id === selectedId ? '#c4122f' : '#4a5b68'" stroke="#fff" stroke-width="3" />
+        <path v-if="o.kind === 'hospital'" :d="CIRCLE_PIN" :fill="o.id === selectedId ? '#b3171e' : '#4a5b68'" stroke="#fff" stroke-width="3" />
+        <path v-else :d="SQUARE_PIN" :fill="o.id === selectedId ? '#b3171e' : '#4a5b68'" stroke="#fff" stroke-width="3" />
         <path v-if="o.kind === 'hospital'" d="M0-30v13M-6.5-23.5h13" stroke="#fff" stroke-width="3" stroke-linecap="round" />
         <path v-else :d="DROP_SMALL" fill="#fff" />
       </g>
@@ -80,6 +81,7 @@ const view = computed(() => {
         <rect x="-26" y="-12" width="52" height="22" rx="11" fill="#fff" stroke="#d5dde3" />
         <text x="0" y="3.5" text-anchor="middle" font-size="12" font-weight="800" fill="#12202b" font-family="Manrope, sans-serif">{{ fmtHours(o.p50) }}</text>
       </g>
+     </g>
     </g>
   </svg>
 </template>
@@ -87,5 +89,11 @@ const view = computed(() => {
 <style scoped>
 .source-map { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .pin { cursor: pointer; outline: none; }
+.drop { animation: pinDrop 0.55s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
+.flow { animation: flow 1.2s linear infinite; }
+.halo { transform-box: fill-box; transform-origin: center; animation: pulse 2.4s ease-out infinite; }
+@keyframes pinDrop { from { opacity: 0; transform: translateY(-26px); } to { opacity: 1; transform: none; } }
+@keyframes flow { to { stroke-dashoffset: -30; } }
+@keyframes pulse { 0% { transform: scale(0.6); opacity: 0.9; } 100% { transform: scale(1.5); opacity: 0; } }
 .pin:focus-visible path:first-of-type { stroke: #1d6fd8; stroke-width: 4; }
 </style>

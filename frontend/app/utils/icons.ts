@@ -21,6 +21,8 @@ export const ICONS: Record<string, string> = {
   bell: 'M6 16v-5a6 6 0 0 1 12 0v5l2 2H4l2-2zM10 21h4',
   audit: 'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5',
   results: 'M4 20V10M10 20V4M16 20v-7M22 20H2',
+  home: 'M4 11l8-7 8 7v9H4zM10 20v-6h4v6',
+  pin: 'M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11zM12 8a2 2 0 1 0 0 4a2 2 0 1 0 0-4',
   back: 'M15 5l-7 7 7 7',
   search: c(11, 11, 8) + 'M21 21l-4.3-4.3',
   check: 'M5 12l5 5 9-10',

@@ -18,8 +18,9 @@ const limitPos = computed(() => (props.limit !== undefined ? (props.limit / prop
 
 <style scoped>
 .track { position: relative; height: 8px; border-radius: 99px; background: var(--fog); }
-.range { position: absolute; top: 0; height: 8px; border-radius: 99px; background: var(--teal-600); }
+.range { position: absolute; top: 0; height: 8px; border-radius: 99px; background: var(--teal-600); transform-origin: left; animation: grow 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both; }
 .range.warn { background: var(--amber-500); }
 .limit { position: absolute; top: -4px; width: 2px; height: 16px; background: var(--ink); opacity: 0.5; }
-.dot { position: absolute; top: -3px; width: 14px; height: 14px; margin-left: -7px; border-radius: 99px; background: var(--ink); border: 3px solid #fff; }
+.dot { position: absolute; top: -3px; width: 14px; height: 14px; margin-left: -7px; border-radius: 99px; background: var(--ink); border: 3px solid #fff; animation: pop 0.4s ease 0.6s both; }
+.track { background: #f0e4e1; }
 </style>

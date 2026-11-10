@@ -39,7 +39,7 @@ const reasons = computed(() => d.selected.value?.reasons ?? [])
       </div>
 
       <ul class="list">
-        <li v-for="(o, i) in d.options.value" :key="o.id">
+        <li v-for="(o, i) in d.options.value" :key="o.id" class="rise" :style="{ '--d': i * 90 + 'ms' }">
           <SourceCard :option="o" :rank="i + 1" :selected="o.id === d.selectedId.value" :limit-h="limitH" @select="d.select(o.id)" />
         </li>
       </ul>
@@ -69,7 +69,7 @@ const reasons = computed(() => d.selected.value?.reasons ?? [])
 </template>
 
 <style scoped>
-.results { position: relative; flex: 1; min-height: calc(100dvh - var(--header-h)); overflow: hidden; background: var(--fog); }
+.results { position: relative; flex: 1; min-height: calc(100dvh - var(--header-h) - 86px); overflow: hidden; background: var(--fog); }
 .map { position: absolute; inset: 0 0 auto 0; height: 36vh; }
 .summary { display: flex; align-items: center; gap: 12px; background: var(--paper); border-radius: 16px; padding: 8px 8px 8px 14px; }
 .grp { font-size: 26px; font-weight: 800; color: var(--blood-500); line-height: 1; }
@@ -92,7 +92,7 @@ const reasons = computed(() => d.selected.value?.reasons ?? [])
 .detail { display: none; }
 
 @media (min-width: 900px) {
-  .results { display: grid; grid-template-columns: 440px minmax(0, 1fr) 340px; }
+  .results { min-height: calc(100dvh - var(--header-h)); display: grid; grid-template-columns: 440px minmax(0, 1fr) 340px; }
   .map { position: relative; inset: auto; height: auto; grid-column: 2; grid-row: 1; min-height: 0; }
   .panel { position: relative; inset: auto; grid-column: 1; grid-row: 1; border-radius: 0; box-shadow: 6px 0 24px rgba(18, 32, 43, 0.12); padding: 20px; z-index: 1; }
   .grab { display: none; }

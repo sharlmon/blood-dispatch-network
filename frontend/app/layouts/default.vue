@@ -7,6 +7,7 @@ const { request } = useDispatch()
 
 <template>
   <div class="shell">
+    <BloodCells />
     <header class="bar">
       <NuxtLink to="/" class="brand" aria-label="Blood Dispatch home">
         <span class="logo"><AppIcon name="drop" :size="20" /></span>
@@ -25,14 +26,16 @@ const { request } = useDispatch()
       <AppIcon name="call" :size="18" /> Tool not reachable. Use the phone process: call the blood centre directly.
     </div>
     <main class="main"><slot /></main>
+    <BottomNav />
   </div>
 </template>
 
 <style scoped>
-.shell { min-height: 100dvh; display: flex; flex-direction: column; }
-.bar { height: var(--header-h); display: flex; align-items: center; gap: 16px; padding: 0 16px; background: var(--white); border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.shell { position: relative; min-height: 100dvh; display: flex; flex-direction: column; }
+.shell > :not(.cells) { position: relative; z-index: 1; }
+.bar { height: var(--header-h); display: flex; align-items: center; gap: 16px; padding: 0 16px; background: rgba(255, 255, 255, 0.82); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); flex-shrink: 0; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 16px; text-decoration: none; color: var(--ink); }
-.logo { width: 32px; height: 32px; border-radius: 10px; background: var(--blood-500); color: #fff; display: grid; place-items: center; }
+.logo { width: 32px; height: 32px; border-radius: 12px 12px 12px 4px; background: var(--blood-500); color: #fff; display: grid; place-items: center; }
 .nav { display: none; gap: 4px; flex: 1; margin-left: 12px; }
 .nav a { padding: 8px 14px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 14px; color: var(--slate); }
 .nav a.router-link-exact-active { background: var(--blood-50); color: var(--blood-700); }
@@ -42,8 +45,9 @@ const { request } = useDispatch()
 .status.ok { color: var(--teal-600); background: var(--teal-50); }
 .status.down { color: var(--amber-700); background: var(--amber-50); }
 .fallback { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--amber-50); color: var(--amber-900); font-size: 13px; font-weight: 700; border-bottom: 1px solid var(--amber-500); }
-.main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.main { flex: 1; min-height: 0; display: flex; flex-direction: column; padding-bottom: 86px; }
 @media (min-width: 900px) {
+  .main { padding-bottom: 0; }
   .nav { display: flex; }
   .site { display: block; }
   .status { margin-left: 0; }
