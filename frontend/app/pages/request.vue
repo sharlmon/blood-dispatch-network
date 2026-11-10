@@ -91,7 +91,7 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
         <p>Tell us what the patient needs. We find every source that can spare it, and when it will really arrive.</p>
         <button type="button" class="sosbtn" @click="sos"><AppIcon name="drop" :size="18" /> <span class="long">Group unknown? </span>Request group O</button>
       </div>
-      <div class="bgphoto" aria-hidden="true"><Pic name="donation-room" sizes="(min-width: 1000px) 600px, 64vw" eager /></div>
+      <div class="bgphoto" aria-hidden="true"><Pic name="patient-care" sizes="(min-width: 1000px) 700px, 64vw" eager /></div>
     </section>
 
     <form ref="form" class="form card" @submit.prevent="submit">
@@ -239,7 +239,7 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
 .hero p { margin: 10px 0 0; font-size: 14.5px; line-height: 1.5; font-weight: 500; color: #44545f; max-width: 420px; }
 .sosbtn { margin-top: 16px; display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 18px; border-radius: 99px; background: #fff; border: 1.5px solid var(--blood-500); color: var(--blood-700); font-weight: 800; font-size: 14px; box-shadow: 0 8px 18px rgba(179, 23, 30, 0.16); }
 .bgphoto { position: absolute; top: 0; right: 0; bottom: 0; width: 62%; z-index: 0; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 55%); mask-image: linear-gradient(90deg, transparent 0%, #000 55%); }
-.bgphoto img { width: 100%; height: 100%; object-fit: cover; object-position: 30% 60%; filter: saturate(1.05) contrast(1.02); mix-blend-mode: multiply; }
+.bgphoto img { width: 100%; height: 100%; object-fit: cover; object-position: 55% 38%; filter: saturate(1.05) contrast(1.02); mix-blend-mode: multiply; }
 .bgphoto::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 107, 98, 0) 40%, rgba(6, 74, 68, 0.28)); }
 
 .form { padding: var(--s-5) var(--s-4); display: flex; flex-direction: column; gap: var(--s-4); }
@@ -304,7 +304,7 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
   .page { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 20px 28px; padding: 22px 24px 40px; }
   .greet, .hero { grid-column: 1 / -1; }
   .side { position: sticky; top: 96px; }
-  .bgphoto { width: 52%; }
+  .bgphoto { width: 60%; }
   .hero { padding: 28px 36px; }
   .hero p { font-size: 16px; }
 }

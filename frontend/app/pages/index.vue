@@ -32,7 +32,7 @@ const safety = [
 <template>
   <div class="landing">
     <section class="hero">
-      <div class="bgimg" aria-hidden="true"><Pic class="bgblur" name="transfusion" small /><Pic class="main" name="transfusion" sizes="100vw" eager /></div>
+      <div class="bgimg" aria-hidden="true"><Pic class="bgblur" name="hero" small /><Pic class="main" name="hero" sizes="100vw" eager /></div>
       <div class="copy">
         <h1 class="rise" style="--d: 80ms">Spare blood<br>is already<br><span>nearby.</span></h1>
         <p class="lead rise" style="--d: 160ms">At 1 a.m. the hospital fridge does not have the right type. See every centre and hospital that can spare it, and when it will really arrive.</p>
@@ -62,7 +62,7 @@ const safety = [
 
     <section v-inview class="section" aria-labelledby="share">
       <div class="share">
-        <div class="photo-card organic"><Pic name="blood-draw" sizes="(min-width: 900px) 520px, 92vw" alt="A health worker drawing blood from a donor's arm" /><span class="pc-tag">Hospitals share. Nobody runs short.</span></div>
+        <div class="photo-card organic"><Pic name="blood-draw" sizes="(min-width: 900px) 520px, 92vw" alt="A health worker in a lab drawing blood from a patient" /><span class="pc-tag">Hospitals share. Nobody runs short.</span></div>
         <div class="share-copy">
           <h2 id="share">Hospitals have never shared. Now they can.</h2>
           <p>A hospital 30 minutes down the road often has spare bags of exactly the type you need. Nobody knows, because nobody can see.</p>
@@ -104,8 +104,8 @@ const safety = [
       </ul>
       <div class="gallery">
         <figure class="organic"><Pic name="blood-bags" sizes="(min-width: 900px) 380px, 31vw" alt="Three bags of donated blood, labelled A and B" /><figcaption>On the shelf</figcaption></figure>
-        <figure class="organic"><Pic name="paramedics" sizes="(min-width: 900px) 380px, 31vw" alt="Paramedics loading a stretcher into an ambulance" /><figcaption>In transit</figcaption></figure>
-        <figure class="organic"><Pic name="care-team" sizes="(min-width: 900px) 380px, 31vw" alt="A team of doctors and nurses standing together" /><figcaption>At the bedside</figcaption></figure>
+        <figure class="organic"><Pic name="paramedics" sizes="(min-width: 900px) 380px, 31vw" alt="Paramedics caring for a patient inside an ambulance" /><figcaption>In transit</figcaption></figure>
+        <figure class="organic"><Pic name="care-team" sizes="(min-width: 900px) 380px, 31vw" alt="Four nurses in blue uniforms and headscarves posing together" /><figcaption>At the bedside</figcaption></figure>
       </div>
       <div class="sms-card organic">
         <IconBadge size="lg"><ServiceIcon name="sms" :size="36" /></IconBadge>
@@ -134,7 +134,7 @@ const safety = [
 .bgimg img { position: absolute; left: 0; width: 100%; object-fit: cover; }
 /* Phone: a soft blurred copy fills the whole hero, the sharp photo sits lower so the faces clear the headline. */
 .bgimg .bgblur { top: -30px; left: -30px; width: calc(100% + 60px); height: calc(100% + 60px); object-position: 60% 40%; filter: blur(28px) saturate(1.1); opacity: 0.75; }
-.bgimg .main { top: 36%; height: 64%; object-position: 66% 30%; filter: saturate(1.05) contrast(1.02); -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 34%); mask-image: linear-gradient(180deg, transparent 0%, #000 34%); }
+.bgimg .main { top: 36%; height: 64%; object-position: 76% 30%; filter: saturate(1.05) contrast(1.02); -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 34%); mask-image: linear-gradient(180deg, transparent 0%, #000 34%); }
 .bgimg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(244, 248, 247, 0.94) 0%, rgba(244, 248, 247, 0.85) 36%, rgba(244, 248, 247, 0.3) 52%, rgba(244, 248, 247, 0) 66%, rgba(10, 107, 98, 0.16) 100%); }
 .copy { position: relative; z-index: 4; max-width: 720px; }
 .eyebrow { margin: 0; display: inline-block; padding: 7px 14px; border-radius: 99px; border: 1.5px solid var(--primary-500); background: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--primary-700); }
@@ -253,8 +253,8 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
 
 @media (min-width: 900px) {
   .bgimg .bgblur { display: none; }
-  .bgimg .main { top: 0; height: 100%; object-position: 62% 50%; -webkit-mask-image: none; mask-image: none; }
-  .bgimg::after { background: linear-gradient(90deg, #f3f8f7 0%, rgba(244, 248, 247, 0.94) 34%, rgba(244, 248, 247, 0.45) 56%, rgba(244, 248, 247, 0) 78%), linear-gradient(180deg, rgba(244, 248, 247, 0.55) 0%, rgba(244, 248, 247, 0) 22%, rgba(244, 248, 247, 0) 70%, rgba(10, 107, 98, 0.18) 100%); }
+  .bgimg .main { top: 0; height: 100%; object-position: 100% 50%; -webkit-mask-image: none; mask-image: none; }
+  .bgimg::after { background: linear-gradient(90deg, #f3f8f7 0%, rgba(244, 248, 247, 0.94) 30%, rgba(244, 248, 247, 0.5) 48%, rgba(244, 248, 247, 0) 68%), linear-gradient(180deg, rgba(244, 248, 247, 0.55) 0%, rgba(244, 248, 247, 0) 22%, rgba(244, 248, 247, 0) 70%, rgba(10, 107, 98, 0.18) 100%); }
   .hero { padding: 40px 64px clamp(190px, 16vw, 240px); min-height: clamp(740px, calc(100svh - var(--header-h)), 880px); }
   .chips-d { display: flex; }
   .cta-m { display: none; }
