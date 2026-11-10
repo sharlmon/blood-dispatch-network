@@ -154,7 +154,7 @@ const safety = [
       <h2 id="how">How it works</h2>
       <ol class="steps">
         <li v-for="(st, i) in steps" :key="st.title" class="organic rise" :style="{ '--d': i * 90 + 'ms' }">
-          <span class="chip-ico big-ico"><ServiceIcon :name="st.icon" :size="38" /></span>
+          <IconBadge size="lg"><ServiceIcon :name="st.icon" :size="36" /></IconBadge>
           <span class="num">{{ i + 1 }}</span>
           <h3>{{ st.title }}</h3>
           <p>{{ st.body }}</p>
@@ -199,14 +199,14 @@ const safety = [
       <h2 id="roles">Who uses it</h2>
       <ul class="roles">
         <li v-for="(r, i) in roles" :key="r.who" class="organic rise" :style="{ '--d': i * 80 + 'ms' }">
-          <span class="chip-ico big-ico"><ServiceIcon :name="r.icon" :size="36" /></span>
+          <IconBadge size="lg"><ServiceIcon :name="r.icon" :size="36" /></IconBadge>
           <h3>{{ r.who }}</h3>
           <small>{{ r.at }}</small>
           <p>{{ r.body }}</p>
         </li>
       </ul>
       <div class="sms-card organic">
-        <span class="chip-ico big-ico"><ServiceIcon name="sms" :size="36" /></span>
+        <IconBadge size="lg"><ServiceIcon name="sms" :size="36" /></IconBadge>
         <div>
           <h3>Works on any phone</h3>
           <p>Requests and confirmations also work by text message. No smartphone and no data needed at the bench.</p>
@@ -219,7 +219,7 @@ const safety = [
       <h2 id="honest">What we are honest about</h2>
       <ul class="honest">
         <li v-for="h in honest" :key="h.title" class="card rise">
-          <span class="hi"><AppIcon :name="h.icon" :size="22" /></span>
+          <IconBadge tone="amber"><AppIcon :name="h.icon" :size="22" /></IconBadge>
           <div><h3>{{ h.title }}</h3><p>{{ h.body }}</p></div>
         </li>
       </ul>

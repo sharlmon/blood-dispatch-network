@@ -18,6 +18,7 @@ const keptSegments = computed(() => {
 
 <template>
   <div v-if="d.request.value" class="results">
+    <h1 class="sr-only">Sources for your blood request</h1>
     <div class="map"><SourceMap :options="d.options.value" :selected-id="d.selectedId.value" :pad-top="70" :pad-bottom="40" panels @select="d.select" /></div>
 
     <span class="mapchip">{{ d.options.value.length }} {{ d.options.value.length === 1 ? 'source' : 'sources' }} {{ d.tooLong.value ? 'available' : 'can cover this' }}</span>
@@ -75,7 +76,7 @@ const keptSegments = computed(() => {
 
     <aside v-if="d.selected.value" class="detail" aria-label="Why this source">
       <div class="dh">
-        <span class="di" :class="d.selected.value.kind"><AppIcon :name="d.selected.value.kind" :size="26" /></span>
+        <IconBadge size="lg" tone="solid" :square="d.selected.value.kind === 'centre'"><AppIcon :name="d.selected.value.kind" :size="26" /></IconBadge>
         <span><strong>{{ d.selected.value.name }}</strong><small>{{ d.selected.value.kind === 'hospital' ? 'Hospital' : 'Centre' }} · {{ d.selected.value.km }} km by road</small></span>
       </div>
       <p class="eta"><AppIcon name="clock" :size="20" /><span>Most likely arrives about <b class="tnum">{{ etaClock(d.request.value.openedAt, d.selected.value.p50) }}</b></span><small>between {{ etaClock(d.request.value.openedAt, d.selected.value.p10) }} and {{ etaClock(d.request.value.openedAt, d.selected.value.p90) }}</small></p>
@@ -97,19 +98,19 @@ const keptSegments = computed(() => {
 </template>
 
 <style scoped>
-.results { position: relative; height: calc(100dvh - var(--header-h) - 86px); min-height: 560px; overflow: hidden; background: var(--fog); margin-top: 6px; }
+.results { position: relative; height: calc(100dvh - var(--header-h) - var(--dock-h)); min-height: 560px; overflow: hidden; background: var(--fog); margin-top: 6px; }
 .map { position: absolute; inset: 0 0 auto 0; height: 34vh; }
 .mapchip { display: none; }
 .panel { position: absolute; left: 0; right: 0; bottom: 0; top: 28vh; padding: 10px 16px 12px; border-radius: 40px 44px 0 0; background: rgba(255, 255, 255, 0.97); box-shadow: 0 -14px 40px rgba(126, 16, 21, 0.2); display: flex; flex-direction: column; gap: 10px; overflow-y: auto; z-index: 5; }
 .grab { width: 44px; height: 5px; border-radius: 99px; background: #e6c4c0; margin: 0 auto 2px; flex-shrink: 0; }
-.sum { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 26px; background: linear-gradient(180deg, #fdecea, #fbe0dc); flex-shrink: 0; }
+.sum { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-radius: var(--r-lg); background: linear-gradient(180deg, #fdecea, #fbe0dc); flex-shrink: 0; }
 .grp { font-size: 44px; line-height: 1; font-weight: 800; color: var(--blood-500); letter-spacing: -0.03em; }
 .meta { flex: 1; min-width: 0; display: flex; flex-direction: column; font-size: 16px; }
-.meta small { font-size: 12px; font-weight: 700; color: #5a3c3f; margin-top: 3px; }
+.meta small { font-size: var(--fs-caption); font-weight: 700; color: #5a3c3f; margin-top: 3px; }
 .meta small.soon { color: var(--teal-600); }
 .urgent { padding: 5px 11px; border-radius: 99px; background: var(--blood-500); color: #fff; font-size: 11px; font-weight: 800; }
 .edit { display: none; width: 44px; height: 44px; border-radius: 99px; border: 1.5px solid #e6c4c0; background: #fff; place-items: center; color: var(--blood-700); }
-.banner { display: none; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 22px; background: var(--teal-50); color: #064e46; font-size: 14px; font-weight: 700; line-height: 1.4; }
+.banner { display: none; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--r-md); background: var(--teal-50); color: #064e46; font-size: 14px; font-weight: 700; line-height: 1.4; }
 .banner svg { color: var(--teal-600); flex-shrink: 0; }
 .filters { display: none; align-items: center; gap: 8px; }
 .filters button { padding: 8px 16px; border-radius: 99px; border: 1.5px solid #e6c4c0; background: #fff; color: #5a3c3f; font-size: 13px; font-weight: 800; }
@@ -118,7 +119,7 @@ const keptSegments = computed(() => {
 .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; padding-top: 6px; }
 .cta { margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding-top: 6px; }
 .cta .btn { min-height: 52px; }
-.warn { background: var(--amber-50); border: 2px solid var(--amber-500); border-radius: 26px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; color: var(--amber-900); flex-shrink: 0; }
+.warn { background: var(--amber-50); border: 2px solid var(--amber-500); border-radius: var(--r-lg); padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; color: var(--amber-900); flex-shrink: 0; }
 .wt { display: flex; align-items: center; gap: 10px; color: var(--amber-700); }
 .wt strong { font-size: 17px; line-height: 1.2; color: var(--amber-900); }
 .warn p { margin: 0; font-size: 13.5px; line-height: 1.5; font-weight: 600; }
@@ -141,8 +142,6 @@ const keptSegments = computed(() => {
 .dh > span:last-child { display: flex; flex-direction: column; }
 .dh strong { font-size: 17px; color: #12202b; }
 .dh small { font-size: 12.5px; font-weight: 600; color: #5a3c3f; }
-.di { width: 46px; height: 46px; border-radius: 99px; background: var(--blood-500); color: #fff; display: grid; place-items: center; }
-.di.centre { border-radius: 14px; }
 .eta { margin: 18px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; align-items: center; padding: 12px 14px; border-radius: 22px; background: var(--teal-50); color: #064e46; font-size: 13.5px; font-weight: 700; }
 .eta svg { color: var(--teal-600); grid-row: span 2; }
 .eta b { font-size: 19px; color: var(--ink); }
@@ -151,7 +150,7 @@ const keptSegments = computed(() => {
 .why { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
 .why li { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; font-weight: 600; line-height: 1.45; color: var(--wine); }
 .tick { width: 22px; height: 22px; border-radius: 99px; background: var(--teal-50); color: var(--teal-600); display: grid; place-items: center; flex-shrink: 0; margin-top: 1px; }
-.kept { margin-top: 22px; padding: 16px 18px; border-radius: 26px; background: var(--blood-50); }
+.kept { margin-top: 22px; padding: var(--s-4); border-radius: var(--r-lg); background: var(--blood-50); }
 .kh { display: flex; justify-content: space-between; }
 .kh small { font-size: 12px; font-weight: 800; color: #7a5a5d; }
 .big { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; }

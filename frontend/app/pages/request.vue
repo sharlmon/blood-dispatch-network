@@ -35,6 +35,11 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
 
 <template>
   <div class="page">
+    <p v-if="route.query.need" class="needhint" role="status">
+      <IconBadge size="sm" tone="amber"><AppIcon name="warning" :size="18" /></IconBadge>
+      <span>Results and tracking appear here after you find sources. Start a request first.</span>
+    </p>
+
     <header class="greet">
       <div>
         <p class="hi">{{ hello }}<span v-if="firstName">, {{ firstName }}</span></p>
@@ -63,22 +68,22 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
 
       <div class="rows">
         <div class="row">
-          <span class="ico"><ServiceIcon name="bag" :size="30" /></span>
+          <IconBadge><AppIcon name="drop" :size="22" /></IconBadge>
           <span class="rl"><b>Product</b><small>What the patient needs</small></span>
           <select v-model="product" class="sel" aria-label="Product"><option>Red cells</option><option>Whole blood</option></select>
         </div>
         <div class="row">
-          <span class="ico"><ServiceIcon name="find" :size="30" /></span>
+          <IconBadge><AppIcon name="units" :size="22" /></IconBadge>
           <span class="rl"><b>Units needed</b><small>Bags for this patient</small></span>
           <span class="step"><button type="button" aria-label="One fewer unit" @click="units = Math.max(1, units - 1)">−</button><output class="tnum" aria-live="polite">{{ units }}</output><button type="button" aria-label="One more unit" @click="units = Math.min(10, units + 1)">+</button></span>
         </div>
         <div class="row">
-          <span class="ico"><ServiceIcon name="window" :size="30" /></span>
+          <IconBadge><AppIcon name="clock" :size="22" /></IconBadge>
           <span class="rl"><b>Longest wait</b><small>Used to flag a wait that is too long</small></span>
           <span class="step"><button type="button" aria-label="Shorter limit" @click="limitH = Math.max(1, limitH - 1)">−</button><output class="tnum">{{ limitH }}h</output><button type="button" aria-label="Longer limit" @click="limitH = Math.min(12, limitH + 1)">+</button></span>
         </div>
         <div class="row">
-          <span class="ico"><ServiceIcon name="shield" :size="30" /></span>
+          <IconBadge><AppIcon name="hospital" :size="22" /></IconBadge>
           <span class="rl"><b>Requesting hospital</b><small>From your account</small></span>
           <span class="hosp">{{ hospital }}</span>
         </div>
@@ -95,7 +100,7 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
         <ul class="recent">
           <li v-for="r in RECENT" :key="r.when">
             <NuxtLink to="/results?group=B%2B&units=2&limit=3&demo=1" class="rcard">
-              <span class="rg">{{ r.group }}</span>
+              <IconBadge size="lg" class="rg"><b>{{ r.group }}</b></IconBadge>
               <span class="rb">
                 <b>{{ r.units }} {{ r.units === 1 ? 'unit' : 'units' }} needed</b>
                 <small>{{ r.where }}</small>
@@ -112,7 +117,7 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
         <ul class="near">
           <li v-for="o in nearby" :key="o.id" class="ncard rise">
             <div class="nt">
-              <span class="ni" :class="o.kind"><AppIcon :name="o.kind" :size="24" /></span>
+              <IconBadge size="lg" tone="solid" :square="o.kind === 'centre'"><AppIcon :name="o.kind" :size="26" /></IconBadge>
               <span class="nb">
                 <b>{{ o.name }}</b>
                 <small><AppIcon name="drop" :size="13" /> {{ effective }} <i>·</i> <AppIcon name="route" :size="13" /> {{ fmtHours(o.p50) }} away</small>
@@ -144,55 +149,60 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
 .thumb { width: 96px; height: 96px; flex-shrink: 0; border-radius: 99px; overflow: hidden; border: 4px solid #fff; box-shadow: 0 12px 26px rgba(126, 16, 21, 0.25); position: relative; background: #f3c9c4; }
 .thumb img { position: absolute; width: 330%; left: -115%; top: -257%; max-width: none; height: auto; filter: sepia(0.4) saturate(1.5) hue-rotate(-14deg) brightness(1.1); }
 
-.form { padding: 20px; display: flex; flex-direction: column; gap: 16px; border-radius: 32px; }
+.form { padding: var(--s-5) var(--s-4); display: flex; flex-direction: column; gap: var(--s-4); }
 .form h2, .side h2 { margin: 0; font-size: 18px; font-weight: 800; color: var(--wine); }
 .lbl { display: block; font-size: 13px; font-weight: 800; color: var(--wine); margin-bottom: 10px; }
-.unk-note { margin: 12px 0 0; display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 18px; background: var(--amber-50); color: var(--amber-900); font-size: 13px; font-weight: 600; line-height: 1.45; }
+.unk-note { margin: 12px 0 0; display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: var(--r-md); background: var(--amber-50); color: var(--amber-900); font-size: 13px; font-weight: 600; line-height: 1.45; }
 .unk-note svg { flex-shrink: 0; color: var(--amber-700); margin-top: 1px; }
-.rows { border: 1.5px solid #ecd5d1; border-radius: 26px; background: #fff; overflow: hidden; }
+.rows { border: 1.5px solid #ecd5d1; border-radius: var(--r-lg); background: #fff; overflow: hidden; }
 .row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
 .row + .row { border-top: 1px solid #f0e1de; }
-.ico { width: 46px; height: 46px; border-radius: 99px; background: radial-gradient(circle at 30% 25%, #fff, #f6d3ce); display: grid; place-items: center; flex-shrink: 0; }
 .rl { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .rl b { font-size: 14.5px; color: var(--ink); }
-.rl small { font-size: 12px; font-weight: 600; color: #7a5a5d; margin-top: 1px; }
+.rl small { font-size: var(--fs-caption); font-weight: 600; color: #7a5a5d; margin-top: 1px; }
 .sel { appearance: none; min-height: 44px; padding: 0 34px 0 16px; border-radius: 99px; border: 1.5px solid #e6c4c0; font-weight: 800; font-size: 14px; color: var(--blood-700); background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%237e1015' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center; }
 .step { display: inline-flex; align-items: center; gap: 4px; }
-.step button { width: 40px; height: 40px; border-radius: 99px; border: 1.5px solid #e6c4c0; background: #fff; font-size: 20px; font-weight: 700; color: var(--blood-700); }
+.step button { width: 44px; height: 44px; border-radius: 99px; border: 1.5px solid #e6c4c0; background: #fff; font-size: 20px; font-weight: 700; color: var(--blood-700); }
 .step output { min-width: 40px; text-align: center; font-size: 20px; font-weight: 800; }
 .hosp { font-size: 13px; font-weight: 800; color: var(--blood-700); text-align: right; max-width: 130px; }
 .go { min-height: 56px; font-size: 16px; }
-.sms { margin: 0; display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 18px; background: var(--azure-50); color: var(--azure-600); font-size: 12.5px; font-weight: 600; }
+.sms { margin: 0; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: var(--r-md); background: var(--azure-50); color: var(--azure-600); font-size: var(--fs-caption); font-weight: 600; }
 .sms span { color: var(--ink); line-height: 1.35; }
 
 .side { display: grid; gap: 18px; align-content: start; }
 .sh { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
-.sh span { font-size: 12px; font-weight: 700; color: #7a5a5d; }
+.sh span { font-size: var(--fs-caption); font-weight: 700; color: #7a5a5d; }
 .recent, .near { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.rcard { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 24px; background: #fff; border: 1.5px solid #ecd5d1; text-decoration: none; color: inherit; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.rcard { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-radius: var(--r-lg); background: #fff; border: 1.5px solid #ecd5d1; text-decoration: none; color: inherit; transition: transform 0.2s ease, box-shadow 0.2s ease; }
 .rcard:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(126, 16, 21, 0.12); }
-.rg { width: 52px; height: 52px; border-radius: 99px; background: var(--blood-50); border: 1.5px solid #f0c0ba; color: var(--blood-500); font-weight: 800; font-size: 17px; display: grid; place-items: center; flex-shrink: 0; }
+.rg b { font-size: 17px; font-weight: 800; }
 .rb { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .rb b { font-size: 14.5px; }
-.rb small { font-size: 12px; font-weight: 600; color: #7a5a5d; margin-top: 1px; }
+.rb small { font-size: var(--fs-caption); font-weight: 600; color: #7a5a5d; margin-top: 1px; }
 .rb .when { display: flex; align-items: center; gap: 6px; }
 .dot { width: 8px; height: 8px; border-radius: 99px; background: var(--blood-500); display: inline-block; }
 .chipst { padding: 5px 11px; border-radius: 99px; font-size: 11.5px; font-weight: 800; white-space: nowrap; }
 .st-red { background: var(--blood-50); color: var(--blood-700); }
 .st-teal { background: var(--teal-50); color: var(--teal-600); }
 .st-amber { background: var(--amber-50); color: var(--amber-700); }
-.ncard { padding: 14px; border-radius: 26px; background: #fff; border: 1.5px solid #ecd5d1; display: flex; flex-direction: column; gap: 12px; }
+.ncard { padding: var(--s-4); border-radius: var(--r-lg); background: #fff; border: 1.5px solid #ecd5d1; display: flex; flex-direction: column; gap: 12px; }
 .nt { display: flex; align-items: center; gap: 12px; }
-.ni { width: 50px; height: 50px; border-radius: 99px; background: var(--blood-500); color: #fff; display: grid; place-items: center; flex-shrink: 0; }
-.ni.centre { border-radius: 16px; }
 .nb { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .nb b { font-size: 14.5px; color: var(--ink); }
-.nb small { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: #7a5a5d; margin-top: 3px; flex-wrap: wrap; }
+.nb small { display: flex; align-items: center; gap: 5px; font-size: var(--fs-caption); font-weight: 700; color: #7a5a5d; margin-top: 3px; flex-wrap: wrap; }
 .nb small svg { color: var(--blood-500); }
 .nb small i { font-style: normal; opacity: 0.5; }
-.avail { font-size: 12px; font-weight: 800; color: var(--teal-600); text-align: right; line-height: 1.3; }
+.avail { font-size: var(--fs-caption); font-weight: 800; color: var(--teal-600); text-align: right; line-height: 1.3; }
 .contact { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; border-radius: 99px; background: var(--blood-50); color: var(--blood-700); font-weight: 800; font-size: 14px; text-decoration: none; border: 1.5px solid #f0c0ba; }
 
+@media (max-width: 520px) {
+  .rl small { display: none; }
+  .row { padding: 10px 12px; gap: 10px; }
+  .hero { padding: 18px 16px 18px 18px; gap: 10px; }
+  .thumb { width: 78px; height: 78px; align-self: flex-start; }
+  .sosbtn { font-size: 13px; padding: 0 14px; line-height: 1.2; text-align: left; }
+  .hosp { max-width: 120px; }
+}
 @media (min-width: 1000px) {
   .page { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 20px 28px; padding: 22px 24px 40px; }
   .greet, .hero { grid-column: 1 / -1; }
@@ -201,4 +211,5 @@ const statusClass = (s: string) => ({ Dispatched: 'st-red', Arrived: 'st-teal', 
   .hero { padding: 28px 36px; }
   .hero p { font-size: 16px; }
 }
+.needhint { margin: 0; display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-radius: var(--r-lg); background: var(--amber-50); color: var(--amber-900); font-size: var(--fs-caption); font-weight: 700; line-height: 1.4; }
 </style>
