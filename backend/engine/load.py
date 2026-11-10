@@ -39,6 +39,13 @@ CSV_TABLES = {
     "requests": "requests.csv",
 }
 
+# Data minimisation: the engine needs only these request columns. Patient sex, age band,
+# clinical indication, raw names and outcomes are never read into the database.
+REQUEST_COLUMNS = [
+    "request_id", "facility_id", "requested_at", "patient_blood_group",
+    "component_requested", "units_requested", "urgency",
+]
+
 INDEXES = {
     "facilities": ["facility_id"],
     "routes": ["from_facility_id, to_facility_id"],
@@ -165,7 +172,8 @@ def read_csvs(data_dir: Path) -> dict[str, pd.DataFrame]:
         path = Path(data_dir) / filename
         if not path.is_file():
             raise FileNotFoundError(f"Missing {filename} in DATA_DIR ({data_dir}).")
-        frames[table] = pd.read_csv(path)
+        usecols = REQUEST_COLUMNS if table == "requests" else None
+        frames[table] = pd.read_csv(path, usecols=usecols)
     return frames
 
 

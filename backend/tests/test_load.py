@@ -13,6 +13,7 @@ from engine.load import (
     BLOOD_GROUPS,
     CSV_TABLES,
     DataError,
+    REQUEST_COLUMNS,
     StockLookup,
     build_db,
     read_csvs,
@@ -112,6 +113,16 @@ def test_db_has_every_table_with_csv_row_counts(built_db, data_dir):
             csv_rows = sum(1 for _ in open(data_dir / filename)) - 1
             (db_rows,) = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()
             assert db_rows == csv_rows == counts[table], table
+
+
+def test_db_keeps_no_patient_details(built_db):
+    """Data minimisation: only the request columns the engine uses reach the database."""
+    db, _ = built_db
+    with sqlite3.connect(db) as conn:
+        cols = [r[1] for r in conn.execute("PRAGMA table_info(requests)")]
+    assert cols == REQUEST_COLUMNS
+    for col in ("patient_sex", "patient_age_band", "clinical_indication", "facility_name_raw"):
+        assert col not in cols
 
 
 def test_satellites_hold_no_stock(frames):
