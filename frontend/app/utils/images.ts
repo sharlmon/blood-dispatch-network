@@ -7,6 +7,6 @@ export const IMAGE_SETS: Record<string, { widths: number[]; ratio: [number, numb
   'blood-bags': { widths: [480, 800], ratio: [1, 1] },
   paramedics: { widths: [480, 800], ratio: [3, 2] },
   'care-team': { widths: [480, 800], ratio: [1400, 1811] },
-  clinician: { widths: [480, 900], ratio: [2, 3] },
+  'patient-care': { widths: [480, 900, 1200], ratio: [3, 2] },
   'hand-tube': { widths: [640, 1000], ratio: [2, 3] }
 }
