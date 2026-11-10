@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const { public: { apiBase, authEnabled } } = useRuntimeConfig()
+const { public: { apiBase, authEnabled, demoAuth } } = useRuntimeConfig()
+const { account, signOut } = useDemoAccount()
+const leave = () => { signOut(); navigateTo('/') }
 // No API configured (static demo): run on built-in demo data instead of showing "Offline".
 const demo = !apiBase
 const { data: health, error } = demo
@@ -48,6 +50,16 @@ const { request } = useDispatch()
               <NuxtLink to="/sign-in" class="signin">Sign in</NuxtLink>
               <NuxtLink to="/request" class="findbtn">Find blood</NuxtLink>
             </Show>
+          </template>
+          <template v-else-if="demoAuth">
+            <template v-if="account">
+              <span class="site">{{ account.hospital }}</span>
+              <button type="button" class="signin" @click="leave">Sign out</button>
+            </template>
+            <template v-else>
+              <NuxtLink to="/sign-in" class="signin">Sign in</NuxtLink>
+              <NuxtLink to="/sign-up" class="findbtn">Create account</NuxtLink>
+            </template>
           </template>
           <template v-else>
             <span class="site">Hillside Hospital · demo</span>

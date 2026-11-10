@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{ title: string; sub: string }>()
+withDefaults(defineProps<{ title: string; sub: string; cta?: string }>(), { cta: 'Login' })
 const img = useImg()
 </script>
 
@@ -16,7 +16,7 @@ const img = useImg()
         <div class="photo"><img :src="img('hand-tube.jpg')" alt="A gloved hand holding a tube of blood"></div>
         <BlockWall class="wall" :max="10" :mobile-gap="1" :desktop-gap="3" />
       </div>
-      <a href="#form" class="pill">Login</a>
+      <a href="#form" class="pill">{{ cta }}</a>
     </section>
 
     <section id="form" class="panel">
@@ -30,7 +30,7 @@ const img = useImg()
 
 <style scoped>
 .wrap { min-height: 100dvh; display: grid; }
-.art { position: relative; min-height: 100dvh; display: flex; flex-direction: column; overflow: hidden; background: linear-gradient(180deg, #fff 0%, #fdf1ef 45%, #f6d3ce 100%); }
+.art { position: relative; min-height: min(100dvh, 620px); display: flex; flex-direction: column; overflow: hidden; background: linear-gradient(180deg, #fff 0%, #fdf1ef 45%, #f6d3ce 100%); }
 .brand { text-decoration: none; display: inline-flex; margin: 24px 24px 0; align-self: flex-start; position: relative; z-index: 6; }
 .txt { position: relative; z-index: 6; padding: 22px 24px 0; }
 h1 { margin: 0; font-size: 10vw; line-height: 1; letter-spacing: -0.03em; font-weight: 800; text-transform: uppercase; color: #a3151b; white-space: pre-line; }
@@ -38,7 +38,7 @@ h1 { margin: 0; font-size: 10vw; line-height: 1; letter-spacing: -0.03em; font-w
 .dots { display: block; width: 40px; height: 11px; border: 2px solid var(--blood-500); border-radius: 99px; margin-top: 18px; position: relative; box-sizing: border-box; }
 .dots i { position: absolute; left: 2px; top: 2px; width: 22px; height: 4px; border-radius: 99px; background: var(--blood-500); animation: slide 2.4s ease-in-out infinite alternate; }
 @keyframes slide { to { transform: translateX(8px); } }
-.stage { position: relative; flex: 1; min-height: 480px; margin-top: 8px; }
+.stage { position: relative; flex: 1; min-height: 340px; margin-top: 8px; }
 .photo { position: absolute; left: 0; right: 0; bottom: 0; height: 600px; max-height: 100%; overflow: hidden; z-index: 2; background: linear-gradient(180deg, #f9d5d0 0%, #e58d86 45%, #b3171e 100%); -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%); }
 .photo img { position: absolute; width: 164%; left: -28%; top: -15%; max-width: none; height: auto; filter: grayscale(1) contrast(1.3) brightness(1.18); mix-blend-mode: multiply; }
 .wall { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; }
@@ -52,6 +52,7 @@ h1 { margin: 0; font-size: 10vw; line-height: 1; letter-spacing: -0.03em; font-w
   .brand { margin: 40px 0 0 64px; }
   .txt { padding: 56px 64px 0; }
   .sub { font-size: 22px; margin-top: 22px; }
+  .art { min-height: 100dvh; }
   .stage { min-height: 520px; }
   .photo { height: 520px; }
   .photo img { width: 97.5%; left: 18.75%; top: -21%; }
