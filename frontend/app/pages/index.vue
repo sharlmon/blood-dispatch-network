@@ -54,7 +54,7 @@ const safety = [
           <div class="tint" />
         </div>
         <div class="fcard" aria-hidden="true">
-          <small>FASTEST OPTION · B+ · 2 UNITS</small>
+          <small>FASTEST · B+ · 2 UNITS</small>
           <strong>{{ demo[0]!.name }}</strong>
           <div class="ft"><b><Dur :h="demo[0]!.p50" /></b><span>{{ fmtRange(demo[0]!.p10, demo[0]!.p90) }}</span></div>
           <WindowBar :p10="demo[0]!.p10" :p50="demo[0]!.p50" :p90="demo[0]!.p90" :limit="3" />
@@ -165,7 +165,7 @@ const safety = [
 </template>
 
 <style scoped>
-.hero { position: relative; overflow: hidden; padding: 14px 20px 96px; }
+.hero { position: relative; overflow: hidden; padding: 14px 20px 150px; }
 .copy { position: relative; z-index: 4; max-width: 720px; }
 .eyebrow { margin: 0; display: inline-block; padding: 7px 14px; border-radius: 99px; border: 1.5px solid var(--blood-500); background: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blood-700); }
 h1 { margin: 16px 0 0; font-size: clamp(46px, 6.1vw, 88px); line-height: 0.94; letter-spacing: -0.035em; font-weight: 800; text-transform: uppercase; color: var(--blood-600); }
@@ -175,16 +175,16 @@ h1 span { color: var(--wine); }
 .chips-d { display: none; }
 .cta-m { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
 .cta-m .btn { min-height: 54px; padding: 0 26px; font-size: 16px; }
-.stage { position: relative; width: 214px; height: 330px; margin: 14px 0 0 auto; z-index: 3; --iw: 187%; --il: -70%; --it: -65%; }
-.arch { position: absolute; inset: 0; border-radius: 107px 107px 28px 28px; overflow: hidden; background: linear-gradient(180deg, #fdeeed, #f3c9c4); box-shadow: 0 20px 44px rgba(126, 16, 21, 0.22); }
+.stage { position: relative; width: 214px; height: 330px; margin: 14px 0 0 auto; --iw: 187%; --il: -70%; --it: -65%; }
+.arch { position: absolute; z-index: 3; inset: 0; border-radius: 107px 107px 28px 28px; overflow: hidden; background: linear-gradient(180deg, #fdeeed, #f3c9c4); box-shadow: 0 20px 44px rgba(126, 16, 21, 0.22); }
 .arch img { position: absolute; width: var(--iw); left: var(--il); top: var(--it); max-width: none; height: auto; filter: sepia(0.4) saturate(1.5) hue-rotate(-14deg) brightness(1.1) contrast(1.04); }
 .tint { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(250, 205, 200, 0.6) 0%, rgba(243, 201, 196, 0.2) 55%, rgba(179, 23, 30, 0.22) 100%); }
-.fcard { position: absolute; z-index: 6; right: calc(100% - 54px); top: 130px; width: 190px; padding: 12px 14px 14px; border-radius: 22px; background: rgba(255, 255, 255, 0.95); border: 1px solid #ecd5d1; box-shadow: 0 14px 30px rgba(126, 16, 21, 0.2); display: flex; flex-direction: column; gap: 3px; }
-.fcard small { font-size: 9.5px; font-weight: 800; letter-spacing: 0.1em; color: var(--slate); }
-.fcard strong { font-size: 13.5px; color: #12202b; }
+.fcard { position: absolute; z-index: 6; left: -136px; top: 150px; width: 206px; padding: 12px 14px 14px; border-radius: 22px; background: rgba(255, 255, 255, 0.95); border: 1px solid #ecd5d1; box-shadow: 0 14px 30px rgba(126, 16, 21, 0.2); display: flex; flex-direction: column; gap: 3px; }
+.fcard small { font-size: 9.5px; font-weight: 800; letter-spacing: 0.1em; color: var(--slate); white-space: nowrap; }
+.fcard strong { font-size: 13.5px; color: #12202b; white-space: nowrap; }
 .ft { display: flex; align-items: baseline; gap: 6px; margin: 2px 0 8px; }
 .ft b { font-size: 30px; line-height: 1; color: var(--blood-500); white-space: nowrap; flex-shrink: 0; }
-.ft > span { font-size: 11px; font-weight: 700; color: var(--slate); }
+.ft > span { font-size: 11px; font-weight: 700; color: var(--slate); white-space: nowrap; }
 .fchip, .fmini { display: none; }
 .wall { position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; }
 .ln { width: 30px; height: 30px; border-radius: 99px; background: var(--slate); color: #fff; font-size: 13px; font-weight: 800; display: grid; place-items: center; flex-shrink: 0; }
@@ -294,18 +294,19 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
 
 
 @media (min-width: 900px) {
-  .hero { padding: 40px 64px clamp(190px, 16vw, 240px); min-height: min(calc(100svh - var(--header-h)), 860px); }
+  .hero { padding: 40px 64px clamp(190px, 16vw, 240px); min-height: clamp(740px, calc(100svh - var(--header-h)), 880px); }
   .chips-d { display: flex; }
   .cta-m { display: none; }
-  .stage { position: absolute; right: 8%; top: 112px; width: min(500px, 36vw); height: auto; aspect-ratio: 500 / 610; margin: 0; --iw: 172%; --il: -66%; --it: -77%; }
+  /* The arch stands on the hills: its base sits in the empty sky of the horizon, so no hospital or label is covered. */
+  .stage { position: absolute; right: 8%; bottom: calc(clamp(200px, 18vw, 270px) * 0.6); width: min(460px, 34vw); height: auto; aspect-ratio: 500 / 610; margin: 0; --iw: 172%; --il: -66%; --it: -77%; }
   .arch { border-radius: 50% 50% 40px 40px / 41% 41% 40px 40px; box-shadow: 0 30px 70px rgba(126, 16, 21, 0.22); }
-  .fcard { right: auto; left: -60px; top: 60%; width: 310px; padding: 18px 20px; border-radius: 26px; gap: 4px; box-shadow: 0 22px 50px rgba(126, 16, 21, 0.2); }
+  .fcard { right: auto; left: -96px; top: 34%; width: 280px; padding: 16px 18px; border-radius: 26px; gap: 4px; box-shadow: 0 22px 50px rgba(126, 16, 21, 0.2); animation: bob 6s ease-in-out infinite; }
   .fcard small { font-size: 11px; }
-  .fcard strong { font-size: 18px; }
-  .ft b { font-size: 44px; }
+  .fcard strong { font-size: 17px; }
+  .ft b { font-size: 40px; }
   .ft > span { font-size: 13px; }
-  .fchip { display: block; position: absolute; z-index: 6; top: 46px; right: -16px; white-space: nowrap; padding: 12px 18px; border-radius: 99px; background: var(--blood-500); color: #fff; font-weight: 800; font-size: 15px; box-shadow: 0 14px 28px rgba(179, 23, 30, 0.38); }
-  .fmini { display: flex; align-items: center; gap: 12px; position: absolute; z-index: 6; top: 30%; right: -70px; white-space: nowrap; padding: 12px 16px; border-radius: 20px; background: rgba(255, 255, 255, 0.95); border: 1px solid #ecd5d1; box-shadow: 0 16px 36px rgba(126, 16, 21, 0.18); }
+  .fchip { display: block; position: absolute; z-index: 6; top: 40px; left: -40px; white-space: nowrap; padding: 11px 18px; border-radius: 99px; background: var(--blood-500); color: #fff; font-weight: 800; font-size: 14.5px; box-shadow: 0 14px 28px rgba(179, 23, 30, 0.38); animation: bob 5s ease-in-out infinite -1s; }
+  .fmini { display: flex; align-items: center; gap: 12px; position: absolute; z-index: 6; top: 56%; right: -56px; white-space: nowrap; padding: 12px 16px; border-radius: 20px; background: rgba(255, 255, 255, 0.95); border: 1px solid #ecd5d1; box-shadow: 0 16px 36px rgba(126, 16, 21, 0.18); animation: bob 7s ease-in-out infinite -3s; }
   .fmini span:last-child { display: flex; flex-direction: column; }
   .fmini strong { font-size: 14px; color: #12202b; }
   .fmini small { font-size: 12px; font-weight: 700; color: var(--teal-600); }
@@ -330,4 +331,6 @@ h3 { margin: 0; font-size: 17px; font-weight: 800; }
 .gallery figure:hover img { transform: scale(1.06); }
 .gallery figcaption { left: 10px; bottom: 10px; padding: 6px 12px; font-size: 12.5px; }
 @media (max-width: 520px) { .gallery { gap: 8px; } .gallery figcaption { font-size: 11.5px; padding: 5px 10px; } }
+@media (min-width: 900px) and (max-width: 1240px) { .fcard { left: -36px; width: 250px; } .fchip { left: -10px; } .fmini { right: -30px; top: 68%; } }
+@keyframes bob { 50% { translate: 0 -8px; } }
 </style>
