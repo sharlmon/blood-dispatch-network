@@ -2,7 +2,7 @@
 // Convergence mark: four drops closing in on one point. Three red drops are the sources,
 // the dark drop is your hospital. `reverse` is for dark and red backgrounds.
 // The drops fly in and lock together on mount when `intro` is set, and again every time the
-// shared logo tick changes (every 30 s, see plugins/brand-motion.client.ts).
+// shared logo tick changes (every 5 s, see plugins/brand-motion.client.ts).
 const props = withDefaults(defineProps<{ size?: number; reverse?: boolean; intro?: boolean; still?: boolean }>(), { size: 32 })
 const DROP = 'M32 5 C40 16 50 27 50 39 A18 18 0 0 1 14 39 C14 27 24 16 32 5 Z'
 const OUT = 46
