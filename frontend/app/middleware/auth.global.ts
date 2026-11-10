@@ -1,6 +1,6 @@
-// Public: landing, sign in/up, and demo links (?demo=1). Everything else needs a signed-in user
-// who belongs to a hospital (a Clerk organization).
-const PUBLIC = ['/', '/sign-in', '/sign-up']
+// Public: landing, sign in/up, the evidence page (aggregate synthetic results) and demo links
+// (?demo=1). Everything else needs a signed-in user who belongs to a hospital (a Clerk organization).
+const PUBLIC = ['/', '/sign-in', '/sign-up', '/evidence']
 
 export default defineNuxtRouteMiddleware(async (to) => {
   const { authEnabled, demoAuth } = useRuntimeConfig().public
@@ -9,6 +9,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (isPublic) return
   if (demoAuth) {
     // Local demo accounts: signed in means an account exists in this browser. No hospital step.
+    // The account lives in localStorage, which the server cannot read: the browser decides.
+    if (import.meta.server) return
     const { account } = useDemoAccount()
     if (!account.value) return navigateTo('/sign-in')
     if (to.path === '/onboarding') return navigateTo('/request')

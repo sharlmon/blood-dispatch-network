@@ -119,6 +119,10 @@ not use the future `units_from_local_stock` outcome to decide eligibility.
 2. All regional centres.
 3. Centres plus explicitly eligible hospital lenders.
 
+The replay keeps this two-neighbour baseline. The live engine's baseline (spec
+section 8, decided 2026-11-10) goes on to the nearest regional centre with
+enough stock, so the app's "today's way" can name a centre this baseline skips.
+
 The reference provider uses exact component and group only. It excludes satellites
 and the requesting site. No whole-blood pooling or compatibility substitution is
 implemented here. Unknown groups are excluded with a human-review reason. This
@@ -156,7 +160,8 @@ def provider(request, as_of, *, include_hospitals):
 ```
 
 `approved_options` above stands for DS1's output; field mapping is intentionally
-isolated in the adapter. No production DS1 interface exists in this checkout yet.
+isolated in the adapter. `DS1CandidateProvider` implements this contract with
+DS1's rules (see "DS1 provider run" below).
 The replay filters this complete candidate set into the three policies. It uses
 the same arrival estimator for fair policy comparisons and separately reports
 the baseline's map-plus-two quote. A full source must cover the entire requested
@@ -167,8 +172,65 @@ Stocks are reused between independent requests. Thus counts are **opportunities*
 not additional unique patients served. No stock depletion, confirmation failure,
 transport capacity, expiry/quarantine reconstruction or split-source fulfilment
 is simulated. The starter's stock reconstruction uses transfer dispatch dates,
-which also makes snapshots approximate. A stateful inventory simulation and DS1
-integration are needed before claiming aggregate additional deliveries.
+which also makes snapshots approximate. A stateful inventory simulation is still
+needed before claiming aggregate additional deliveries; the DS1 provider run
+below changes which sources count, not this.
+
+### DS1 provider run
+
+`DS1CandidateProvider` (`backend/engine/replay/ds1_provider.py`) calls DS1's
+`engine.stock.candidates` unchanged. It returns every site with spare compatible
+units and a route to the requester, not DS1's top few, and never the requester or
+a satellite. Run it with:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/evaluate_ds2.py --candidate-provider ds1 --engine-country kenya
+```
+
+`--engine-country` (default `kenya`) picks DS1's settings file
+`backend/config/<country>.yaml`. Output goes to `results/ds1-provider/` unless
+`--output-dir` is given, so the committed `results/` are never overwritten. The run
+builds DS1's SQLite from the same CSV folder the replay reads (the cleaned folder,
+or `--data-dir` with `--skip-cleaning`) in a temporary folder; `data/blood.db` and
+`ENGINE_DB_PATH` are not touched. `replay_summary.json` records
+`candidate_provider: "DS1CandidateProvider"`, and `settings.ds1_engine` records
+DS1's `country`, `sharing_allowed`, `min_keep` and `o_neg_reserve` (covered by
+`settings_sha256`). Nothing from a DS1 run is committed yet. Once `results/ds1-provider/`
+exists where the API runs (generated or committed), `GET /api/results` lists it as a
+scenario and the Evidence page labels it "DS1 rules"; the static demo build offers only
+the two hospital-reserve scenarios.
+
+How it differs from the reference provider:
+
+- Compatible groups come from the fixed table: an O+ patient counts O+ and O- units.
+- RBC and WB are pooled as red cell supply.
+- Hospitals keep max(usual level, `min_keep`) per group and never lend O- below
+  `o_neg_reserve`; regional centres lend everything.
+- DS1's `sharing_allowed` decides hospital lending. The script folds DS2's
+  `lending.enabled` into it, which must be a YAML boolean (a quoted `"false"` is
+  refused).
+
+The run stops with exit 1 rather than ignore a setting it cannot honour: hospital
+reserves (`--hospital-reserve-units` or `replay.hospital_reserve_units`),
+`replay.components` other than `[RBC]`, and a DS1 settings file with a nonzero
+`hospital_extra_dispatch_h` (use `backend/scripts/sensitivity.py` for that
+question). It also exits 1, with the reason, if DS1's data checks reject the
+CSVs. From Python, the provider raises `ValueError` for a non-RBC request and
+reads no DS2 settings, so fold `lending.enabled` into `sharing_allowed`
+yourself, as the script does.
+
+Caveats (the artifacts list them too):
+
+- Requests are still selected by the requester's prior-day exact-match
+  snapshot, so both providers are compared on the same requests.
+- Every source is timed by this replay's arrival estimator against
+  `replay.deadline_hours`, with no extra hospital dispatch delay; the baseline
+  quote stays map + 2 h. DS1's ETA model and its `clinician_limit_h` and
+  `baseline_quote_extra_h` are not used.
+- `usual_level` is a median over the whole year, so the replay sees some later
+  information.
+- Counts are still opportunities, not unique patients served, and hospital
+  lending is still an unobserved assumption.
 
 ## Evening alert test
 
@@ -198,6 +260,9 @@ alert burden and recall together; it needs expert review before operational use.
 | `prealert_evaluation.json` | Alert metrics, denominators and censoring |
 | `prealerts.json` | Facility-level review alerts and missing snapshots |
 | `summary.json` | Compact metrics for the results tab |
+
+The API serves every file except `arrival_model.json`: `prealerts.json` through
+`GET /api/prealerts`, the others through `GET /api/results/<name>`.
 
 Every envelope includes schema version, generated time, synthetic-data flag,
 input file hashes, settings and their hash, split and seed. JSON serialization
@@ -247,9 +312,17 @@ identities are merged and no unknown group or receipt is invented.
 - How should stale snapshots and unavailable confirmations affect the workflow?
 - Can a more selective alert rule reduce false alarms while retaining recall?
 
-The API team still needs to wire these functions into endpoints and live workflow
-state. The frontend reads the JSON and displays uncertainty, explanations and
-review controls. DS1 supplies reviewed compatibility/stock candidate selection.
-Tests and the offline pipeline do not establish real-world clinical validity.
+Wired into the app now: `GET /api/results` lists the result files and scenario
+folders, `GET /api/results/<name>?scenario=<folder>` returns one file's envelope
+unchanged, and `GET /api/prealerts` serves `results/prealerts.json` with facility
+names added. The web app's Evidence page (`/evidence`) and Pre-alerts page
+(`/prealerts`) read them; the static demo build reads the same committed files.
+Not wired yet: the API does not generate pre-alerts at the evening hour (it
+serves the list `scripts/evaluate_ds2.py` last wrote), and there is no stateful
+replay. The live ranking's arrival ranges come from DS1's model
+(`backend/engine/eta.py`, fitted by `backend/scripts/fit_eta.py`); `engine.arrival`
+serves the replay and this evaluation. DS1 supplies reviewed compatibility/stock
+candidate selection. Tests and the offline pipeline do not establish real-world
+clinical validity.
 
 AI tool disclosure: Codex assisted with DS2 code, tests, documentation and evaluation.

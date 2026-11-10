@@ -62,6 +62,18 @@ def create_request():
     return jsonify(workflow.create(data)), 201
 
 
+@api.post('/rank')
+@require_hospital
+def rank_preview():
+    """Rank sources for a would-be request without storing anything (no stock is reserved)."""
+    data = body()
+    access.require_facility(workflow.required(data, 'facility_id'))
+    payload = workflow.normalize(data)
+    services.ensure_available()
+    workflow.facility(get_db(), payload['facility_id'])
+    return jsonify(request=payload, ranking=services.ranking(payload))
+
+
 @api.get('/requests')
 @require_hospital
 def list_requests():

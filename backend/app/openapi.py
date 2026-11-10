@@ -109,6 +109,7 @@ def build_spec():
     operation('/api/facilities/{id}', 'get', 'Facility details', 'Facilities', ref('Facility'))
     operation('/api/facilities/{id}/inventory', 'get', 'Exact stock and reservations', 'Facilities', listing(ref('Inventory'), False), description='Own facility or network operator only. Engine RBC+WB counts never create actual RBC units.')
     operation('/api/requests', 'post', 'Create request and rank sources', 'Requests', ref('Request'), ref('CreateRequest'), status=201, description='Requester facility or network operator. Persists deterministic ranking, baseline and advice. No patient identifiers. Actual RBC fulfillment only; partial/whole-blood fulfillment requires the phone process.')
+    operation('/api/rank', 'post', 'Preview ranking without storing', 'Requests', ref('Ranking'), ref('CreateRequest'), description='Requester facility or network operator. Same input as creating a request; returns the engine ranking and the canonical request but stores nothing and reserves no stock. Used for shareable result links.')
     operation('/api/requests', 'get', 'List visible requests', 'Requests', listing(ref('RequestSummary')), parameters=PAGING + [param('facility_id'), param('status'), param('created_after', schema=TIME), param('created_before', schema=TIME)])
     operation('/api/requests/{id}', 'get', 'Request status and allocations', 'Requests', ref('Request'), description='Requester, current supplier or network operator.')
     operation('/api/requests/{id}/options', 'get', 'Saved ranked source options', 'Requests', ref('Ranking'))
