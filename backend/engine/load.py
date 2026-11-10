@@ -207,7 +207,10 @@ class StockLookup:
     def __init__(self, red_stock: pd.DataFrame):
         self._by_day: dict[tuple[str, str], dict[str, int]] = {}
         for (day, facility), grp in red_stock.groupby(["date", "facility_id"]):
-            self._by_day[(day, facility)] = dict(zip(grp["blood_group"], grp["units"].astype(int)))
+            # .tolist() gives plain Python ints, so results serialise to JSON directly.
+            self._by_day[(day, facility)] = dict(
+                zip(grp["blood_group"].tolist(), grp["units"].astype(int).tolist())
+            )
 
     def units(self, day: str, facility_id: str, blood_group: str) -> int:
         return self._by_day.get((day, facility_id), {}).get(blood_group, 0)

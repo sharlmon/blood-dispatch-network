@@ -176,13 +176,22 @@ If your numbers are far off, check the join and the emergency-type filter before
      then `has_backup_power` (True first), then `spare` descending.
   4. If **no** candidate has enough, return the best partial options (largest `spare`
      within the shortest p50), each flagged `partial`, and set
-     `advice: "no_full_source"`.
+     `advice: "no_full_source"`. Partial options are sites with at least 1 spare unit,
+     sorted exactly like full options, fastest first (decided 2026-11-10).
 - `mode="baseline"` (today's rule, also the **fallback**): the hospital's supply centre if
-  it has enough stock, otherwise the 2 nearest other regional centres by `road_km`, in that
-  order. Quote = map time + 2 h, no window.
+  it has enough stock, otherwise the other regional centres by `road_km`, nearest first,
+  taking the first with enough stock (decided 2026-11-10; "the 2 nearest" would leave
+  golden case 1 with no baseline). Quote = map time + 2 h, no window. If no centre has
+  enough, `baseline.facility_id`, `name` and `quote_hours` are `null`.
+  - The JSON has the same shape as model mode. `options` lists the baseline sites in rule
+    order. Each still carries an `eta` range, and its `reason` says it is today's rule and
+    gives today's single-number quote.
 - **Clinician advice:** if the top option's `p90 > clinician_limit_h` (config, default 6),
-  set `advice: "consider_emergency_O_or_transfer"`.
+  set `advice: "consider_emergency_O_or_transfer"`. This wins over `no_full_source` when
+  both apply; the `partial` flags still show that no site covers the full request.
 - Always return the baseline choice alongside the model ranking, so the UI can show both.
+- Out-of-scope input raises `ValueError`: a component other than `RBC`, `units_needed`
+  below 1, a patient group outside the table, or an unknown `facility_id`.
 
 ## 9. Output JSON contract (keep stable; teammates build on it)
 
