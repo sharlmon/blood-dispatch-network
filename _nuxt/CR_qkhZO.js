@@ -1,1 +1,0 @@
-import{R as e,V as t,m as n,t as r}from"./SUehQPof.js";var i={},a={class:`auth`};function o(r,i){return e(),n(`div`,a,[t(r.$slots,`default`,{},void 0,!0)])}var s=r(i,[[`render`,o],[`__scopeId`,`data-v-cd8e3277`]]);export{s as default};
