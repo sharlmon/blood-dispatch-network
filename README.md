@@ -69,7 +69,7 @@ with two pre-registered demo phones; a live shortcode is not required.
 
 **Stack:** Nuxt 4 (frontend) · Flask (backend API) · Python decision engine · SQLite · SMS gateway · CSV in, JSON out.
 
-Demo video (3 minutes or less): `[[link]]`
+Demo video (3 minutes or less): https://drive.google.com/file/d/17in7cgVS8MKqdoyp4N9kBrjJxtFU79KB/view?usp=sharing
 
 Live demo: https://sharlmon.github.io/blood-dispatch-network/ · Test log-in: none needed.
 The live site is connected to the hosted API and the real engine, running on the synthetic
