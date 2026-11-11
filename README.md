@@ -245,10 +245,15 @@ and dispatch module.
 
 ## AI tools we used
 
+We used two tools, Claude (Anthropic) and Codex (OpenAI), for different parts of the work.
+
 | Tool | What for |
 |---|---|
-| Claude Code (Anthropic) | Ranking engine code and tests, engine spec, documentation, pitch deck text |
-| Codex (OpenAI) | Data-science arrival model, data cleaning, replay evaluation, pre-alert tests, results files, documentation |
+| Claude (Anthropic) | Ranking engine code and tests, engine spec, API, request workflow, audit log, engine integration, web screens, map, accessibility, documentation, pitch deck text |
+| Codex (OpenAI) | Arrival model, data cleaning, replay evaluation, pre-alert tests, results files, API, request workflow, SMS with Africa's Talking, settings, deployment, documentation |
+
+No AI tool runs inside the product: rankings, arrival ranges and reasons all come from
+deterministic code.
 
 The numerical results come from deterministic code running on the synthetic starter
 dataset. Every team member can explain the part they built.
