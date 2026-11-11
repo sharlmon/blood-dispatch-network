@@ -7,6 +7,7 @@ const links = [
   { label: 'Who uses it', to: { path: '/', hash: '#phone' } },
   { label: 'Built to be safe', to: { path: '/', hash: '#safe' } }
 ]
+const img = useImg()
 const D = 'M32 5 C40 16 50 27 50 39 A18 18 0 0 1 14 39 C14 27 24 16 32 5 Z'
 const petals = [
   { r: 0, x: 0, y: -56, fill: '#cfeae6' },
@@ -46,6 +47,10 @@ const petals = [
       <NuxtLink v-for="l in links" :key="l.label" :to="l.to">{{ l.label }}</NuxtLink>
       <NuxtLink to="/sign-in">Sign in</NuxtLink>
     </nav>
+    <div class="partners">
+      <p class="plabel">Hackathon partners</p>
+      <img class="plogo" :src="img('partners-420.webp')" width="210" height="105" loading="lazy" decoding="async" alt="Terumo, powered by TALO">
+    </div>
     <p class="fine">Hackathon prototype · Terumo BCT Africa Hackathon 2026 · All data is synthetic and does not describe real facilities.</p>
   </footer>
 </template>
@@ -94,6 +99,10 @@ h2 { margin: 18px 0 0; font-size: clamp(18px, 2.6vw, 26px); line-height: 1.1; le
 .links { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 6px; padding: 4px 16px; margin-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.14); margin: 0 16px; }
 .links a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 99px; color: #dff1ee; font-weight: 700; font-size: 14px; text-decoration: none; transition: background 0.2s ease; }
 .links a:hover { background: rgba(255, 255, 255, 0.14); }
+.partners { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 18px 20px 6px; }
+.plabel { margin: 0; font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #bfe3de; }
+.plogo { display: block; width: 210px; height: auto; border-radius: 16px; background: #230102; box-shadow: 0 10px 24px rgba(3, 30, 28, 0.35); }
 .fine { margin: 0; padding: 2px 20px 16px; font-size: 12px; font-weight: 600; color: rgba(255, 220, 216, 0.7); }
-@media (max-width: 520px) { .set b { font-size: 20px; } .mark, .mark svg { width: 72px; height: 72px; } }
+@media (max-width: 899px) { .fine { padding-inline: 68px; } }
+@media (max-width: 520px) { .plogo { width: 180px; } .set b { font-size: 20px; } .mark, .mark svg { width: 72px; height: 72px; } }
 </style>
