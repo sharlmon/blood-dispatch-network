@@ -282,7 +282,7 @@ const searching = computed(() => d.busy.value === 'search')
       <p class="pnote"><AppIcon name="drop" :size="16" /> Red cell stock above safety reserves counts. The supplying site must confirm availability.</p>
 
       <button type="submit" class="btn btn-primary go" :disabled="searching"><AppIcon name="search" /> {{ searching ? 'Finding sources…' : 'Find sources' }}</button>
-      <p class="sms"><AppIcon name="sms" :size="22" /><span>No data? Text <b>{{ smsText }}</b> to [SHORTCODE].</span></p>
+      <p class="sms"><AppIcon name="sms" :size="22" /><span>No data? Text <b>{{ smsText }}</b> to <b>{{ SMS_SHORTCODE }}</b>.</span></p>
       <SafetyNote />
     </form>
 

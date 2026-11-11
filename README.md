@@ -69,16 +69,28 @@ and bypasses sign-in for the demo; it is not a clinical production deployment.
 - Stock is yesterday's closing count from the dataset, not a live feed.
 - The dataset has no hospital-to-hospital lending, so hospital dispatch times are assumed
   from regional centre data. Our result still holds with hospitals up to 3 h slower.
+<<<<<<< HEAD
 - Submitted requests on the public site use the server-hosted engine on synthetic historical
   data. The homepage example and explicit example links remain illustrative mock scenarios.
+=======
+>>>>>>> origin/dev
 - SMS runs in the Africa's Talking sandbox, not on a live shortcode.
 
 **Stack:** Nuxt 4 (frontend) · Flask (backend API) · Python decision engine · SQLite · SMS gateway · CSV in, JSON out.
 
-Demo video (3 minutes or less): `[[link]]`
+Demo video (3 minutes or less): https://drive.google.com/file/d/17in7cgVS8MKqdoyp4N9kBrjJxtFU79KB/view?usp=sharing
 
+<<<<<<< HEAD
 Live demo: https://sharlmon.github.io/blood-dispatch-network/ · No sign-in is required
 for this public synthetic demo. API: https://blood-dispatch.169.58.141.254.sslip.io.
+=======
+Live demo: https://sharlmon.github.io/blood-dispatch-network/ · Test log-in: none needed.
+The live site is connected to the hosted API and the real engine, running on the synthetic
+starter dataset with the clock set inside the data (31 Oct 2026). Sign-in is switched off
+for this demo.
+
+Hosted API docs (Swagger): https://blood-dispatch.169.58.141.254.sslip.io/api/docs
+>>>>>>> origin/dev
 
 ## How to run it
 
@@ -194,11 +206,18 @@ and dispatch module.
   | **Our model** | **0.95 h** |
   | Remote hospitals, map time 5 h+: today's quote | 2.75 h |
   | Remote hospitals, map time 5 h+: our model | 1.76 h |
+  | Independent check, 438 deliveries, Sep–Oct 2026: today's quote | 1.33 h |
+  | Independent check, 438 deliveries, Sep–Oct 2026: second model | 0.89 h |
 
   80% of real arrivals fell inside our 8-in-10 range, and coverage stays between 77% and 82%
-  in every distance band and for 2G sites. A separate data-science evaluation, with its own
-  cleaning and test period, is in [docs/ds2-implementation.md](docs/ds2-implementation.md)
-  and `results/`.
+  in every distance band and for 2G sites.
+
+  The independent check is a separate evaluation by our second data scientist. It has its
+  own cleaning, its own model and a later test period, and 81% of arrivals fell inside its
+  range. It is not the model the ranking uses, but it reaches the same conclusion: both
+  models beat today's quote. Its details are in
+  [docs/ds2-implementation.md](docs/ds2-implementation.md) and `results/`, and the
+  **Evidence** page shows it.
 - **How a user sees the reason for a recommendation:** plain-language reasons built from
   templates filled with computed numbers. For example: *"22 spare compatible units above its
   own safety stock (yesterday's count). Most likely 2.6 h; 8 in 10 arrive within 1.4–3.8 h.
@@ -219,8 +238,13 @@ and dispatch module.
   `backend/engine/cleaning.py`).
 - No other data. Everything is synthetic, and there is no real donor, patient or facility
   data.
+<<<<<<< HEAD
 - The public request workflow uses the server engine on the synthetic starter dataset.
   The homepage example uses `frontend/app/utils/mock.ts` and is illustrative.
+=======
+- The home page illustration uses fictional sample data from `frontend/app/utils/mock.ts`.
+  Requests on the live demo run on the starter dataset.
+>>>>>>> origin/dev
 
 ## African conditions
 
@@ -238,11 +262,15 @@ and dispatch module.
 
 ## AI tools we used
 
+We used two tools, Claude (Anthropic) and Codex (OpenAI), for different parts of the work.
+
 | Tool | What for |
 |---|---|
-| Claude Code (Anthropic) | Ranking engine code and tests, engine spec, documentation, pitch deck text |
-| Codex (OpenAI) | Data-science arrival model, data cleaning, replay evaluation, pre-alert tests, results files, documentation |
-| `[[others the team used]]` | `[[what for]]` |
+| Claude (Anthropic) | Ranking engine code and tests, engine spec, API, request workflow, audit log, engine integration, web screens, map, accessibility, documentation, pitch deck text |
+| Codex (OpenAI) | Arrival model, data cleaning, replay evaluation, pre-alert tests, results files, API, request workflow, SMS with Africa's Talking, settings, deployment, documentation |
+
+No AI tool runs inside the product: rankings, arrival ranges and reasons all come from
+deterministic code.
 
 The numerical results come from deterministic code running on the synthetic starter
 dataset. Every team member can explain the part they built.
@@ -251,11 +279,11 @@ dataset. Every team member can explain the part they built.
 
 | Name | Role | Country | Presenting Friday (in person / online) |
 |------|------|---------|-----------------------------------------|
-| Sheila Mumbi Macharia | Data scientist: ranking engine (compatibility, safe lending, arrival ranges, reasons) | `[[country]]` | `[[in person / online]]` |
-| Graham Akello | Data scientist: data cleaning, arrival replay, pre-alert evaluation, evidence results | `[[country]]` | `[[in person / online]]` |
-| Rovenel Abanga | Full-stack: API, request workflow, audit log, engine integration | `[[country]]` | `[[in person / online]]` |
-| Thomas Muia | Full-stack: SMS with Africa's Talking, settings, deployment and operations | `[[country]]` | `[[in person / online]]` |
-| Sharlmon Junior | Frontend: web screens, map, accessibility, demo video | `[[country]]` | `[[in person / online]]` |
+| Sheila Mumbi Macharia | Data scientist: ranking engine (compatibility, safe lending, arrival ranges, reasons) | Kenya | In person |
+| Graham Akello | Data scientist: data cleaning, arrival replay, pre-alert evaluation, evidence results | Kenya | In person |
+| Rovenel Abanga | Full-stack: API, request workflow, audit log, engine integration | Kenya | In person |
+| Thomas Muia | Full-stack: SMS with Africa's Talking, settings, deployment and operations | Kenya | In person |
+| Sharlmon Junior | Frontend: web screens, map, accessibility, demo video | Kenya | In person |
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for how we worked.
 
@@ -266,8 +294,13 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how we worked.
   supplying site confirms the shelf before dispatch.
 - Hospital lending times are assumed, because the dataset has no hospital-to-hospital
   transfers.
+<<<<<<< HEAD
 - The public deployment bypasses authentication for the synthetic demo. Configure Clerk
   and actual facility mappings before an authenticated deployment.
+=======
+- The live demo has sign-in switched off, so anyone with the link can create or cancel
+  requests on the synthetic data.
+>>>>>>> origin/dev
 - No FHIR or ISBT 128 interface is built yet. These are mappings only.
 
 **Next steps**

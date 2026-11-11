@@ -117,7 +117,7 @@ const safety = [
         <IconBadge size="lg"><ServiceIcon name="sms" :size="36" /></IconBadge>
         <div>
           <h3>Works on any phone</h3>
-          <p>Requests and confirmations also work by text message. No smartphone and no data needed at the bench.</p>
+          <p>Requests and confirmations also work by text message to <b>{{ SMS_SHORTCODE }}</b>. No smartphone and no data needed at the bench.</p>
         </div>
         <div class="bubbles" aria-hidden="true"><span class="out">B+ 2 RBC 3H</span><span class="in">3 sources. Fastest Lakeview, likely 1.5h, 8 in 10 within 1-2.2h. Reply 1 to request.</span></div>
       </div>
