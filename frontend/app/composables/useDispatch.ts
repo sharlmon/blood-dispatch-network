@@ -374,6 +374,23 @@ export function useDispatch() {
 
   // ---------- actions ----------
 
+  async function refreshSources() {
+    const id = request.value?.id
+    if (busy.value || !viaApi.value || !id || status.value !== 'open') return
+    busy.value = 'refresh'
+    error.value = null
+    try {
+      const res = await backend.refreshSources(id)
+      adopt(res.request, res.result, res.audit)
+      engineUp()
+      toast({ tone: 'info', title: 'Sources refreshed', body: 'Availability now accounts for recorded dispatches and reservations. Shelf confirmation is still required.' })
+    } catch (e) {
+      error.value = fail(e)
+    } finally {
+      busy.value = null
+    }
+  }
+
   /** The lab worker submits a request: stored, ranked and audited by the API, then the results. */
   async function search(input: SearchInput) {
     if (busy.value) return
@@ -529,6 +546,6 @@ export function useDispatch() {
     live, local, request, result, record, ranking, options, selected, selectedId, top, baseline, limitH, tooLong, noFullSource, sooner,
     requesterName, status, audit, names, passed, passedIds, passedReason, decision, pickedId, pickedSite, pickedAt, busy, error,
     resultsLink, trackLink, canTrack,
-    search, loadFromQuery, matches, select, pickSite, confirmSelection, decide, advance, nextSource, cancel
+    search, refreshSources, loadFromQuery, matches, select, pickSite, confirmSelection, decide, advance, nextSource, cancel
   }
 }

@@ -132,14 +132,25 @@ supplier still must confirm its shelf and explicitly dispatch. Old attempt IDs
 cannot confirm newer selections. An attempted supplier cannot be selected again.
 
 Selection requires a ranking and imported stock from the exact previous calendar
-day in the configured timezone. Engine ranking may show older snapshots for
-exploration; workflow selection refuses them. Inventory is reserved atomically
+day in the configured timezone. Historical engine/CLI rankings may show older snapshots
+for exploration; workflow selection refuses them. Live API rankings read the workflow
+inventory for that day and count RBC rows only, after recorded dispatches, reservations,
+and safety reserves. Whole-blood rows and missing/stale RBC rows do not supply live
+availability. Routes, arrival estimates, compatibility and lending policies remain with
+the engine; historical replay frames are not modified. Inventory is reserved atomically
 above safety stock, per actual blood group/component. Fixed engine compatibility
 rules support compatible-group allocation, including group O only for unknown
 patients. Hospital lending uses the engine's spare caps and imported safety reserves.
 The engine's RBC+WB counts never manufacture RBC units: this workflow allocates
 actual RBC rows only. Whole-blood and partial fulfillment, and receipt discrepancies,
 require the phone process rather than silently substituting quantities/components.
+
+Saved options are a snapshot. Pending requests can update them using
+`POST /requests/{id}/options/refresh` (the web results page's **Refresh sources** button).
+Refresh is audited and never reserves stock. A later pick still checks current stock
+atomically, since other requests can allocate units after the options were displayed.
+Ranking caps already exclude existing reservations; picking compares each cap against
+current free stock without subtracting the same reservations a second time.
 
 Arrival windows are retained from the selected engine option; they are estimates
 from request time, not a live transport tracker. The dispatch event records server

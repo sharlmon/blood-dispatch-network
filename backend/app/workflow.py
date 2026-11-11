@@ -145,6 +145,7 @@ def release(db, row):
 
 def select(db, row, supplier):
     from engine.compat import acceptable_unit_groups
+    from .inventory import available_units
     meta = metadata(db, row['id'])
     option = next((item for item in meta['ranking']['options'] if item['facility_id'] == supplier), None)
     if not option or supplier in meta['attempted_sources']:
@@ -163,7 +164,7 @@ def select(db, row, supplier):
         if item is None or item['updated_at'][:10] != stock_day:
             continue
         cap = option['spare_by_group'].get(group, 0)
-        count = min(needed, max(0, min(item['on_hand'] - item['safety_stock'], cap) - item['reserved']))
+        count = min(needed, available_units(item, cap))
         if count:
             db.execute("UPDATE inventory SET reserved=reserved+? WHERE facility_id=? AND blood_group=? AND product='red_cells'", (count, supplier, group))
             db.execute("INSERT INTO allocations VALUES(?,?,?,'red_cells',?)", (row['id'], supplier, group, count))

@@ -209,6 +209,11 @@ const errorText = computed(() => {
         <span v-if="demo" class="demo">Demo data: fictional sites.</span>
       </p>
 
+      <button v-if="!demo && req.id && d.status.value === 'open'" type="button"
+        class="btn refresh-sources" :disabled="busy" @click="d.refreshSources()">
+        {{ d.busy.value === 'refresh' ? 'Refreshing sources…' : 'Refresh sources' }}
+      </button>
+
       <ul class="list">
         <li v-for="(o, i) in shown" :key="o.id" class="rise" :style="{ '--d': i * 90 + 'ms' }">
           <SourceCard
@@ -302,6 +307,7 @@ const errorText = computed(() => {
 .todays { min-height: 46px; font-size: 13.5px; flex-shrink: 0; }
 .todays:disabled { opacity: 0.6; cursor: not-allowed; }
 .filters { display: none; align-items: center; gap: 8px; }
+.refresh-sources { margin-bottom: 12px; }
 .filters button { padding: 8px 16px; border-radius: 99px; border: 1.5px solid #c9dbd8; background: #fff; color: #44545f; font-size: 13px; font-weight: 800; }
 .filters button.on { background: #1b1b1f; border-color: #1b1b1f; color: #fff; }
 .notes { margin: 0; display: flex; flex-direction: column; gap: 2px; font-size: 12px; font-weight: 700; color: #5d6d78; line-height: 1.4; flex-shrink: 0; }

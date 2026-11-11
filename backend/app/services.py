@@ -18,12 +18,55 @@ def ranking(payload):
     try:
         from engine.config import ConfigError
         from engine.rank import rank_sources
-        return rank_sources(payload, config={**current_app.config['ENGINE_CONFIG'], 'clinician_limit_h': payload['clinician_limit_h']})
+        result = rank_sources(payload, frames=operational_frames(),
+                              config={**current_app.config['ENGINE_CONFIG'], 'clinician_limit_h': payload['clinician_limit_h']})
+        result['stock_note'] = ("Yesterday's RBC count, less recorded use and reservations. "
+                                "Unconfirmed until the supplying site confirms.")
+        return result
     except ValueError as exc:
         raise APIError(str(exc)) from exc
     except (ConfigError, FileNotFoundError, OSError, sqlite3.Error, FrameDatabaseError, KeyError) as exc:
         current_app.logger.warning('Ranking unavailable: %s', exc)
         raise APIError('Ranking data unavailable; use the phone process', 503) from exc
+
+
+def operational_frames():
+    """Rank the same RBC stock that the workflow can reserve, without altering replay data.
+
+    Routes, arrival model, compatibility and lending policies stay with the engine.
+    Only this request's stock view changes. Missing or old inventory never falls
+    back to the historical RBC+whole-blood counts in the cached engine frames.
+    """
+    from dataclasses import replace
+    import pandas as pd
+    from engine.config import db_path
+    from engine.load import load_frames, StockLookup, red_units_frame
+    from .inventory import available_units
+
+    frames = load_frames(db_path())
+    day = snapshot_day()
+    rows = get_db().execute("SELECT * FROM inventory WHERE product='red_cells' AND substr(updated_at,1,10)=?",
+                            (day,)).fetchall()
+    stock_rows = []
+    usual = dict(frames.usual_level)
+    for row in rows:
+        site, group = row['facility_id'], row['blood_group']
+        info = frames.facility_info.get(site)
+        if info is None:
+            continue
+        if info['facility_type'] == 'regional_blood_centre':
+            # The engine lends all centre stock, so provide only what is free.
+            units = available_units(row)
+        else:
+            # Hospital policy subtracts its reserve inside the engine. Apply the
+            # recorded allocation here and retain the stricter of both reserves.
+            units = max(0, row['on_hand'] - row['reserved'])
+            usual[site, group] = max(usual.get((site, group), 0), row['safety_stock'])
+        stock_rows.append((day, site, group, units))
+    stock = pd.DataFrame(stock_rows, columns=['date', 'facility_id', 'blood_group', 'units'])
+    rbc_units = frames.units[frames.units['component'] == 'RBC']
+    return replace(frames, red_stock=stock, stock=StockLookup(stock), stock_dates=(day,),
+                   usual_level=usual, red_units=red_units_frame(rbc_units))
 
 
 def fallback():

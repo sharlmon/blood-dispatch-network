@@ -64,6 +64,11 @@ export function useBackend() {
     return bundle(await api<DevRequest>(`/api/requests/${encodeURIComponent(id)}`))
   }
 
+  async function refreshSources(id: string): Promise<Bundle> {
+    await api(`/api/requests/${encodeURIComponent(id)}/options/refresh`, { method: 'POST', body: {} })
+    return get(id)
+  }
+
   /**
    * Record one step. Null when the server has no such step (a clinician's choice stays on screen).
    * The server checks the status, the supplier and the attempt, and answers 409 when they are stale.
@@ -90,5 +95,5 @@ export function useBackend() {
     return prealertsFromDev(run, facs, 'API pre-alert run')
   }
 
-  return { recent, rank, create, get, step, prealerts }
+  return { recent, rank, create, get, refreshSources, step, prealerts }
 }
