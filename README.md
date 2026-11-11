@@ -238,7 +238,6 @@ and dispatch module.
 |---|---|
 | Claude Code (Anthropic) | Ranking engine code and tests, engine spec, documentation, pitch deck text |
 | Codex (OpenAI) | Data-science arrival model, data cleaning, replay evaluation, pre-alert tests, results files, documentation |
-| `[[others the team used]]` | `[[what for]]` |
 
 The numerical results come from deterministic code running on the synthetic starter
 dataset. Every team member can explain the part they built.
@@ -247,11 +246,11 @@ dataset. Every team member can explain the part they built.
 
 | Name | Role | Country | Presenting Friday (in person / online) |
 |------|------|---------|-----------------------------------------|
-| Sheila Mumbi Macharia | Data scientist: ranking engine (compatibility, safe lending, arrival ranges, reasons) | `[[country]]` | `[[in person / online]]` |
-| Graham Akello | Data scientist: data cleaning, arrival replay, pre-alert evaluation, evidence results | `[[country]]` | `[[in person / online]]` |
-| Rovenel Abanga | Full-stack: API, request workflow, audit log, engine integration | `[[country]]` | `[[in person / online]]` |
-| Thomas Muia | Full-stack: SMS with Africa's Talking, settings, deployment and operations | `[[country]]` | `[[in person / online]]` |
-| Sharlmon Junior | Frontend: web screens, map, accessibility, demo video | `[[country]]` | `[[in person / online]]` |
+| Sheila Mumbi Macharia | Data scientist: ranking engine (compatibility, safe lending, arrival ranges, reasons) | Kenya | In person |
+| Graham Akello | Data scientist: data cleaning, arrival replay, pre-alert evaluation, evidence results | Kenya | In person |
+| Rovenel Abanga | Full-stack: API, request workflow, audit log, engine integration | Kenya | In person |
+| Thomas Muia | Full-stack: SMS with Africa's Talking, settings, deployment and operations | Kenya | In person |
+| Sharlmon Junior | Frontend: web screens, map, accessibility, demo video | Kenya | In person |
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for how we worked.
 
