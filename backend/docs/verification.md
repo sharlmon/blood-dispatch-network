@@ -78,5 +78,6 @@ The final build explicitly disables Clerk and the browser-local demo login as re
 Existing unrelated containers retained their IDs and remained running.
 
 The server uses the requested sign-in bypass and synthetic historical stock, rather
-than the authenticated production profile. Africa's Talking dashboard callbacks must
-be pointed at the server URLs to remove their remaining dependency on the local tunnel.
+than the authenticated production profile. The previously registered ngrok SMS callback hostname was subsequently migrated to
+a dedicated server container forwarding to the API, so the sandbox dashboard can
+retain its existing URLs without relying on the laptop.

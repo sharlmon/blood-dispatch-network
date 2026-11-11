@@ -1,0 +1,27 @@
+# Optional server-side tunnel retaining the previously registered SMS callbacks.
+# Use with: docker compose -f compose.yaml -f compose.tunnel.yaml up -d tunnel
+services:
+  tunnel:
+    image: ngrok/ngrok:3
+    container_name: blood-dispatch-tunnel
+    command:
+      - http
+      - --url=https://passably-granny-onscreen.ngrok-free.dev
+      - --inspect=false
+      - --log=stdout
+      - http://api:5000
+    env_file: tunnel.env
+    environment:
+      HOME: /tmp
+    restart: unless-stopped
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    cpus: 0.25
+    mem_limit: 128m
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"

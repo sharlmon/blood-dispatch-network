@@ -83,8 +83,26 @@ DEMO_AUTH=bypass NUXT_PUBLIC_API_BASE=https://YOUR_API_HOST scripts/deploy-pages
 
 Check the served page's `apiBase` and execute a golden request through the public API.
 The homepage's explicitly labelled example may still use mock data; submitted live
-requests must use the backend. Keep Africa's Talking callback secrets out of public
-documentation; update its inbound/delivery URLs privately when moving off ngrok.
+requests must use the backend. Keep Africa's Talking callback secrets out of public documentation.
+
+## SMS callback compatibility tunnel
+
+The sandbox dashboard rejected the alternate hostname update, so the original saved
+ngrok hostname is now served from the VPS by `blood-dispatch-tunnel`. It forwards to
+`http://api:5000` on this project's Docker network. The laptop ngrok agent was stopped;
+SMS no longer relies on the laptop. Keep the existing inbound and delivery callback
+URLs and tokens unchanged in the sandbox dashboard.
+
+The optional overlay is `backend/deploy/compose.tunnel.yaml`. Store the ngrok token
+in private `backend/deploy/tunnel.env` as `NGROK_AUTHTOKEN` (0600; ignored by Git).
+
+```sh
+docker compose -f compose.yaml -f compose.tunnel.yaml up -d --no-deps tunnel
+```
+
+Only one agent can own this saved endpoint. Do not restart a laptop agent with the
+same hostname. The public web frontend continues to use the direct HTTPS API hostname.
+The ngrok inspector is disabled and its management port is not published.
 
 ## Backups
 

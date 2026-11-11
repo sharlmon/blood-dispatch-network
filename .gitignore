@@ -26,3 +26,5 @@ dist
 
 # Server deployment credentials
 backend/deploy/private.env
+
+backend/deploy/tunnel.env

@@ -14,3 +14,4 @@ frontend
 .agents
 **/*.sqlite*
 **/private.env
+**/tunnel.env
