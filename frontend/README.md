@@ -123,7 +123,7 @@ Calm palette: teal is the interface colour; red is kept for blood, urgency and t
 - The map is schematic: true bearing from the requesting hospital, distances scaled to fit. It is not real geography.
 - No supplying-site view: the site's steps are recorded from the requesting hospital's track page.
 - No site phone register yet: "Contact site" and "Call site" show no number; call the site the usual way.
-- No SMS view; the SMS hint shows a placeholder short code.
+- No SMS view; the SMS hint shows the shortcode 38421 (set in `app/utils/sms.ts`).
 - No dark mode.
 - The landing page's "28%" and "617" figures match the starter data (2,456 of 8,768 emergency requests had local stock below the units asked for; 617 red cell emergencies were issued no units; checked 2026-11-10) but no committed results file records them yet.
 - No automated tests yet.
