@@ -271,3 +271,84 @@ def test_outbound_contact_config_validation(enabled, contacts):
     config['SMS_FACILITY_CONTACTS'] = contacts
     with pytest.raises(ValueError):
         provider.validate_config(config)
+
+
+def test_short_commands_and_supplier_messages(enabled, client):
+    first = inbound(client, text='request a pos 3')
+    identifier = first.json['request']['id']
+    reply = first.json['reply']
+    option = first.json['request']['ranking']['options'][0]
+    assert f"1 {option['name']}" in reply
+    assert "yesterday's count, unconfirmed" in reply
+    assert "Today's way:" in reply
+    assert inbound(client, id='status', text='status').json['request']['id'] == identifier
+    assert inbound(client, id='pick', text='1').json['request']['status'] == 'awaiting_confirmation'
+    supplier_text = next(r['body'] for r in rows(enabled) if r['recipient'] == SUPPLIER)
+    assert '3 A+ red cell units' in supplier_text and 'Reply YES' in supplier_text
+    confirmed = inbound(client, id='yes', text='yes', **{'from': SUPPLIER})
+    assert confirmed.json['request']['status'] == 'confirmed'
+    assert 'Reply SENT' in confirmed.json['reply']
+    assert any('confirmed. Most likely' in r['body'] for r in rows(enabled) if r['recipient'] == REQUESTER)
+    sent = inbound(client, id='sent', text='sent', **{'from': SUPPLIER})
+    assert sent.json['request']['status'] == 'dispatched'
+    assert inbound(client, id='sent', text='sent', **{'from': SUPPLIER}).json == sent.json
+
+
+def test_cancel_help_and_normalization(enabled, client):
+    for i, group in enumerate(['o pos', 'o−', 'o-']):
+        result = inbound(client, id=f'group-{i}', text=f'request {group} 1')
+        assert result.json['request']['blood_group'] == ('O+' if i == 0 else 'O-')
+    assert inbound(client, id='cancel', text='cancel').json['request']['status'] == 'cancelled'
+    assert inbound(client, id='help', text='???').json['reply'].startswith('HELP:')
+    assert inbound(client, id='bad-role', text='YES').json['error'] == 409
+
+
+@pytest.mark.parametrize('timeout', [False, True])
+def test_next_supplier_notice(enabled, client, timeout):
+    with enabled.app_context(), atomic() as db:
+        db.execute("INSERT INTO facilities VALUES('RBTC-B','Next Centre','centre')")
+        db.execute("INSERT INTO inventory VALUES('RBTC-B','A+','red_cells',5,0,1,'2026-03-09T23:59:59+03:00')")
+    inbound(client)
+    inbound(client, id='pick', text='1')
+    if timeout:
+        enabled.config['SETTINGS']['demo_clock'] = '2026-03-10T01:11:00+03:00'
+        assert enabled.test_cli_runner().invoke(args=['expire-confirmations']).exit_code == 0
+    else:
+        assert inbound(client, id='no', text='no', **{'from': SUPPLIER}).json['request']['attempt'] == 2
+    assert any(' next (' in r['body'] for r in rows(enabled) if r['recipient'] == REQUESTER)
+
+
+def test_options_render_real_golden_engine_output(frames, eta_model):
+    from engine.rank import rank_sources, request_from_dataset
+    from app.sms import request_reply
+    payload = request_from_dataset(frames, 'REQ-020421')
+    ranking = rank_sources(payload, frames=frames, eta_model=eta_model)
+    result = dict(id='REQ-1042', blood_group='O+', units=1, status='pending', ranking=ranking)
+    reply = request_reply(result)
+    for i, option in enumerate(ranking['options'][:3], 1):
+        assert f"{i} {option['name']} {option['eta']['p50']:.1f}h" in reply
+    assert '~8.9h' in reply
+    ranking['advice'] = 'no_full_source'
+    assert request_reply(result).startswith('No single site has enough')
+    ranking['advice'] = 'too_long'
+    assert request_reply(result).startswith('Wait may pass 6h: consider emergency group O or patient transfer.')
+
+
+def test_golden_short_reply_workflow(enabled, client, frames, eta_model, built_db):
+    import sqlite3
+    from engine.rank import rank_sources
+    enabled.config['SETTINGS']['demo_clock'] = '2026-10-31T00:58:20+03:00'
+    enabled.config['RANKING_PROVIDER'] = lambda payload: rank_sources(payload, frames=frames, eta_model=eta_model)
+    enabled.config['SMS_SENDERS'][REQUESTER]['facility_id'] = 'HSP-004'
+    enabled.config['SMS_SENDERS'][SUPPLIER]['facility_id'] = 'HSP-001'
+    with enabled.app_context(), atomic() as db, sqlite3.connect(built_db[0]) as source:
+        for identifier, item in frames.facility_info.items():
+            db.execute('INSERT OR IGNORE INTO facilities VALUES(?,?,?)', (identifier, item.get('name') or item.get('facility_name') or identifier, 'hospital'))
+        for facility, group, units in source.execute("SELECT facility_id,blood_group,units_in_stock_end_of_day FROM daily_stock WHERE date='2026-10-30' AND component='RBC'"):
+            db.execute("INSERT INTO inventory VALUES(?,?,'red_cells',?,0,0,'2026-10-30T23:59:59+03:00')", (facility, group, int(units)))
+    result = inbound(client, text='request O pos 1')
+    assert result.json['request']['ranking']['options'][0]['facility_id'] == 'HSP-001'
+    assert 'National Referral' in result.json['reply'] and '~8.9h' in result.json['reply']
+    assert inbound(client, id='gold-pick', text='1').json['request']['supplier_id'] == 'HSP-001'
+    assert inbound(client, id='gold-yes', text='YES', **{'from': SUPPLIER}).json['request']['status'] == 'confirmed'
+    assert inbound(client, id='gold-sent', text='SENT', **{'from': SUPPLIER}).json['request']['status'] == 'dispatched'

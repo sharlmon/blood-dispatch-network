@@ -55,6 +55,12 @@ From the starter dataset (Kenya, 1 Nov 2025 to 31 Oct 2026, 47 facilities):
 - **Fallback:** if the API or the engine is down, the web app shows a banner for the phone
   process.
 
+SMS is implemented: a basic phone receives three ranked sites with arrival ranges
+and today's baseline; staff reply `1`/`2`/`3`, `STATUS`, or `CANCEL`. Suppliers reply
+`YES`, `NO`, then `SENT`. The transactional outbox, retries, delivery reports and
+signed gateway remain in place. For the video, use the [sandbox simulator and tunnel walkthrough](backend/docs/sms.md#video-demo-sandbox-simulator-and-tunnel)
+with two pre-registered demo phones; a live shortcode is not required.
+
 **What is mocked or not finished**
 - Stock is yesterday's closing count from the dataset, not a live feed.
 - The dataset has no hospital-to-hospital lending, so hospital dispatch times are assumed
@@ -62,6 +68,8 @@ From the starter dataset (Kenya, 1 Nov 2025 to 31 Oct 2026, 47 facilities):
 - The public live demo runs on fictional sample data in the engine's output shape. The real
   engine runs when you start the API locally (see How to run it).
 - SMS runs in the Africa's Talking sandbox, not on a live shortcode.
+
+**Stack:** Nuxt 4 (frontend) · Flask (backend API) · Python decision engine · SQLite · SMS gateway · CSV in, JSON out.
 
 Demo video (3 minutes or less): `[[link]]`
 

@@ -34,3 +34,32 @@ external setup requirements.
 The backend CI template is included under deploy/backend-ci.yml. GitHub rejected
 active workflow publication because the OAuth token lacks workflow scope; CI
 activation remains pending that authorization.
+
+
+## SMS sandbox acceptance — 11 November 2026
+
+The free Africa's Talking sandbox was exercised through a public HTTPS ngrok tunnel
+with separate requester and supplier simulator sessions. The requester was scoped
+to HSP-004 and the supplier to HSP-001. Private keys, callback tokens, and actual
+staff phone numbers remain in ignored local configuration.
+
+- `REQUEST O+ 1` returned the real golden-case ranking: National Referral 2.6h
+  (1.4–3.8h), Eastlands County 2.8h (1.6–4.0h), and Naivasha 4.6h (3.3–5.9h),
+  alongside the Eldoret baseline of about 8.9h and the unconfirmed-stock note.
+- `1` selected National Referral; supplier `YES` confirmed stock and the requester
+  received the arrival range. Supplier `SENT` completed dispatch and both simulator
+  sessions showed the dispatch update.
+- The isolated demo workflow database records one request in `dispatched` state,
+  with `created`, `pick`, `confirm`, and `dispatch` audit events.
+- All 376 backend tests passed, including real-data golden ranking, short commands,
+  legacy commands, authorization, duplicate handling, rejection and timeout advance,
+  outbox atomicity, transport failures, retries, and delivery-report ordering.
+- Actual simulator receipt was observed. The outbox records provider acceptance;
+  no `Success` delivery reports were present at the acceptance check. Provider
+  acceptance and delivery-report confirmation remain distinct states.
+
+Use [the sandbox walkthrough](sms.md#video-demo-sandbox-simulator-and-tunnel) and
+`backend/sms-demo.env.example` to reproduce this with a separate demo database.
+The profile freezes 31 October 2026 at 00:58:20 EAT with 30 October synthetic stock.
+This verifies sandbox SMS only; live shortcode service and live Clerk integration
+remain separate setup work.
