@@ -42,6 +42,10 @@ and today's baseline; staff reply `1`/`2`/`3`, `STATUS`, or `CANCEL`. Suppliers 
 signed gateway remain in place. For the video, use the [sandbox simulator and tunnel walkthrough](backend/docs/sms.md#video-demo-sandbox-simulator-and-tunnel)
 with two pre-registered demo phones; a live shortcode is not required.
 
+The [isolated server deployment](backend/docs/container-deployment.md) connects GitHub
+Pages to the real engine API. This public deployment uses synthetic historical data
+and bypasses sign-in for the demo; it is not a clinical production deployment.
+
 **Stack:** Nuxt 4 (frontend) · Flask (backend API) · Python decision engine · SQLite · SMS gateway · CSV in, JSON out.
 
 ```

@@ -63,3 +63,20 @@ Use [the sandbox walkthrough](sms.md#video-demo-sandbox-simulator-and-tunnel) an
 The profile freezes 31 October 2026 at 00:58:20 EAT with 30 October synthetic stock.
 This verifies sandbox SMS only; live shortcode service and live Clerk integration
 remain separate setup work.
+
+
+## Isolated server acceptance — 11 November 2026
+
+The API, sandbox SMS worker, and maintenance worker were deployed in the separate
+`blood-dispatch` Docker Compose project with persistent project-owned SQLite storage.
+Public HTTPS readiness reports both engine data and inventory loaded. The public
+facility API permits the GitHub Pages origin, and the public ranking preview returns
+the real golden-case 2.6h, 2.8h, 4.6h options and 8.9h baseline. A synthetic request
+was created, retried idempotently, and cancelled without reserving or consuming stock.
+All 28 frontend adapter tests passed and the connected static frontend built successfully.
+The final build explicitly disables Clerk and the browser-local demo login as requested.
+Existing unrelated containers retained their IDs and remained running.
+
+The server uses the requested sign-in bypass and synthetic historical stock, rather
+than the authenticated production profile. Africa's Talking dashboard callbacks must
+be pointed at the server URLs to remove their remaining dependency on the local tunnel.

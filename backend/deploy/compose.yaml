@@ -1,0 +1,58 @@
+name: blood-dispatch
+
+x-app: &app
+  image: blood-dispatch:${BLOOD_IMAGE_TAG:-latest}
+  build:
+    context: ../..
+  env_file: private.env
+  environment:
+    XDG_RUNTIME_DIR: /tmp
+  restart: unless-stopped
+  init: true
+  user: "10001:10001"
+  read_only: true
+  tmpfs:
+    - /tmp:size=128m,mode=1777
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  volumes:
+    - /srv/blood-dispatch/state:/var/lib/blood-dispatch
+    - /srv/blood-dispatch/dataset:/dataset:ro
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  api:
+    <<: *app
+    container_name: blood-dispatch-api
+    ports:
+      - "127.0.0.1:25001:5000"
+    cpus: 1.5
+    mem_limit: 1536m
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/api/ready', timeout=10)"]
+      interval: 30s
+      timeout: 15s
+      start_period: 90s
+      retries: 3
+  sms:
+    <<: *app
+    container_name: blood-dispatch-sms
+    command: [python, -m, flask, --app, wsgi, sms-worker, --interval, "2"]
+    cpus: 0.5
+    mem_limit: 768m
+    depends_on:
+      api:
+        condition: service_healthy
+  maintenance:
+    <<: *app
+    container_name: blood-dispatch-maintenance
+    command: [python, -m, flask, --app, wsgi, maintenance, --interval, "30"]
+    cpus: 0.5
+    mem_limit: 768m
+    depends_on:
+      api:
+        condition: service_healthy

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 const pages = !!process.env.GH_PAGES
 const base = process.env.NUXT_APP_BASE_URL || '/'
 const clerkOn = process.env.DEMO_AUTH ? false : pages ? !!process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY : true
+const bypassDemoLogin = process.env.DEMO_AUTH === 'bypass'
 // scripts/deploy-pages.sh always sets NUXT_PUBLIC_API_BASE (empty unless the shell gives one), so
 // the localhost API in a developer's frontend/.env never reaches the Pages build.
 const apiBase = process.env.NUXT_PUBLIC_API_BASE ?? (pages ? '' : 'http://localhost:5001')
@@ -35,7 +36,7 @@ export default defineNuxtConfig({
       apiBase,
       authEnabled: clerkOn,
       // Static demo with no Clerk: anyone can make a local account for their hospital.
-      demoAuth: !clerkOn && (pages || !!process.env.DEMO_AUTH)
+      demoAuth: !clerkOn && !bypassDemoLogin && (pages || !!process.env.DEMO_AUTH)
     }
   },
   app: {

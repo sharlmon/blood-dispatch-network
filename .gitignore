@@ -23,3 +23,6 @@ dist
 .vscode/
 .nuxt/
 .output/
+
+# Server deployment credentials
+backend/deploy/private.env
