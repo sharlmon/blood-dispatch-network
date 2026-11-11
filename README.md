@@ -69,28 +69,20 @@ and bypasses sign-in for the demo; it is not a clinical production deployment.
 - Stock is yesterday's closing count from the dataset, not a live feed.
 - The dataset has no hospital-to-hospital lending, so hospital dispatch times are assumed
   from regional centre data. Our result still holds with hospitals up to 3 h slower.
-<<<<<<< HEAD
 - Submitted requests on the public site use the server-hosted engine on synthetic historical
   data. The homepage example and explicit example links remain illustrative mock scenarios.
-=======
->>>>>>> origin/dev
 - SMS runs in the Africa's Talking sandbox, not on a live shortcode.
 
 **Stack:** Nuxt 4 (frontend) · Flask (backend API) · Python decision engine · SQLite · SMS gateway · CSV in, JSON out.
 
 Demo video (3 minutes or less): https://drive.google.com/file/d/17in7cgVS8MKqdoyp4N9kBrjJxtFU79KB/view?usp=sharing
 
-<<<<<<< HEAD
-Live demo: https://sharlmon.github.io/blood-dispatch-network/ · No sign-in is required
-for this public synthetic demo. API: https://blood-dispatch.169.58.141.254.sslip.io.
-=======
 Live demo: https://sharlmon.github.io/blood-dispatch-network/ · Test log-in: none needed.
 The live site is connected to the hosted API and the real engine, running on the synthetic
 starter dataset with the clock set inside the data (31 Oct 2026). Sign-in is switched off
 for this demo.
 
 Hosted API docs (Swagger): https://blood-dispatch.169.58.141.254.sslip.io/api/docs
->>>>>>> origin/dev
 
 ## How to run it
 
@@ -238,13 +230,8 @@ and dispatch module.
   `backend/engine/cleaning.py`).
 - No other data. Everything is synthetic, and there is no real donor, patient or facility
   data.
-<<<<<<< HEAD
-- The public request workflow uses the server engine on the synthetic starter dataset.
-  The homepage example uses `frontend/app/utils/mock.ts` and is illustrative.
-=======
 - The home page illustration uses fictional sample data from `frontend/app/utils/mock.ts`.
   Requests on the live demo run on the starter dataset.
->>>>>>> origin/dev
 
 ## African conditions
 
@@ -294,13 +281,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how we worked.
   supplying site confirms the shelf before dispatch.
 - Hospital lending times are assumed, because the dataset has no hospital-to-hospital
   transfers.
-<<<<<<< HEAD
-- The public deployment bypasses authentication for the synthetic demo. Configure Clerk
-  and actual facility mappings before an authenticated deployment.
-=======
 - The live demo has sign-in switched off, so anyone with the link can create or cancel
   requests on the synthetic data.
->>>>>>> origin/dev
 - No FHIR or ISBT 128 interface is built yet. These are mappings only.
 
 **Next steps**
