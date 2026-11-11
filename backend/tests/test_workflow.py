@@ -136,3 +136,28 @@ def test_insufficient_stock_rolls_back(client):
     assert client.get(f'/api/requests/{identifier}').json['status'] == 'pending'
     assert client.get('/api/facilities/RBTC-A/inventory').json['items'][0]['reserved'] == 0
     assert len(client.get('/api/audit').json['items']) == 1
+
+
+def test_rank_preview_stores_nothing_and_reserves_nothing(client, app):
+    response = client.post('/api/rank', json=dict(facility_id='HSP-R', patient_group='A+', units_needed=3))
+    assert response.status_code == 200
+    assert response.json['request']['patient_group'] == 'A+'
+    assert response.json['ranking']['options'][0]['facility_id'] == 'RBTC-A'
+    with app.app_context():
+        db = get_db()
+        assert db.execute('SELECT COUNT(*) FROM requests').fetchone()[0] == 0
+        assert db.execute('SELECT reserved FROM inventory').fetchone()[0] == 0
+
+
+def test_rank_preview_validates_like_create(client):
+    assert client.post('/api/rank', json=dict(facility_id='HSP-R', patient_group='A+', units_needed=0)).status_code == 400
+    assert client.post('/api/rank', json=dict(facility_id='NOPE', patient_group='A+', units_needed=1)).status_code == 404
+
+
+def test_demo_clock_env_freezes_the_operational_clock(monkeypatch, tmp_path):
+    monkeypatch.setenv('DEMO_CLOCK', '2026-10-31T00:58:00')
+    app = create_app(test_config={'TESTING': True, 'AUTH_DISABLED': True, 'DB_PATH': str(tmp_path / 'c.sqlite')})
+    assert app.config['SETTINGS']['demo_clock'] == '2026-10-31T00:58:00+03:00'
+    from app.workflow import now
+    with app.app_context():
+        assert now().isoformat() == '2026-10-30T21:58:00+00:00'

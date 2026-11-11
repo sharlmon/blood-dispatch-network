@@ -30,5 +30,6 @@ export const ICONS: Record<string, string> = {
   close: 'M6 6l12 12M18 6L6 18',
   copy: 'M9 9h10v10H9zM5 15V5h10',
   list: 'M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01',
+  evidence: 'M9 3.5h6v3H9zM9 5H6v16h12V5h-3M9 13.5l2 2 4-4.5',
   groupO: c(12, 12, 9) + 'M10 9.5a2.5 2.5 0 0 1 5 0v5a2.5 2.5 0 0 1-5 0z'
 }
