@@ -5,6 +5,65 @@ SQLite transaction as the workflow change. A separate worker sends committed ite
 HTTP handlers never call the external provider. SMS does not replace the phone
 process, human crossmatching, release, or facility authorization.
 
+## Video demo: sandbox simulator and tunnel
+
+Follow [Africa's Talking's sandbox setup](https://help.africastalking.com/en/articles/1170660-how-do-i-get-started-on-the-africa-s-talking-sandbox).
+Sandbox traffic appears in simulator phones. Create a free two-way sandbox shortcode
+in your sandbox dashboard, copy its sandbox API key, and launch two simulator phones
+in separate browser sessions: **+254700000001** (Westlands lab, HSP-004) and
+**+254700000002** (National Referral supplier, HSP-001).
+
+From `backend/`, copy `sms-demo.env.example` to your private `.env` (preserve any
+existing private configuration first). Both sender registrations are included.
+Fill in the sandbox key, shortcode in both settings, callback secret, and `DATA_DIR`
+pointing at the starter CSVs. Never commit keys or complete callback URLs.
+This profile uses separate demo databases and freezes time at the golden case,
+31 October 2026, 00:58:20 EAT, with 30 October stock. Keep that clock while filming.
+
+Prepare the engine and workflow (do not use `seed-demo`, which creates other sites):
+
+```sh
+.venv/bin/python -m flask --app wsgi ingest-data
+.venv/bin/python -c "from dotenv import load_dotenv; load_dotenv('.env'); from scripts.fit_eta import main; main()"
+.venv/bin/gunicorn --config gunicorn.conf.py wsgi:app
+```
+
+In separate terminals from `backend/`, run the outbox worker and tunnel:
+
+```sh
+.venv/bin/python -m flask --app wsgi sms-worker --interval 2
+ngrok http 5000
+# Alternative: cloudflared tunnel --url http://localhost:5000
+```
+
+Use the tunnel's HTTPS hostname in both callback URLs shown below and configure
+them in the sandbox dashboard. Use a private tunnel session: callback URLs contain
+a bearer secret; do not display its request inspector or URLs on camera. Restart
+Gunicorn and workers after changing `.env`. Reconfigure callbacks if the tunnel URL
+changes. `sms-status` shows queued/accepted/delivered counts.
+
+Film this sequence:
+
+1. Lab phone sends `REQUEST O+ 1` to the sandbox shortcode. Its reply lists National
+   Referral, Eastlands County, Naivasha SCH and the Eldoret baseline from the engine.
+2. Lab sends `1`. Supplier phone gets facility, `1 O+ red cell unit`, and YES/NO instructions.
+3. Supplier sends `YES`. Lab gets the confirmed arrival range; supplier gets SENT instructions.
+4. Supplier sends `SENT`. Lab gets dispatched status. `STATUS` works without an ID.
+
+For a rejection demonstration start a fresh request and pick `1`, then send `NO`:
+the lab receives “Asking Eastlands County next” with its estimate. Only National
+Referral is registered on the second phone; register additional supplier numbers
+if you want to confirm the next site too. For timeout, advance `demo_clock` by more
+than ten minutes, restart API/worker and run `expire-confirmations`; restore the
+golden clock before starting another golden take. Frozen time does not expire itself.
+
+Short commands resolve the sender facility's latest open requester request, or
+latest awaiting-confirmation supplier request (`SENT`: latest confirmed request).
+Keep one active request per demo facility. With concurrent requests use long forms
+to identify the intended request and attempt. Lowercase, `O pos`, and Unicode minus
+are accepted; unknown commands receive one-line HELP. Human crossmatch and release
+remain required.
+
 ## Configuration
 
 Set these in private `backend/.env` for local development, or the deployment
@@ -38,8 +97,9 @@ number can be assigned to every facility. Map each
 phone to its actual authorized user, organization and facility. Requester and
 current supplier contacts receive lifecycle notifications, including confirmation
 expiry and automatic selection of the next supplier. Replies suppress duplicate
-notifications to the originating handset. Notification bodies contain a request
-reference, event, state and attempt; no patient identifiers or blood group.
+notifications to the originating handset. Requester replies include the top three engine options, arrival ranges, and today's
+baseline comparison. Supplier prompts include the requesting facility, blood group,
+and unit count so staff can check the shelf. Messages contain no patient identifier.
 
 For sandbox, use `SMS_ENVIRONMENT=sandbox` and
 `AFRICASTALKING_SANDBOX_API_KEY`; optionally set
@@ -73,8 +133,9 @@ Use HTTPS, redact query strings in reverse-proxy/access/error logs, and do not
 publish the complete URLs. Flask's request logger records route templates only;
 the provided Gunicorn configuration disables raw access logs. Do not use the
 Flask development server with private callback URLs in a public deployment.
-A localhost URL cannot receive external callbacks. Register the receiving
-shortcode/service with the provider before enabling inbound traffic. An
+A localhost URL cannot receive external callbacks. For live traffic, register the receiving
+shortcode/service with the provider before enabling inbound traffic. Use the sandbox
+simulator below for the video; live shortcode approval is not a demo dependency. An
 alphanumeric sender ID alone does not provide two-way SMS. This adapter sends
 bulk SMS replies; premium/on-demand linkId billing is not implemented.
 
@@ -84,7 +145,13 @@ registered. Commands are:
 
 ```text
 REQUEST A+ 3
+1 / 2 / 3
+STATUS
+CANCEL
+YES / NO / SENT
+# Long forms remain available:
 STATUS <request-id>
+CANCEL <request-id>
 PICK <request-id> <supplier-id>
 CONFIRM <request-id> <attempt> <units>
 REJECT <request-id> <attempt> <reason>
@@ -94,7 +161,7 @@ DISPATCH <request-id> <attempt>
 Authorization and workflow validation are identical to the signed gateway adapter.
 Valid provider callbacks return HTTP 200, including duplicates. Message ID reuse
 with a different command returns 409. Invalid/forbidden commands from registered
-senders receive a generic queued error reply and HTTP 200, with no partial workflow
+senders receive a one-line HELP reply and HTTP 200, with no partial workflow
 changes. Transient dependency errors return 503 so provider retries remain useful.
 Unknown senders and invalid callback credentials never queue replies. The original
 `POST /api/sms` HMAC envelope remains supported for other gateways; those gateways

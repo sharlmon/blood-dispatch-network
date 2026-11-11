@@ -63,14 +63,37 @@ def queue_workflow_event(db, identifier, action, details):
         return
     row = db.execute('SELECT * FROM requests WHERE id=?', (identifier,)).fetchone()
     event_id = db.execute('SELECT last_insert_rowid()').fetchone()[0]
+    from . import workflow
+    from .sms import request_reply
+    result = workflow.detail(identifier)
+    option = result.get('selected_option')
+    requester_body = request_reply(result)
+    if action == 'next_supplier_selected' and option:
+        requester_body = f"Asking {option['name']} next ({option['eta']['p50']:.1f}h)."
+    elif action == 'confirmation_expired':
+        # The subsequent selection/exhaustion event gives the actionable outcome.
+        return
+    elif action == 'reject':
+        # advance() already queued the next selection or exhaustion event.
+        return
+    elif action == 'sources_exhausted':
+        requester_body = 'No further sites available. Call your facility for the phone process.'
+    facility_name = workflow.facility(db, row['facility_id'])['name']
+    supplier_body = f"{identifier}: {facility_name} needs {row['units']} {row['blood_group']} red cell unit{'s' if row['units'] != 1 else ''}. Reply YES if it's on the shelf, NO if not."
+    if action == 'confirm':
+        supplier_body = f"{identifier}: confirmed. Reply SENT when dispatched."
+    elif action not in {'pick', 'next_supplier_selected'}:
+        supplier_body = f"{identifier}: {row['status']}."
     facilities = {row['facility_id'], row['supplier_id'], details.get('supplier_id')}
-    # No patient details, blood group or clinical instructions in notifications.
-    body = f"Blood Dispatch: {identifier}; {action}; status {row['status']}; attempt {row['attempt']}. Check app or call facility."
-    recipients = {number for number, mapping in current_app.config['SMS_SENDERS'].items()
-                  if mapping['facility_id'] in facilities}
-    for facility in facilities:
+    messages = {}
+    for facility in sorted(facilities - {None}, key=lambda item: item != row['facility_id']):
+        body = requester_body if facility == row['facility_id'] else supplier_body
+        recipients = {number for number, mapping in current_app.config['SMS_SENDERS'].items()
+                      if mapping['facility_id'] == facility}
         recipients.update(current_app.config['SMS_FACILITY_CONTACTS'].get(facility, []))
-    for number in sorted(recipients):
+        for number in recipients:
+            messages.setdefault(number, body)
+    for number, body in sorted(messages.items()):
         if number != getattr(g, 'sms_sender', None):
             enqueue(db, f'audit:{event_id}:{number}', number, body, identifier)
 

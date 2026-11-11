@@ -35,6 +35,12 @@ hospital lending remains an unobserved assumption.
 
 ## Architecture
 
+SMS is implemented: a basic phone receives three ranked sites with arrival ranges
+and today's baseline; staff reply `1`/`2`/`3`, `STATUS`, or `CANCEL`. Suppliers reply
+`YES`, `NO`, then `SENT`. The transactional outbox, retries, delivery reports and
+signed gateway remain in place. For the video, use the [sandbox simulator and tunnel walkthrough](backend/docs/sms.md#video-demo-sandbox-simulator-and-tunnel)
+with two pre-registered demo phones; a live shortcode is not required.
+
 **Stack:** Nuxt 4 (frontend) · Flask (backend API) · Python decision engine · SQLite · SMS gateway · CSV in, JSON out.
 
 ```

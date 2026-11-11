@@ -171,6 +171,18 @@ For example `/results/summary` or `/results/hospital-reserve-5/replay_summary`.
 Existing replay generation remains an offline CLI (`scripts/evaluate_ds2.py`);
 no unbounded replay execution endpoint is exposed.
 
+## SMS commands and simulator demo
+
+`REQUEST O+ 1` replies with up to three engine-ranked sites, p10/p50/p90 arrival
+estimates, yesterday's unconfirmed-stock notice, and today's baseline quote. Advice
+appears first; partial options are labelled when no single site has enough.
+Registered requesters can send `1`, `2`, `3`, `STATUS`, or `CANCEL` against their
+facility's latest open request. Registered suppliers send `YES`, `NO`, and `SENT`
+against their latest eligible supply request. Long commands remain supported.
+Lowercase, `O pos`, and either minus character are accepted; unknown commands
+receive one-line HELP. See [SMS configuration and sandbox walkthrough](sms.md)
+for callback endpoints, sender registration, outbox behavior and the two-phone demo.
+
 ## SMS gateway envelope
 
 A provider adapter must POST this JSON envelope:

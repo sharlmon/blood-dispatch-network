@@ -14,7 +14,7 @@ It is not legal advice; section numbers should be checked with the ODPC guidance
 | Patient sex, age band, clinical indication | Requests CSV | **Not stored by the engine** (dropped at load; tested) | Health data | Not in `blood.db` |
 | Donor records (sex, birth date, county, last 4 phone digits) | Donors CSV | DS2 data-quality checks only; identities never merged | Yes | Not used by ranking or the API |
 | Staff identity and role | Clerk login | API auth, audit log | Yes | Clerk (US), audit log |
-| Phone number of SMS sender | SMS gateway | SMS parser, reply | Yes | Gateway, audit log |
+| Phone number of SMS sender | SMS gateway | SMS parser, reply | Yes | Private sender configuration, gateway, SMS outbox |
 
 Committed outputs (`results/`, `backend/engine/examples/`) hold no personal fields.
 
@@ -29,6 +29,25 @@ Committed outputs (`results/`, `backend/engine/examples/`) hold no personal fiel
 | Access control | Clerk sessions verified server-side; organisation role on every request |
 | Accountability | Audit log records request, decision, confirmation, dispatch and timeout |
 | Resilience | If the tool fails, everyone falls back to the phone process |
+
+## Implemented SMS handling
+
+SMS is built: registered staff can request ranked options, choose a site and confirm
+or dispatch using short replies. Messages include facility names, blood group,
+unit count and arrival estimates, without patient identifiers. The supplier needs
+the group and quantity to check stock. Staff must still crossmatch and release units.
+
+Sender authorization is facility scoped. The signed gateway verifies HMAC timestamps;
+Africa's Talking callbacks use a separate secret bearer token over HTTPS. Committed
+outbox records support delivery reports and controlled retries. Raw phone numbers
+and incoming texts are not logged in the workflow audit; SMS actors are keyed hashes.
+The private sender configuration and outbox contain phone numbers, and outbox bodies
+contain request details. Restrict their access and backups and set a retention policy
+before sustained use. Never log callback query strings or expose tunnel inspectors.
+
+The [video walkthrough](../backend/docs/sms.md#video-demo-sandbox-simulator-and-tunnel)
+uses synthetic stock and two sandbox simulator phones, rather than real handset
+traffic. Its sender registrations are demo identities, not staff identity records.
 
 ## Lawful basis
 
