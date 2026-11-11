@@ -65,21 +65,18 @@ with two pre-registered demo phones; a live shortcode is not required.
 - Stock is yesterday's closing count from the dataset, not a live feed.
 - The dataset has no hospital-to-hospital lending, so hospital dispatch times are assumed
   from regional centre data. Our result still holds with hospitals up to 3 h slower.
-- The public live demo runs on fictional sample data in the engine's output shape. The real
-  engine runs when you start the API locally (see How to run it).
 - SMS runs in the Africa's Talking sandbox, not on a live shortcode.
 
 **Stack:** Nuxt 4 (frontend) · Flask (backend API) · Python decision engine · SQLite · SMS gateway · CSV in, JSON out.
 
 Demo video (3 minutes or less): `[[link]]`
 
-Live demo: https://sharlmon.github.io/blood-dispatch-network/ · Test log-in: create any
-demo account on the sign-in page. It is stored only in your browser, and no password is
-checked.
+Live demo: https://sharlmon.github.io/blood-dispatch-network/ · Test log-in: none needed.
+The live site is connected to the hosted API and the real engine, running on the synthetic
+starter dataset with the clock set inside the data (31 Oct 2026). Sign-in is switched off
+for this demo.
 
-Hosted API docs (Swagger): https://blood-dispatch-api.onrender.com/api/docs. The API is on
-Render's free plan, so the first request after a quiet spell can take about a minute. Its
-engine data is not loaded yet, so ranking runs only locally for now.
+Hosted API docs (Swagger): https://blood-dispatch.169.58.141.254.sslip.io/api/docs
 
 ## How to run it
 
@@ -227,7 +224,8 @@ and dispatch module.
   `backend/engine/cleaning.py`).
 - No other data. Everything is synthetic, and there is no real donor, patient or facility
   data.
-- The public demo uses fictional sample data generated in `frontend/app/utils/mock.ts`.
+- The home page illustration uses fictional sample data from `frontend/app/utils/mock.ts`.
+  Requests on the live demo run on the starter dataset.
 
 ## African conditions
 
@@ -277,7 +275,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how we worked.
   supplying site confirms the shelf before dispatch.
 - Hospital lending times are assumed, because the dataset has no hospital-to-hospital
   transfers.
-- The hosted API on Render is not loaded with data yet, so the live site runs on sample data.
+- The live demo has sign-in switched off, so anyone with the link can create or cancel
+  requests on the synthetic data.
 - No FHIR or ISBT 128 interface is built yet. These are mappings only.
 
 **Next steps**
