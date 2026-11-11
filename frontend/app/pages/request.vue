@@ -183,7 +183,7 @@ const recentOpen = computed({ get: () => !!pickedRecent.value, set: (v) => { if 
 const contact = ref<Option | null>(null)
 const contactOpen = computed({ get: () => !!contact.value, set: (v) => { if (!v) contact.value = null } })
 const contacted = ref<string[]>([])
-const smsText = computed(() => `${effective.value || '[GROUP]'} ${units.value} RBC ${limitH.value}H`)
+const smsText = computed(() => `REQUEST ${effective.value || '[GROUP]'} ${units.value}`)
 async function copy(text: string) {
   try { await navigator.clipboard.writeText(text); toast({ tone: 'ok', title: 'Copied', body: text, ms: 2600 }) }
   catch { toast({ tone: 'warn', title: 'Could not copy', body: 'Select the text and copy it by hand.' }) }
@@ -279,7 +279,7 @@ const searching = computed(() => d.busy.value === 'search')
           <span v-else class="hosp">{{ hospital }}</span>
         </div>
       </div>
-      <p class="pnote"><AppIcon name="drop" :size="16" /> Red cells and whole blood stock both count. Platelets and plasma are not ranked yet.</p>
+      <p class="pnote"><AppIcon name="drop" :size="16" /> Red cell stock above safety reserves counts. The supplying site must confirm availability.</p>
 
       <button type="submit" class="btn btn-primary go" :disabled="searching"><AppIcon name="search" /> {{ searching ? 'Finding sources…' : 'Find sources' }}</button>
       <p class="sms"><AppIcon name="sms" :size="22" /><span>No data? Text <b>{{ smsText }}</b> to [SHORTCODE].</span></p>
