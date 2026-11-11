@@ -2,7 +2,8 @@
 // Floating accessibility menu, bottom-left. Preferences persist on this device (useA11y).
 const { prefs, load, set, reset, changed } = useA11y()
 const route = useRoute()
-// Results and Track are map screens with a panel at the bottom (phone) or left (desktop): sit on the map beside it.
+// Results and Track are map screens. Phone: the panel is a bottom sheet, so sit just above it. Desktop: the
+// panel stops above the corner (see those pages), so the icon stays in the usual bottom-left place.
 const lift = computed(() => /^\/(results|track)(\/|$)/.test(route.path))
 const open = ref(false)
 const btn = ref<HTMLButtonElement | null>(null)
@@ -104,7 +105,6 @@ h2 { margin: 0; font-size: 17px; font-weight: 800; color: var(--ink-deep); }
 .reset:disabled { opacity: 0.45; cursor: default; }
 .pop-enter-active, .pop-leave-active { transition: opacity 0.18s ease, transform 0.18s ease; }
 .pop-enter-from, .pop-leave-to { opacity: 0; transform: translateY(8px) scale(0.97); }
-@media (min-width: 900px) { .a11y.lift { left: 504px; bottom: 92px; } }
 /* Phones: sit above the bottom navigation dock. */
 @media (max-width: 899px) {
   .a11y { left: 12px; bottom: calc(var(--dock-h, 96px) + 14px + env(safe-area-inset-bottom)); }
