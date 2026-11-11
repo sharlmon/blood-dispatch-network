@@ -77,6 +77,10 @@ Live demo: https://sharlmon.github.io/blood-dispatch-network/ · Test log-in: cr
 demo account on the sign-in page. It is stored only in your browser, and no password is
 checked.
 
+Hosted API docs (Swagger): https://blood-dispatch-api.onrender.com/api/docs. The API is on
+Render's free plan, so the first request after a quiet spell can take about a minute. Its
+engine data is not loaded yet, so ranking runs only locally for now.
+
 ## How to run it
 
 You need Python 3.11+, Node 22+ and the hackathon starter kit CSVs. Run these commands from
@@ -191,11 +195,18 @@ and dispatch module.
   | **Our model** | **0.95 h** |
   | Remote hospitals, map time 5 h+: today's quote | 2.75 h |
   | Remote hospitals, map time 5 h+: our model | 1.76 h |
+  | Independent check, 438 deliveries, Sep–Oct 2026: today's quote | 1.33 h |
+  | Independent check, 438 deliveries, Sep–Oct 2026: second model | 0.89 h |
 
   80% of real arrivals fell inside our 8-in-10 range, and coverage stays between 77% and 82%
-  in every distance band and for 2G sites. A separate data-science evaluation, with its own
-  cleaning and test period, is in [docs/ds2-implementation.md](docs/ds2-implementation.md)
-  and `results/`.
+  in every distance band and for 2G sites.
+
+  The independent check is a separate evaluation by our second data scientist. It has its
+  own cleaning, its own model and a later test period, and 81% of arrivals fell inside its
+  range. It is not the model the ranking uses, but it reaches the same conclusion: both
+  models beat today's quote. Its details are in
+  [docs/ds2-implementation.md](docs/ds2-implementation.md) and `results/`, and the
+  **Evidence** page shows it.
 - **How a user sees the reason for a recommendation:** plain-language reasons built from
   templates filled with computed numbers. For example: *"22 spare compatible units above its
   own safety stock (yesterday's count). Most likely 2.6 h; 8 in 10 arrive within 1.4–3.8 h.
